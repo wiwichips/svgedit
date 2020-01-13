@@ -228,4 +228,7 @@ void deletePath(void* data);
 char* pathToString(void* data);
 int comparePaths(const void *first, const void *second);
 
+/* ******************************* Will's helper functions - to be deleted ******************************* */
+void print_element_names(xmlNode * a_node); 
+
 #endif

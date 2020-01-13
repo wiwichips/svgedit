@@ -8,5 +8,4 @@ liblist: $(SRC)LinkedListAPI.c
 	$(CC) $(SRC)LinkedListAPI.c $(CFLAGS) -shared -o bin/liblist.so
 
 clean:
-	rm bin/*.o
-	rm bin/*.so
+	rm liblist.so
