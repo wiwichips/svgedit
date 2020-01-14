@@ -1,20 +1,21 @@
 #include <stdio.h>
+#include <string.h>
 #include "LinkedListAPI.h"
 #include "SVGParser.h"
 
-/**
- * Simple example to parse a file called "file.xml", 
- * walk down the DOM, and print the name of the 
- * xml elements nodes.
- */
 int
 main(int argc, char **argv)
 {
-    xmlDoc *doc = NULL;
+	xmlDoc *doc = NULL;
     xmlNode *root_element = NULL;
 
-    if (argc != 2)
-        return(1);
+    if (argc != 2) {
+        puts("no input");
+		return 1;
+	}
+	
+	linkedPrinter();
+	printer();
 
     /*
      * this initialize the library and check potential ABI mismatches
@@ -33,6 +34,7 @@ main(int argc, char **argv)
     /*Get the root element node */
     root_element = xmlDocGetRootElement(doc);
 
+    print_element_names(root_element);
 
     /*free the document */
     xmlFreeDoc(doc);

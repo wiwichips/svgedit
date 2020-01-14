@@ -336,3 +336,7 @@ void* findElement(List * list, bool (*customCompare)(const void* first,const voi
 
 	return NULL;
 }
+
+void linkedPrinter() {
+	printf("printing from LinkedListAPI.c\n");
+}

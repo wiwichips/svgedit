@@ -3,7 +3,8 @@ CC = gcc
 CFLAGS = -Wall -std=c11 -g -Iinclude
 SRC = src/
 BIN = bin/
-INC = include
+INC = include/
+LDFLAGS = -L./bin
 
 #change the inlcude path depending on operating system
 ifeq ($(UNAME), Linux)
@@ -14,13 +15,19 @@ ifeq ($(UNAME), Darwin)
 endif
 
 #executable for test (REMEMBER TO DELETE LATER)
-l: $(SRC)test.c SVGParser.so liblist.so
-	$(CC) $(CFLAGS) $(SRC)test.c -lxml2 -I$(INC_PATH) -o bin/l
+test: $(SRC)test.c libsvgparse.so liblist.so 
+	$(CC) $(CFLAGS) $(LDFLAGS) $(SRC)test.c -I$(INC_PATH) -o bin/test -llist -lsvgparse -lxml2
+
+#test: $(SRC)test.c SVGParser.so liblist.so
+#	$(CC) $(CFLAGS) -I$(INC_PATH) $(SRC)test.c -lxml2 -o test
 
 #shared library for svg parser
-SVGParser.so: $(SRC)SVGParser.c
-	$(CC) -I$(INC_PATH) $(SRC)SVGParser.c  $(CFLAGS) -lxml2 -shared -o bin/SVGParser.so
+libsvgparse.so: $(SRC)SVGParser.c $(INC)SVGParser.h
+	$(CC) -I$(INC_PATH) $(SRC)SVGParser.c  $(CFLAGS) -lxml2 -shared -o bin/libsvgparse.so
 
 #shared library for linked list api
-liblist.so: $(SRC)LinkedListAPI.c
+liblist.so: $(SRC)LinkedListAPI.c $(INC)LinkedListAPI.h
 	$(CC) $(SRC)LinkedListAPI.c $(CFLAGS) -shared -o bin/liblist.so
+
+clean:
+	rm -rfv bin/*.so bin/*.o
