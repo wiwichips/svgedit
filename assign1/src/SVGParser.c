@@ -1,5 +1,6 @@
 #include "SVGParser.h"
 
+#define PI 3.14159265359
 
 void printer() {
 	puts("hello. Printer has been called.");
@@ -35,76 +36,97 @@ void printer() {
 **/
 //void deleteSVGimage(SVGimage* img);
 
-/*
-// Function that returns a list of all rectangles in the image.  
-List* getRects(SVGimage* img);
-// Function that returns a list of all circles in the image.  
-List* getCircles(SVGimage* img);
-// Function that returns a list of all groups in the image.  
-List* getGroups(SVGimage* img);
-// Function that returns a list of all paths in the image.  
-List* getPaths(SVGimage* img);
 
+// Function that returns a list of all rectangles in the image.  
+List* getRects(SVGimage* img) {
+	return img->rectangles; // fix this
+}
+
+// Function that returns a list of all circles in the image.  
+List* getCircles(SVGimage* img) {
+	return img->circles; // fix this
+}
+
+// Function that returns a list of all groups in the image.  
+List* getGroups(SVGimage* img) {
+	return img->groups; // fix this
+}
+
+// Function that returns a list of all paths in the image.  
+List* getPaths(SVGimage* img) {
+	linkedPrinter();
+	return img->paths; // fix this
+}
+
+///////////////WIP WIP ///////////////WIP WIP ///////////////WIP WIP 
 // Function that returns the number of all rectangles with the specified area
-int numRectsWithArea(SVGimage* img, float area);
+int numRectsWithArea(SVGimage* img, float area) {
+	int matches = 0;
+	List* rectangles = img->rectangles; // linked list of rectangles
+	
+	// initialize the currentNode to the first node
+	Node* currentNode = getFromFront(rectangles);
+	
+	// create a list iterator to traverse the list
+	ListIterator iterator = createIterator(rectangles);
+	
+	while(currentNode != NULL) {
+		//
+		
+	}
+	
+	return matches;
+}
+
 // Function that returns the number of all circles with the specified area
 int numCirclesWithArea(SVGimage* img, float area);
+
 // Function that returns the number of all paths with the specified data - i.e. Path.data field
 int numPathsWithdata(SVGimage* img, char* data);
+
 // Function that returns the number of all groups with the specified length - see A1 Module 2 for details
 int numGroupsWithLen(SVGimage* img, int len);
 
-int numAttr(SVGimage* img);
+// Sums all the attributes
+int numAttr(SVGimage* img) {
+	int attributes = 0;
+	
+	// TODO
+	
+	return attributes;
+}
 
 
 void deleteAttribute( void* data);
 char* attributeToString( void* data);
-int compareAttributes(const void *first, const void *second);
+int compareAttributes(const void *first, const void *second) {
+	return 0;
+}
+
 
 void deleteGroup(void* data);
 char* groupToString( void* data);
-int compareGroups(const void *first, const void *second);
+int compareGroups(const void *first, const void *second) {
+	return 0;
+}
+
 
 void deleteRectangle(void* data);
 char* rectangleToString(void* data);
-int compareRectangles(const void *first, const void *second);
+int compareRectangles(const void *first, const void *second) {
+	return 0;
+}
+
 
 void deleteCircle(void* data);
 char* circleToString(void* data);
-int compareCircles(const void *first, const void *second);
+int compareCircles(const void *first, const void *second) {
+	return 0;
+}
+
 
 void deletePath(void* data);
 char* pathToString(void* data);
-int comparePaths(const void *first, const void *second);
-*/
-
-
-void
-print_element_names(xmlNode * a_node)
-{
-    xmlNode *cur_node = NULL;
-
-    for (cur_node = a_node; cur_node != NULL; cur_node = cur_node->next) {
-        if (cur_node->type == XML_ELEMENT_NODE) {
-            printf("node type: Element, name: %s\n", cur_node->name);
-        }
-
-        // Uncomment the code below if you want to see the content of every node.
-
-        if (cur_node->content != NULL ){
-            printf("  content: %s\n", cur_node->content);
-        }
-
-        // Iterate through every attribute of the current node
-        xmlAttr *attr;
-        for (attr = cur_node->properties; attr != NULL; attr = attr->next)
-        {
-            xmlNode *value = attr->children;
-            char *attrName = (char *)attr->name;
-            char *cont = (char *)(value->content);
-            printf("\tattribute name: %s, attribute value = %s\n", attrName, cont);
-        }
-
-        print_element_names(cur_node->children);
-    }
+int comparePaths(const void *first, const void *second) {
+	return 0;
 }

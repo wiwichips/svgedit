@@ -229,7 +229,6 @@ char* pathToString(void* data);
 int comparePaths(const void *first, const void *second);
 
 /* ******************************* Will's helper functions - to be deleted ******************************* */
-void print_element_names(xmlNode * a_node); 
 void printer();
 
 #endif
