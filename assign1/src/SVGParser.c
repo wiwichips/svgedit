@@ -18,7 +18,91 @@ void printer() {
  *@return the pinter to the new struct or NULL
  *@param fileName - a string containing the name of the SVG file
 **/
-//SVGimage* createSVGimage(char* fileName);
+SVGimage* createSVGimage(char* fileName) {
+	
+	xmlDoc *doc = NULL;
+    xmlNode *root_element = NULL;
+	
+	SVGimage *image = NULL;
+
+    /*
+     * this initialize the library and check potential ABI mismatches
+     * between the version it was compiled for and the actual shared
+     * library used.
+     */
+    LIBXML_TEST_VERSION
+
+    // parse the file and get the DOM
+    doc = xmlReadFile(fileName, NULL, 0);
+	
+	// if xml had problems
+	if(doc == NULL) {
+		puts("LIB XML cannot open the file.");
+		return NULL;
+	}
+	
+	// Get the root element node
+    root_element = xmlDocGetRootElement(doc);
+	
+	/*
+	 * Create and allocate the stuf for the 
+	 * SVGImage
+	 *
+	 * if nothing is found, give it a null string.
+	 */
+	// CREATE SPACE FOR SVGIMAGE
+	image = malloc(sizeof(SVGimage));
+
+	
+	xmlNode *cur_node = NULL;
+
+	// while the current node isn't null, set it to the next node
+    for (cur_node = root_element; cur_node != NULL; cur_node = cur_node->next) {
+        if (cur_node->type == XML_ELEMENT_NODE) {
+            printf("######type/element/name#######: %s\n", cur_node->name);
+			strcpy((char*) cur_node->name, image->title);
+        }
+		
+		// ?
+        if (cur_node->content != NULL ){
+            printf("######content####### %s\n", cur_node->content);
+        }
+
+        // Iterate through every attribute of the current node
+        xmlAttr *attr;
+        for (attr = cur_node->properties; attr != NULL; attr = attr->next)
+        {
+            xmlNode *value = attr->children;
+            char *attrName = (char *)attr->name;
+            char *cont = (char *)(value->content);
+			
+            printf("\t######attname####### %s\t######attvalue####### %s\n", attrName, cont);
+			
+			if(!strcmp(attrName, "width")) {
+				puts("width");
+				
+			} else if(!strcmp(attrName, "height")) {
+				puts("height");
+				
+			}
+        }
+		
+		
+		
+		// need to account for recursive thing
+
+    }
+	
+	
+	// frees
+    xmlFreeDoc(doc); // free document
+    xmlCleanupParser(); // free global variable 
+	
+	/*
+	 * return the svgimage
+	 */
+	return image;
+}
 
 /** Function to create a string representation of an SVG object.
  *@pre SVGimgage exists, is not null, and is valid
@@ -58,6 +142,7 @@ List* getPaths(SVGimage* img) {
 	return img->paths; // fix this
 }
 
+/*
 ///////////////WIP WIP ///////////////WIP WIP ///////////////WIP WIP 
 // Function that returns the number of all rectangles with the specified area
 int numRectsWithArea(SVGimage* img, float area) {
@@ -77,7 +162,7 @@ int numRectsWithArea(SVGimage* img, float area) {
 	
 	return matches;
 }
-
+*/
 // Function that returns the number of all circles with the specified area
 int numCirclesWithArea(SVGimage* img, float area);
 
