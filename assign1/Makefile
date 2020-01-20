@@ -1,33 +1,22 @@
-UNAME := $(shell uname)
-CC = gcc
-CFLAGS = -Wall -std=c11 -g -Iinclude
-SRC = src/
+CFLAGS = -Wall -g -std=c11
 BIN = bin/
 INC = include/
-LDFLAGS = -L./bin
+SRC = src/
+XML_PATH = /usr/include/libxml2
 
-#change the inlcude path depending on operating system
-ifeq ($(UNAME), Linux)
-	INC_PATH = /usr/include/libxml2
-endif
-ifeq ($(UNAME), Darwin)
-	INC_PATH = /System/Volumes/Data/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/libxml2
-endif
 
 #executable for test (REMEMBER TO DELETE LATER)
-test: $(SRC)test.c libsvgparse.so liblist.so 
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SRC)test.c -I$(INC_PATH) -o bin/test -llist -lsvgparse -lxml2
+test: $(SRC)test.c $(BIN)libsvgparse.so
+	gcc $(CFLAGS) -L./bin $(SRC)test.c -I$(XML_PATH) -I$(INC) -o $(BIN)test -lsvgparse -lxml2
 
-#test: $(SRC)test.c SVGParser.so liblist.so
-#	$(CC) $(CFLAGS) -I$(INC_PATH) $(SRC)test.c -lxml2 -o test
+$(BIN)libsvgparse.so: $(BIN)SVGParser.o $(BIN)LinkedListAPI.o
+	gcc -shared -o $(BIN)libsvgparse.so $(BIN)SVGParser.o $(BIN)LinkedListAPI.o -lxml2 -lm
 
-#shared library for svg parser
-libsvgparse.so: $(SRC)SVGParser.c $(INC)SVGParser.h
-	$(CC) -I$(INC_PATH) $(SRC)SVGParser.c  $(CFLAGS) -lxml2 -shared -o bin/libsvgparse.so
+$(BIN)SVGParser.o: $(SRC)SVGParser.c $(INC)LinkedListAPI.h $(INC)SVGParser.h
+	gcc -c -fpic $(CFLAGS) -I$(XML_PATH) -I$(INC) $(SRC)SVGParser.c -o $(BIN)SVGParser.o
 
-#shared library for linked list api
-liblist.so: $(SRC)LinkedListAPI.c $(INC)LinkedListAPI.h
-	$(CC) $(SRC)LinkedListAPI.c $(CFLAGS) -shared -o bin/liblist.so
+$(BIN)LinkedListAPI.o: $(SRC)LinkedListAPI.c $(INC)LinkedListAPI.h
+	gcc -c -fpic $(CFLAGS) -I$(INC) $(SRC)LinkedListAPI.c -o $(BIN)LinkedListAPI.o
 
 clean:
-	rm -rfv bin/*.so bin/*.o
+	rm $(BIN)*.o $(BIN)*.so
