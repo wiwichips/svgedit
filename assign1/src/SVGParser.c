@@ -175,6 +175,7 @@ Path* parsePath(xmlNode* cur_node) {
 		if(!strcmp(attrName, "d")) {
 			data = malloc(sizeof(char) * strlen(cont));
 			strcpy(data, cont);
+			puts("hello world");
 			
 		// all othre attributes go here
 		} else {

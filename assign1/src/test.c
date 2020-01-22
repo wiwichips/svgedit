@@ -13,7 +13,7 @@ main(int argc, char **argv)
 
 	getPaths(&img);
 	
-	free(createSVGimage("rect.svg"));
+	free(createSVGimage("Emoji_poo.svg"));
     return 0;
 	
 }
