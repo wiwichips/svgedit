@@ -9,8 +9,32 @@ void printer() {
 	puts("hello. Printer has been called.");
 }
 
+// misc helper functions
+
+// compares an unsigned string to a string, s1 is unsigned, s2 is signed
 int strcmpu(const unsigned char* s1, const char* s2) {
 	return strcmp((const char*) s1, s2);
+}
+
+// returns an integer from a string and sets the second string to string portion
+int stringToInt(char* string, char* end) {
+	return (int) strtol(string, &end, 10);
+}
+
+// 
+Attribute* addAttribute(char* attrName, char* cont) {
+	Attribute* a;
+	
+	// alloacte space for the attribute and the strings
+	a = malloc(sizeof(Attribute));
+	a->name = malloc(sizeof(char) * (strlen(attrName) +1));
+	a->value = malloc(sizeof(char) * (strlen(cont) +1));
+	
+	// copy the information to the strings
+	strcpy(a->name, attrName);
+	strcpy(a->value, cont);
+	
+	return a;
 }
 
 List* addToList(List* head, void* data, char* (*printFunction)(void* toBePrinted),void (*deleteFunction)(void* toBeDeleted)) {
@@ -28,13 +52,20 @@ List* addToList(List* head, void* data, char* (*printFunction)(void* toBePrinted
 	return head;
 }
 
-//
+// shape paresers
 Rectangle* parseRect(xmlNode* cur_node) {
 	xmlAttr* attr;
 	Rectangle* rect;
+	float x = 0;
+	float y = 0;
+	float width = 0;
+	float height = 0;
+	char* end;
+
 	
-	// allocate space for a rectanle
+	// allocate space for a rectanle and create list of other Attributes
 	rect = malloc(sizeof(Rectangle));
+	rect->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &comparePaths);
 	
 	// go through each attribute
 	for (attr = cur_node->properties; attr != NULL; attr = attr->next)
@@ -43,29 +74,119 @@ Rectangle* parseRect(xmlNode* cur_node) {
 		char *attrName = (char *)attr->name;
 		char *cont = (char *)(value->content);
 		
-		printf("\t######attname#######\t%s = %s\n", attrName, cont);
 		
 		if(!strcmp(attrName, "x")) {
-			printf("x = %s\n", cont);
+			x = strtof(cont, NULL);
+			rect->x = x;
 			
 		} else if(!strcmp(attrName, "y")) {
-			printf("y = %s\n", cont);
+			y = strtof(cont, NULL);
+			rect->y = y;
 			
 		} else if(!strcmp(attrName, "width")) {
-			printf("width = %s\n", cont);
+			width = strtof(cont, &end);
+			rect->width = width;
 			
 		} else if(!strcmp(attrName, "height")) {
-			printf("height = %s\n", cont);
+			height = strtof(cont, NULL);	
+			rect->height = height;
+			
+		// all othre attributes go here
+		} else {
+			
+			// add the attribute to the list
+			insertBack(rect->otherAttributes, addAttribute(attrName, cont));
 			
 		}
 		
 	}
 	
-	//TODO - implement the other attributes list thing
-	
+	// copy the units from the x to the units in the struct
+	strcpy(rect->units, end);
+
 	return rect;
 }
 
+Circle* parseCircle(xmlNode* cur_node) {
+	xmlAttr* attr;
+	Circle* circle;
+	float cx = 0;
+	float cy = 0;
+	float r = 0;
+	char* end; // used to get units
+
+	
+	// allocate space for a rectanle and create list of other Attributes
+	circle = malloc(sizeof(Rectangle));
+	circle->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &comparePaths);
+	
+	// go through each attribute
+	for (attr = cur_node->properties; attr != NULL; attr = attr->next)
+	{
+		xmlNode *value = attr->children;
+		char *attrName = (char *)attr->name;
+		char *cont = (char *)(value->content);
+		
+		
+		if(!strcmp(attrName, "cx")) {
+			cx = strtof(cont, NULL);
+			circle->cx = cx;
+			
+		} else if(!strcmp(attrName, "cy")) {
+			cy = strtof(cont, NULL);
+			circle->cy = cy;
+			
+		} else if(!strcmp(attrName, "r")) {
+			r = strtof(cont, &end);
+			circle->r = r;
+			
+			
+		// all othre attributes go here
+		} else {
+			
+			// add the attribute to the list
+			insertBack(circle->otherAttributes, addAttribute(attrName, cont));
+			
+		}
+		
+	}
+	
+	// copy the units from the x to the units in the struct
+	strcpy(circle->units, end);
+
+	return circle;
+}
+
+Path* parsePath(xmlNode* cur_node) {
+	xmlAttr* attr;
+	Path* path;
+	char* data;
+
+	// allocate space for a rectanle and create list of other Attributes
+	path = malloc(sizeof(Rectangle));
+	path->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &comparePaths);
+	
+	// go through each attribute
+	for (attr = cur_node->properties; attr != NULL; attr = attr->next) {
+		xmlNode *value = attr->children;
+		char *attrName = (char *)attr->name;
+		char *cont = (char *)(value->content);
+		
+		if(!strcmp(attrName, "d")) {
+			data = malloc(sizeof(char) * strlen(cont));
+			strcpy(data, cont);
+			
+		// all othre attributes go here
+		} else {
+			
+			// add the attribute to the list
+			insertBack(path->otherAttributes, addAttribute(attrName, cont));
+			
+		}	
+	}
+
+	return path;
+}
 
 void bog(SVGimage* image, xmlNode *root) {
 	
@@ -76,81 +197,54 @@ void bog(SVGimage* image, xmlNode *root) {
         if (cur_node->type == XML_ELEMENT_NODE) {
             printf("######type/element/name#######: %s\n", cur_node->name);
 			
-			
 			// copy namespace to svgimage
 			if(!strcmpu(cur_node->name, "svg")) {
-				strcpy((char*) cur_node->ns->href, image->title);
+				strcpy(image->title, (char*) cur_node->ns->href);
 				printf("(PF) %s\t(hr) %s\n", cur_node->ns->prefix, cur_node->ns->href);
 				
 			}
 			
-			
 			// place in title, description
 			else if(!strcmpu(cur_node->name, "title")) {
-				strcpy((char*) cur_node->name, image->title);
+				strcpy(image->title, (char*) cur_node->name);
+				printf("{%s}", (char*) cur_node->children->content);
 				
 			} else if(!strcmpu(cur_node->name, "desc")) {
-				strcpy((char*) cur_node->name, image->description);
+				strcpy(image->description, (char*) cur_node->name);
 				
 			}
-			
 			
 			// place in rectangles, circles, paths, groups
 			else if(!strcmpu(cur_node->name, "rect")) {
-				strcpy((char*) cur_node->name, image->title);
+				strcpy(image->title, (char*) cur_node->name);
 				puts("rectangle ");
-				parseRect(cur_node);
+				deleteRectangle(parseRect(cur_node)); // purposes
+				
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
-				strcpy((char*) cur_node->name, image->description);
-				puts("circle\n");
+				strcpy(image->description, (char*) cur_node->name);
+				
+				deleteCircle(parseCircle(cur_node));
 				
 			} else if(!strcmpu(cur_node->name, "path")) {
-				strcpy((char*) cur_node->name, image->title);
-				puts("paths\n");
+				strcpy(image->title, (char*) cur_node->name);
+				deletePath(parsePath(cur_node));
 				
 			}
 			
-			
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
-				strcpy((char*) cur_node->name, image->description);
+				strcpy(image->description, (char*) cur_node->name);
 				puts("group\n");
 				
 			}
 			
         }
-		
-		/*
-        if (cur_node->content != NULL ){
-            printf("######content####### %s\n", cur_node->content);
-        }*/
 
-        // Iterate through every attribute of the current node
-/*        xmlAttr *attr;
-        for (attr = cur_node->properties; attr != NULL; attr = attr->next)
-        {
-            xmlNode *value = attr->children;
-            char *attrName = (char *)attr->name;
-            char *cont = (char *)(value->content);
-			
-            printf("\t######attname#######\t%s = %s\n", attrName, cont);
-			
-			if(!strcmp(attrName, "width")) {
-				puts("\t\t\twidth");
-				
-			} else if(!strcmp(attrName, "height")) {
-				puts("\t\t\theight");
-				
-			}
-        }*/
-		
-		// this will check successive children
+		// this will check successive groups
 		bog(image, cur_node->children);
 
     }
-	
-	
 	
 }
 
@@ -202,10 +296,10 @@ SVGimage* createSVGimage(char* fileName) {
 	image = malloc(sizeof(SVGimage));
 	
 	// tempoarily setting list variables to NULL
-	image->rectangles = NULL;
-	image->circles = NULL;
-	image->paths = NULL;
-	image->groups = NULL;
+	image->rectangles = initializeList(&rectangleToString, &deleteRectangle, &comparePaths);
+	image->circles = initializeList(&rectangleToString, &deleteCircle, &comparePaths);
+	image->paths = initializeList(&rectangleToString, &deletePath, &comparePaths);
+	image->groups = initializeList(&rectangleToString, &deleteGroup, &comparePaths);
 	
 	// populating the svgimage
 	bog(image, root_element);
@@ -213,6 +307,13 @@ SVGimage* createSVGimage(char* fileName) {
 	// frees
     xmlFreeDoc(doc); // free document
     xmlCleanupParser(); // free global variable 
+	
+// testing free
+freeList(image->rectangles);
+freeList(image->circles);
+freeList(image->paths);
+freeList(image->groups);
+	
 	
 	/*
 	 * return the svgimage
@@ -299,6 +400,15 @@ int numAttr(SVGimage* img) {
 
 
 void deleteAttribute( void* data) {
+	Attribute* a = (Attribute*) data;
+	
+	// free name and value
+	free(a->name);
+	free(a->value);
+	
+	// free the struct itself
+	free(a);
+
 	return;
 }
 char* attributeToString( void* data) {
@@ -310,6 +420,8 @@ int compareAttributes(const void *first, const void *second) {
 
 
 void deleteGroup(void* data) {
+	
+	
 	return;
 }
 char* groupToString( void* data){
@@ -321,6 +433,14 @@ int compareGroups(const void *first, const void *second) {
 
 
 void deleteRectangle(void* data) {
+	Rectangle* rect = (Rectangle*) data;
+	
+	// free miscellaneous attributes  
+	freeList(rect->otherAttributes);
+
+	// free the struct itself
+	free(rect);
+	
 	return;
 }
 char* rectangleToString(void* data) {
@@ -332,6 +452,14 @@ int compareRectangles(const void *first, const void *second) {
 
 
 void deleteCircle(void* data) {
+	Circle* circle = (Circle*) data;
+	
+	// free miscellaneous attributes  
+	freeList(circle->otherAttributes);
+
+	// free the struct itself
+	free(circle);
+	
 	return;
 }
 char* circleToString(void* data) {
@@ -343,8 +471,20 @@ int compareCircles(const void *first, const void *second) {
 
 
 void deletePath(void* data) {
+	Path* path = (Path*) data;
+	
+	// free data 
+	free(path->data);
+	
+	// free miscellaneous attributes  
+	freeList(path->otherAttributes);
+
+	// free the struct itself
+	free(path);
+	
 	return;
 }
+
 char* pathToString(void* data) {
 	return "pathToString";
 }

@@ -15,7 +15,16 @@ List* addToList(List* head, void* data, char* (*printFunction)(void* toBePrinted
  */
 
 Rectangle* parseRect(xmlNode* cur_node);
+Cirlce* parseCircle(xmlNode* cur_node);
+Path* parsePath(xmlNode* cur_node);
+
+// add attribute
+Attribute* addAttribute(char* attrName, char* cont);
 
 
+/*
+ * Functions used to convert strings to inetgers and floats.
+ */
+int stringToInt(char* string, char* end);
 
 #endif

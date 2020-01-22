@@ -14,6 +14,6 @@ main(int argc, char **argv)
 	getPaths(&img);
 	
 	free(createSVGimage("rect.svg"));
-	
     return 0;
+	
 }
