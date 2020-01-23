@@ -158,13 +158,16 @@ Circle* parseCircle(xmlNode* cur_node) {
 }
 
 Path* parsePath(xmlNode* cur_node) {
-	xmlAttr* attr;
-	Path* path;
-	char* data;
-
+	xmlAttr* attr = NULL;
+	Path* path = NULL;
+	
 	// allocate space for a rectanle and create list of other Attributes
-	path = malloc(sizeof(Rectangle));
+	path = malloc(sizeof(Path));
 	path->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &comparePaths);
+	
+	// allocate space for the path data and set the first index to /0
+	path->data = malloc(sizeof(char) * 2);
+	path->data[0] = '\0';
 	
 	// go through each attribute
 	for (attr = cur_node->properties; attr != NULL; attr = attr->next) {
@@ -173,9 +176,13 @@ Path* parsePath(xmlNode* cur_node) {
 		char *cont = (char *)(value->content);
 		
 		if(!strcmp(attrName, "d")) {
-			data = malloc(sizeof(char) * strlen(cont));
-			strcpy(data, cont);
-			puts("hello world");
+			printf("content is = {%s}\n}", cont);
+			
+			// realloc size for the path
+			path->data = realloc(path->data, sizeof(char) * (strlen(cont)+1));
+			
+			// copy the string over
+			sprintf(path->data, "%s", cont);
 			
 		// all othre attributes go here
 		} else {
@@ -224,7 +231,7 @@ void bog(SVGimage* image, xmlNode *root) {
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
 				strcpy(image->description, (char*) cur_node->name);
-				
+				puts("circle");
 				deleteCircle(parseCircle(cur_node));
 				
 			} else if(!strcmpu(cur_node->name, "path")) {

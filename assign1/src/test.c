@@ -3,9 +3,7 @@
 #include "LinkedListAPI.h"
 #include "SVGParser.h"
 
-int
-main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	puts("hello1");
 	SVGimage img;
 
@@ -13,7 +11,7 @@ main(int argc, char **argv)
 
 	getPaths(&img);
 	
-	free(createSVGimage("Emoji_poo.svg"));
-    return 0;
+	free(createSVGimage("raf_group_in_group.svg"));
 	
+    return 0;
 }
