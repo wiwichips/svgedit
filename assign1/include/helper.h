@@ -18,6 +18,9 @@ Rectangle* parseRect(xmlNode* cur_node);
 Cirlce* parseCircle(xmlNode* cur_node);
 Path* parsePath(xmlNode* cur_node);
 
+// specific for group
+Group* parseGroup(xmlNode* groupNode);
+
 // add attribute
 Attribute* addAttribute(char* attrName, char* cont);
 
@@ -26,5 +29,11 @@ Attribute* addAttribute(char* attrName, char* cont);
  * Functions used to convert strings to inetgers and floats.
  */
 int stringToInt(char* string, char* end);
+
+/*
+ * Additional delete group function to avoid recursive scnerio when deleting
+ * a group from within a group
+ */
+void deleteGroupFromGroup(void* data);// not implemented
 
 #endif

@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 
 	getPaths(&img);
 	
-	free(createSVGimage("raf_group_in_group.svg"));
+	deleteSVGimage(createSVGimage("Wink_Brutal_Test_2.svg"));
 	
     return 0;
 }

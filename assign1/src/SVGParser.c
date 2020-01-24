@@ -3,6 +3,9 @@
 
 #define PI 3.14159265359
 
+// test
+int test = 0;
+
 // Will Pringle's Helper functions
 
 void printer() {
@@ -196,6 +199,72 @@ Path* parsePath(xmlNode* cur_node) {
 	return path;
 }
 
+Group* parseGroup(xmlNode* groupNode) {
+	Group* g = NULL;
+	
+	// allocate space for the group
+	g = malloc(sizeof(Group));
+	
+	xmlNode *cur_node = NULL;
+	
+	g->rectangles = initializeList(&rectangleToString, &deleteRectangle, &comparePaths);
+	g->circles = initializeList(&rectangleToString, &deleteCircle, &comparePaths);
+	g->paths = initializeList(&rectangleToString, &deletePath, &comparePaths);
+	g->groups = initializeList(&rectangleToString, &deleteGroup, &comparePaths);
+	g->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
+	
+	
+
+	// while the current node isn't null, set it to the next node
+    for (cur_node = groupNode; cur_node != NULL; cur_node = cur_node->next) {
+        if (cur_node->type == XML_ELEMENT_NODE) {
+            printf("######type/element/name#######: %s\n", cur_node->name);
+			
+/*			xmlNode *value = attr->children;
+			char *attrName = (char *)attr->name;
+			char *cont = (char *)(value->content);*/
+			
+			// place in rectangles, circles, paths, groups
+			if(!strcmpu(cur_node->name, "rect")) {
+				puts("rectangle ");
+				insertBack(g->rectangles, parseRect(cur_node));
+				
+				
+			} else if(!strcmpu(cur_node->name, "circle")) {
+				puts("circle");
+				insertBack(g->circles, parseCircle(cur_node));
+				
+			} else if(!strcmpu(cur_node->name, "path")) {
+				puts("path");
+				insertBack(g->paths, parsePath(cur_node));
+				
+			}
+			
+			// groups
+			else if(!strcmpu(cur_node->name, "g")) {
+				
+				insertBack(g->groups, parseGroup);
+				parseGroup(
+				
+				puts("TODO - group\n");
+				printf("test = %d\n", test);
+				
+			// all othre attributes go here
+			}/* else {
+				
+				// add the attribute to the list
+				insertBack(g->otherAttributes, addAttribute(attrName, cont));
+				
+			}*/
+			
+        }
+
+    }
+	
+	return g;
+	
+}
+
 void bog(SVGimage* image, xmlNode *root) {
 	
 	xmlNode *cur_node = NULL;
@@ -224,26 +293,29 @@ void bog(SVGimage* image, xmlNode *root) {
 			
 			// place in rectangles, circles, paths, groups
 			else if(!strcmpu(cur_node->name, "rect")) {
-				strcpy(image->title, (char*) cur_node->name);
 				puts("rectangle ");
-				deleteRectangle(parseRect(cur_node)); // purposes
+				insertBack(image->rectangles, parseRect(cur_node));
 				
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
-				strcpy(image->description, (char*) cur_node->name);
 				puts("circle");
-				deleteCircle(parseCircle(cur_node));
+				insertBack(image->circles, parseCircle(cur_node));
 				
 			} else if(!strcmpu(cur_node->name, "path")) {
-				strcpy(image->title, (char*) cur_node->name);
-				deletePath(parsePath(cur_node));
+				puts("path");
+				insertBack(image->paths, parsePath(cur_node));
 				
 			}
 			
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
-				strcpy(image->description, (char*) cur_node->name);
-				puts("group\n");
+				puts("TODO - group\n");
+				
+				insertBack(image->groups, parseGroup(cur_node));
+				
+				// testing purposes
+				test++;
+				printf("group = %d\n", test);
 				
 			}
 			
@@ -255,6 +327,8 @@ void bog(SVGimage* image, xmlNode *root) {
     }
 	
 }
+
+
 
 /* Public API - main */
 
@@ -308,6 +382,7 @@ SVGimage* createSVGimage(char* fileName) {
 	image->circles = initializeList(&rectangleToString, &deleteCircle, &comparePaths);
 	image->paths = initializeList(&rectangleToString, &deletePath, &comparePaths);
 	image->groups = initializeList(&rectangleToString, &deleteGroup, &comparePaths);
+	image->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
 	
 	// populating the svgimage
 	bog(image, root_element);
@@ -315,12 +390,6 @@ SVGimage* createSVGimage(char* fileName) {
 	// frees
     xmlFreeDoc(doc); // free document
     xmlCleanupParser(); // free global variable 
-	
-// testing free
-freeList(image->rectangles);
-freeList(image->circles);
-freeList(image->paths);
-freeList(image->groups);
 	
 	
 	/*
@@ -339,11 +408,26 @@ freeList(image->groups);
 
 /** Function to delete image content and free all the memory.
  *@pre SVGimgage  exists, is not null, and has not been freed
- *@post SVSVGimgageG  had been freed
+ *@post SVSVGimage  had been freed
  *@return none
  *@param obj - a pointer to an SVG struct
 **/
-//void deleteSVGimage(SVGimage* img);
+void deleteSVGimage(SVGimage* img) {
+	
+	if(img == NULL) {
+		return;
+	}
+	
+	// free all the lists
+	freeList(img->rectangles);
+	freeList(img->circles);
+	freeList(img->paths);
+	freeList(img->groups);
+	freeList(img->otherAttributes);
+	
+	// frees the space that held the struct
+	free(img);
+}
 
 
 // Function that returns a list of all rectangles in the image.  
@@ -428,7 +512,16 @@ int compareAttributes(const void *first, const void *second) {
 
 
 void deleteGroup(void* data) {
+	Group* g = (Group*) data;
 	
+	// clear the lists
+	clearList(g->rectangles);
+	clearList(g->circles);
+	clearList(g->paths);
+	clearList(g->groups);
+	
+	// free the other attributes list
+	freeList(g->otherAttributes);
 	
 	return;
 }
@@ -471,6 +564,9 @@ void deleteCircle(void* data) {
 	return;
 }
 char* circleToString(void* data) {
+	
+	
+	
 	return "circle to string";
 }
 int compareCircles(const void *first, const void *second) {
