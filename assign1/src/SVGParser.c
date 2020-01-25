@@ -509,7 +509,7 @@ int numCirclesWithArea(SVGimage* img, float area) {
 	base->r = area / PI;
 	
 	// find the elements and put them in a list
-	List list = findElements(img->circles, base, &circleToString, &deleteCircle, &compareCircles);
+	List* list = findElements(img->circles, base, &circleToString, &deleteCircle, &compareCircles);
 	
 	// free base
 	free(base);
@@ -526,7 +526,9 @@ int numPathsWithdata(SVGimage* img, char* data) {
 	base->data = data;
 	
 	// find the elements and put them in a list
-	List list = findElements(img->paths, base, *pathToString, &deletePath
+	List* list = findElements(img->paths, base, *pathToString, &deletePath, &comparePaths);
+	
+	return getLength(list);
 }
 
 // Function that returns the number of all groups with the specified length - see A1 Module 2 for details
@@ -586,6 +588,28 @@ char* groupToString( void* data){
 	return "groupToString";
 }
 int compareGroups(const void *first, const void *second) {
+	Group* g1 = (Group*) first;
+	Group* g2 = (Group*) second;
+	
+	int g1Size = 0;
+	int g2Size = 0;
+	
+	//
+	g1Size += getLength(g1->rectangles) 
+	+ getLength(g1->circles) 
+	+ getLength(g1->paths)
+	+ getLength(g1->groups);
+	
+	g2Size += getLength(g2->rectangles) 
+	+ getLength(g2->circles) 
+	+ getLength(g2->paths)
+	+ getLength(g2->groups);
+	
+	// return 1 if they are the same length
+	if(g1Size == g2Size) {
+		return 1;
+	}
+	
 	return 0;
 }
 
@@ -655,7 +679,6 @@ int compareCircles(const void *first, const void *second) {
 	
 	return 0;
 }
-
 
 void deletePath(void* data) {
 	Path* path = (Path*) data;
