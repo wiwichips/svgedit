@@ -10,8 +10,13 @@ int main(int argc, char **argv) {
 	img.paths = NULL;
 
 	getPaths(&img);
+	SVGimage* gork = createSVGimage("Emoji_poo.svg");
 	
-	deleteSVGimage(createSVGimage("Wink_Brutal_Test_2.svg"));
+	puts("\n\n\ntesting stuff");
+	printf("\tnum attri = {%d}\n", numAttr(gork));
+	
+	puts("testing delete");
+	deleteSVGimage(gork);
 	
     return 0;
 }

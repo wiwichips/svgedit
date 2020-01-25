@@ -36,4 +36,18 @@ int stringToInt(char* string, char* end);
  */
 void deleteGroupFromGroup(void* data);// not implemented
 
+
+/*
+ * Functions for returning copied lists of specified data;
+ */
+
+// returns a list of elements that follow the compare function
+List* findElements(List * list, 
+const void* searchRecord,
+char* (*printFunction)(void* toBePrinted),
+void (*deleteFunction)(void* toBeDeleted),
+int (*compareFunction)(const void* first,const void* second)
+);
+
+
 #endif

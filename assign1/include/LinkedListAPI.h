@@ -214,7 +214,5 @@ int getLength(List* list);
  **/
 void* findElement(List * list, bool (*customCompare)(const void* first,const void* second), const void* searchRecord);
 
-//
-void linkedPrinter();
 
 #endif
