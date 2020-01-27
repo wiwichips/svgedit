@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
 	img.paths = NULL;
 
 	getPaths(&img);
-	SVGimage* gork = createSVGimage("Emoji_poo.svg");
+	SVGimage* gork = createSVGimage("testFiles/rect.svg");
 	
 	puts("\n\n\ntesting stuff");
 	printf("\tnum attri = {%d}\n", numAttr(gork));

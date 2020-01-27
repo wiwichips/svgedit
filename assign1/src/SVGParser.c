@@ -1,11 +1,10 @@
 #include "SVGParser.h"
 #include "helper.h"
+#include <math.h>
+#include <strings.h>
 
 #define PI 3.14159265359
 
-// test
-int test = 0;
-int numGroupParse = 0;
 
 // Will Pringle's Helper functions
 
@@ -15,7 +14,7 @@ void printer() {
 
 // misc helper functions
 
-//
+// will return a list of elements that match a criteria
 List* findElements(List * list, 
 const void* searchRecord,
 char* (*printFunction)(void* toBePrinted),
@@ -41,6 +40,7 @@ int (*compareFunction)(const void* first,const void* second)
 	return matchList;
 }
 
+
 // compares an unsigned string to a string, s1 is unsigned, s2 is signed
 int strcmpu(const unsigned char* s1, const char* s2) {
 	return strcmp((const char*) s1, s2);
@@ -63,7 +63,6 @@ Attribute* addAttribute(char* attrName, char* cont) {
 	// copy the information to the strings
 	strcpy(a->name, attrName);
 	strcpy(a->value, cont);
-	
 	return a;
 }
 
@@ -129,7 +128,7 @@ Rectangle* parseRect(xmlNode* cur_node) {
 			
 			// add the attribute to the list
 			insertBack(rect->otherAttributes, addAttribute(attrName, cont));
-			
+			puts("called");
 		}
 		
 	}
@@ -186,9 +185,7 @@ Circle* parseCircle(xmlNode* cur_node) {
 		}
 		
 	}
-	
-circleToString(circle);
-	
+		
 	// copy the units from the x to the units in the struct
 	strcpy(circle->units, end);
 
@@ -280,8 +277,6 @@ Group* parseGroup(xmlNode* groupNode) {
 				
 				insertBack(g->groups, parseGroup(cur_node->next));
 				
-				numGroupParse++;
-//				printf("ngp = %d\n\n", numGroupParse);
 				
 			// all othre attributes go here
 			}/* else {
@@ -292,6 +287,17 @@ Group* parseGroup(xmlNode* groupNode) {
 			}*/
 			
         }
+		
+		// Iterate through every attribute of the current node
+/*        xmlAttr *attr;
+        for (attr = cur_node->properties; attr != NULL; attr = attr->next)
+        {
+            xmlNode *value = attr->children;
+            char *attrName = (char *)attr->name;
+            char *cont = (char *)(value->content);
+            printf("\tattribute name: %s, attribute value = %s\n", attrName, cont);
+			insertBack(g->otherAttributes, addAttribute(attrName, cont));
+        }*/
 
     }
 	
@@ -313,11 +319,25 @@ void bog(SVGimage* image, xmlNode *root) {
 				strcpy(image->title, (char*) cur_node->ns->href);
 //				printf("(PF) %s\t(hr) %s\n", cur_node->ns->prefix, cur_node->ns->href);
 				
+				// populate attributes
+				xmlAttr *attr;
+				for (attr = cur_node->properties; attr != NULL; attr = attr->next)
+				{
+					
+					xmlNode *value = attr->children;
+					char *attrName = (char *)attr->name;
+					char *cont = (char *)(value->content);
+					
+					// if it is not xmlns
+					if(strcasecmp(attrName, "xmlns")) {
+						insertBack(image->otherAttributes, addAttribute(attrName, cont));
+					}
+				}
 			}
 			
 			// place in title, description
 			else if(!strcmpu(cur_node->name, "title")) {
-				strcpy(image->title, (char*) cur_node->name);
+				strcpy(image->title, (char*) cur_node->children->content);
 //				printf("{%s}", (char*) cur_node->children->content);
 				
 			} else if(!strcmpu(cur_node->name, "desc")) {
@@ -346,13 +366,12 @@ void bog(SVGimage* image, xmlNode *root) {
 				
 				insertBack(image->groups, parseGroup(cur_node));
 				
-				// testing purposes
-				test++;
-//				printf("group = %d\n", test);
 				
 			}
 			
         }
+		
+		
 
 		// this will check successive groups
 		bog(image, cur_node->children);
@@ -360,7 +379,6 @@ void bog(SVGimage* image, xmlNode *root) {
     }
 	
 }
-
 
 
 /* Public API - main */
@@ -376,6 +394,12 @@ void bog(SVGimage* image, xmlNode *root) {
  *@param fileName - a string containing the name of the SVG file
 **/
 SVGimage* createSVGimage(char* fileName) {
+	
+	// check for NULL
+	if(!(fileName)) {
+		return NULL;
+	}
+	
 	
 	xmlDoc *doc = NULL;
     xmlNode *root_element = NULL;
@@ -437,8 +461,11 @@ SVGimage* createSVGimage(char* fileName) {
  *@return a string contaning a humanly readable representation of an SVG object
  *@param obj - a pointer to an SVG struct
 **/
-//char* SVGimageToString(SVGimage* img);
-
+char* SVGimageToString(SVGimage* img) {
+	
+	return "hello";
+}
+/////TODO TODO
 /** Function to delete image content and free all the memory.
  *@pre SVGimgage  exists, is not null, and has not been freed
  *@post SVSVGimage  had been freed
@@ -446,6 +473,11 @@ SVGimage* createSVGimage(char* fileName) {
  *@param obj - a pointer to an SVG struct
 **/
 void deleteSVGimage(SVGimage* img) {
+	// check for NULL
+	if(!(img)) {
+		return;
+	}
+	
 	
 	if(img == NULL) {
 		return;
@@ -465,27 +497,52 @@ void deleteSVGimage(SVGimage* img) {
 
 // Function that returns a list of all rectangles in the image.  
 List* getRects(SVGimage* img) {
+	// check for NULL
+	if(!(img)) {
+		return NULL;
+	}
+	
 	return img->rectangles; // fix this
 }
 
 // Function that returns a list of all circles in the image.  
 List* getCircles(SVGimage* img) {
+	// check for NULL
+	if(!(img)) {
+		return NULL;
+	}
+	
 	return img->circles; // fix this
 }
 
 // Function that returns a list of all groups in the image.  
 List* getGroups(SVGimage* img) {
+	// check for NULL
+	if(!(img)) {
+		return NULL;
+	}
+	
 	return img->groups; // fix this
 }
 
 // Function that returns a list of all paths in the image.  
 List* getPaths(SVGimage* img) {
+	// check for NULL
+	if(!(img)) {
+		return NULL;
+	}
+	
 	return img->paths; // fix this
 }
 
 
 // Function that returns the number of all rectangles with the specified area
 int numRectsWithArea(SVGimage* img, float area) {
+	// check for NULL
+	if(!(img) || area < 0) {
+		return 0;
+	}
+	
 	// allocate the base
 	Rectangle* base = malloc(sizeof(Rectangle));
 	base->width = area;
@@ -502,11 +559,16 @@ int numRectsWithArea(SVGimage* img, float area) {
 
 // Function that returns the number of all circles with the specified area
 int numCirclesWithArea(SVGimage* img, float area) {
+	// check for NULL
+	if(!(img) || area < 0) {
+		return 0;
+	}
+	
 	//allocate the base
 	Circle* base = malloc(sizeof(Circle));
 	
 	// set the radius to the radius (since comparing area using radius)
-	base->r = area / PI;
+	base->r = sqrt(area / PI);
 	
 	// find the elements and put them in a list
 	List* list = findElements(img->circles, base, &circleToString, &deleteCircle, &compareCircles);
@@ -519,6 +581,11 @@ int numCirclesWithArea(SVGimage* img, float area) {
 
 // Function that returns the number of all paths with the specified data - i.e. Path.data field
 int numPathsWithdata(SVGimage* img, char* data) {
+	// check for NULL
+	if(!(img)) {
+		return 0;
+	}
+	
 	// allocate the base
 	Path* base = malloc(sizeof(Path));
 	
@@ -528,14 +595,55 @@ int numPathsWithdata(SVGimage* img, char* data) {
 	// find the elements and put them in a list
 	List* list = findElements(img->paths, base, *pathToString, &deletePath, &comparePaths);
 	
+	free(base);
+	
 	return getLength(list);
 }
 
 // Function that returns the number of all groups with the specified length - see A1 Module 2 for details
-int numGroupsWithLen(SVGimage* img, int len);
+int numGroupsWithLen(SVGimage* img, int len) {
+	
+	// check for NULL
+	if(!(img) || len < 0) {
+		return 0;
+	}
+	
+	Group* base = malloc(sizeof(Group));
+	
+	// 
+	base->rectangles = initializeList(&rectangleToString, &deleteRectangle, &comparePaths);
+	base->circles = initializeList(&rectangleToString, &deleteCircle, &comparePaths);
+	base->paths = initializeList(&rectangleToString, &deletePath, &comparePaths);
+	base->groups = initializeList(&rectangleToString, &deleteGroup, &comparePaths);
+	base->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
+	
+	// add however many length to it
+	for(int i = 0; i < len; i++) {
+		insertBack(base->rectangles, NULL);
+	}
+	
+	List* list = findElements(img->groups, base, *groupToString, &deleteGroup, &compareGroups);
+	
+	// free stub lists
+	freeList(base->rectangles);
+	freeList(base->circles);
+	freeList(base->paths);
+	freeList(base->groups);
+	freeList(base->otherAttributes);
+	
+	
+	
+	return getLength(list);
+	
+}
 
 // Sums all the attributes
 int numAttr(SVGimage* img) {
+	//check for NULL
+	if (!img) {
+		return 0;
+	}
+	
 	int attributes = 0;
 	
 	attributes += getLength(img->rectangles);
@@ -544,11 +652,17 @@ int numAttr(SVGimage* img) {
 	attributes += getLength(img->groups);
 	attributes += getLength(img->otherAttributes);
 	
+	printf("number of attributes is {%d}\n", attributes);
+	
 	return attributes;
 }
 
 
 void deleteAttribute( void* data) {
+	if(!data) {
+		return;
+	}
+	
 	Attribute* a = (Attribute*) data;
 	
 	// free name and value
@@ -561,14 +675,28 @@ void deleteAttribute( void* data) {
 	return;
 }
 char* attributeToString( void* data) {
+	if(!data) {
+		return NULL;
+	}
+	
 	return "attributeToString";
 }
 int compareAttributes(const void *first, const void *second) {
+	// check for NULL
+	if(!(first&&second)) {
+		return 0;
+	}
+	
+	
 	return 0;
 }
 
 
 void deleteGroup(void* data) {
+	if(!data) {
+		return;
+	}
+	
 	Group* g = (Group*) data;
 	
 	// clear the lists
@@ -585,9 +713,19 @@ void deleteGroup(void* data) {
 	return;
 }
 char* groupToString( void* data){
+	if(!data) {
+		return NULL;
+	}
+	
 	return "groupToString";
 }
 int compareGroups(const void *first, const void *second) {
+	// check for NULL
+	if(!(first&&second)) {
+		return 0;
+	}
+	
+	
 	Group* g1 = (Group*) first;
 	Group* g2 = (Group*) second;
 	
@@ -615,6 +753,13 @@ int compareGroups(const void *first, const void *second) {
 
 
 void deleteRectangle(void* data) {
+	// check for NULL
+	if(!data) {
+		return;
+	}
+	
+	
+	
 	Rectangle* rect = (Rectangle*) data;
 	
 	// free miscellaneous attributes  
@@ -626,11 +771,22 @@ void deleteRectangle(void* data) {
 	return;
 }
 char* rectangleToString(void* data) {
+	// check for NULL
+	if(!data) {
+		return NULL;
+	}
+	
 	
 	
 	return "rect to string";
 }
 int compareRectangles(const void *first, const void *second) {
+	// check for NULL
+	if(!(first&&second)) {
+		return 0;
+	}
+	
+	
 	Rectangle* rect1 = (Rectangle*) first;
 	Rectangle* rect2 = (Rectangle*) second;
 	
@@ -639,7 +795,7 @@ int compareRectangles(const void *first, const void *second) {
 	float area2 = rect2->width * rect2->height;
 	
 	// return 1 is the areas are equal
-	if(area1 == area2) {
+	if(ceil(area1) == ceil(area2)) {
 		return 1;
 	}
 	
@@ -648,6 +804,13 @@ int compareRectangles(const void *first, const void *second) {
 
 
 void deleteCircle(void* data) {
+	// check for NULL
+	if(!data) {
+		return;
+	}
+	
+	
+	
 	Circle* circle = (Circle*) data;
 	
 	// free miscellaneous attributes  
@@ -659,6 +822,13 @@ void deleteCircle(void* data) {
 	return;
 }
 char* circleToString(void* data) {
+	// check for NULL
+	if(!data) {
+		return NULL;
+	}
+	
+	
+	
 	Circle* c = (Circle*) data;
 	
 	printf("~~~ CIRCLE - %p ~~~\n", c);
@@ -669,11 +839,17 @@ char* circleToString(void* data) {
 	return "circle to string";
 }
 int compareCircles(const void *first, const void *second) {
+	// check for NULL
+	if(!(first&&second)) {
+		return 0;
+	}
+	
+	
 	Circle* circle1 = (Circle*) first;
 	Circle* circle2 = (Circle*) second;
 	
 	// return 1 is the areas are equal (only need radius to compare area)
-	if(circle1->r == circle2->r) {
+	if(ceil(circle1->r * circle1->r * PI ) == ceil(circle2->r * circle2->r * PI)) {
 		return 1;
 	}
 	
@@ -681,6 +857,11 @@ int compareCircles(const void *first, const void *second) {
 }
 
 void deletePath(void* data) {
+	// check for NULL
+	if(!data) {
+		return;
+	}
+	
 	Path* path = (Path*) data;
 	
 	// free data 
@@ -696,9 +877,20 @@ void deletePath(void* data) {
 }
 
 char* pathToString(void* data) {
+	// check for NULL
+	if(!data) {
+		return NULL;
+	}
+	
 	return "pathToString";
 }
 int comparePaths(const void *first, const void *second) {
+	// check for NULL
+	if(!(first&&second)) {
+		return 0;
+	}
+	
+	
 	Path* path1 = (Path*) first;
 	Path* path2 = (Path*) second;
 	
