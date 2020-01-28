@@ -1,5 +1,5 @@
-#ifndef SVGPARSER_H
-#define SVGPARSER_H
+#ifndef HELPER_H
+#define HELPER_H
 
 // image populator (recursive)
 void bog(SVGimage* image, xmlNode *root);
@@ -15,7 +15,7 @@ List* addToList(List* head, void* data, char* (*printFunction)(void* toBePrinted
  */
 
 Rectangle* parseRect(xmlNode* cur_node);
-Cirlce* parseCircle(xmlNode* cur_node);
+Circle* parseCircle(xmlNode* cur_node);
 Path* parsePath(xmlNode* cur_node);
 
 // specific for group
@@ -42,12 +42,42 @@ void deleteGroupFromGroup(void* data);// not implemented
  */
 
 // returns a list of elements that follow the compare function
-List* findElements(List * list, 
-const void* searchRecord,
-char* (*printFunction)(void* toBePrinted),
-void (*deleteFunction)(void* toBeDeleted),
+int findElements(List * list, const void* searchRecord,
 int (*compareFunction)(const void* first,const void* second)
 );
 
+// return the length of a group
+int getGroupLength(Group* group);
+
+
+//
+int returnNumAttributes(Group* g, int is
+
+
+//
+int groupAttributeHunter(Group* g) {
+	int numAttributes = 0;
+	ListIterator itr = createIterator(list);
+	
+	// add the other attributes from the group
+	numAttributes += getLength(g->otherAttributes);
+	
+	for(getLength(g->groups)) {
+		//
+		numAttributes += groupAttributeHunter(g
+	}
+	
+	return numAttributes;
+}
+
+// 
+int attributeHunter(int* numAttributes, xmlNode* root) {
+	
+	
+	// add the other attributes
+	*numAttributes += getLength(
+	
+	
+}
 
 #endif
