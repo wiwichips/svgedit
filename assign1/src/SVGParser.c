@@ -8,70 +8,6 @@
 
 // Will Pringle's Helper functions
 
-/*
-int returnNumAttributes(void* node, int isGroup) {
-	int numAttributes = 0;
-	
-	// if it is a group and not an image
-	if(isGroup) {
-		Group* g = (Group*) node;
-		
-		printf("{{{{{%d}}}}}\n", getLength(g->rectangles));
-	
-	} else {
-		SVGimage* g = (SVGimage*) node;
-printf("{{{{{%d}}}}}\n", getLength(g->otherAttributes));
-
-		// add the current one's attributes
-		numAttributes += getLength(g->otherAttributes);
-		
-		// get the attributes from rects, circles, paths, etc
-		
-		
-		// add up the attributes from inside all of the things
-		ListIterator itrRect = createIterator(g->rectangles);
-		
-		void* data = nextElement(&itr);
-		while (data != NULL)
-		{
-			
-			data = nextElement(&itr);
-		}
-		
-	}
-	
-	
-	
-	return 0;
-}
-
-//
-int groupAttributeHunter(Group* g) {
-	int numAttributes = 0;
-	
-	// add the other attributes from the group
-	numAttributes += getLength(g->otherAttributes);
-	
-	if(getLength(g->groups)) {
-		//
-//		numAttributes += groupAttributeHunter(g
-	}
-	
-	return numAttributes;
-}
-
-// 
-int attributeHunter(xmlNode* root) {
-	int numAttributes = 0;
-	
-	// add the other attributes
-//	*numAttributes += getLength(
-	
-	return numAttributes;
-}
-*/
-
-
 
 List* combineList(List* source, List* destination) {
 	
@@ -89,20 +25,14 @@ List* combineList(List* source, List* destination) {
 		data = nextElement(&itr);
 	}
 
-	
+	return source;
 }
 
-List* getAll(Group* g, List* list) {
+List* getAllRectsFromGroups(Group* g, List* list) {
     
-    // initialize the list if necessary
-    if(list == NULL) {
-		initializeList 
-	}
-		
-    
-    // print the stuff inside
-    
-    
+	// add the list of rectangles to the lists
+	combineList(g->rectangles, list);
+
     // if there is at least one group in the group list
     if(getLength(g->groups)) {
         
@@ -110,20 +40,72 @@ List* getAll(Group* g, List* list) {
         ListIterator itr = createIterator(g->groups);
         
         Group* data = nextElement(&itr);
-        while (data != NULL)
-        {
-            // 
-            goThroughGroup(data);
-            
+		
+		// iterate through each thing 
+        while (data != NULL) {
+            getAllRectsFromGroups(data, list);
             data = nextElement(&itr);
             
         }
-        
     }
     
-    return NULL;
-    
+    return list;
 }
+
+List* getAllCirclesFromGroups(Group* g, List* list) {
+    
+	// add the list of rectangles to the lists
+	printf("list before the combineList = {%d}\n", getLength(list));
+	combineList(g->circles, list);
+	printf("list after the combineList = {%d}\n", getLength(list));
+
+    // if there is at least one group in the group list
+    if(getLength(g->groups)) {
+        
+        // iterate through each group and call goThroughGroup recursively
+        ListIterator itr = createIterator(g->groups);
+        
+        Group* data = nextElement(&itr);
+		
+		puts("circle called and added");
+		
+		// iterate through each thing 
+        while (data != NULL) {
+            getAllCirclesFromGroups(data, list);
+            data = nextElement(&itr);
+            
+        }
+    }
+    
+    return list;
+}
+
+// groups may be hard
+
+List* getAllPathsFromGroups(Group* g, List* list) {
+    
+	// add the list of rectangles to the lists
+	combineList(g->paths, list);
+
+    // if there is at least one group in the group list
+    if(getLength(g->groups)) {
+        
+        // iterate through each group and call goThroughGroup recursively
+        ListIterator itr = createIterator(g->groups);
+        
+        Group* data = nextElement(&itr);
+		
+		// iterate through each thing 
+        while (data != NULL) {
+            getAllPathsFromGroups(data, list);
+            data = nextElement(&itr);
+            
+        }
+    }
+    
+    return list;
+}
+
 
 
 int attributeListCounter(List* list, int test) {
@@ -492,20 +474,13 @@ Group* parseGroup(xmlNode* groupNode) {
 	g->paths = initializeList(&rectangleToString, &deletePath, &comparePaths);
 	g->groups = initializeList(&groupToString, &deleteGroup, &comparePaths);
 	g->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
-
-	
-	//
-	printf("\t\tpargeGroup attr == NULL --> %d\n", groupNode->properties == NULL);
 	
 	
 	// get attributes
 	// populate attributes
 	xmlAttr *attr;
 	for (attr = groupNode->parent->properties; attr != NULL; attr = attr->next)
-	{
-		
-		puts("\t\t\t\t\t\t\twe wanna be free");
-		
+	{		
 		xmlNode *value = attr->children;
 		char *attrName = (char *)attr->name;
 		char *cont = (char *)(value->content);
@@ -559,54 +534,11 @@ Group* parseGroup(xmlNode* groupNode) {
 //				printf("groups -> %d\n",  getGroupLength(parseGroup(cur_node->next)));
 				
 			// all othre attributes go here
-			}/* else {
-				
-				// add the attribute to the list
-				insertBack(g->otherAttributes, addAttribute(attrName, cont));
-				
-			}*/
+			}
 			
         }
 
     }
-	
-	
-	// get all the attributes
-/*	xmlAttr* attr;
-	
-	// allocate space for a rectanle and create list of other Attributes
-	g->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &comparePaths);
-	
-	// go through each attribute
-	for (attr = cur_node->properties; attr != NULL; attr = attr->next)
-	{
-		xmlNode *value = attr->children;
-		char *attrName = (char *)attr->name;
-		char *cont = (char *)(value->content);
-		
-		insertBack(g->otherAttributes, addAttribute(attrName, cont));
-	}*/
-	
-/*	if(groupNode) {
-		xmlAttr* attr = groupNode->properties;
-		
-		// cycle through attributes
-		while(attr != NULL) {
-	//		printf("attribute name %s\n", (char*) attr->name);
-			
-			//
-			xmlNode *value = attr->children;
-			
-			// add the attribute
-			insertBack(g->otherAttributes, addAttribute((char*) attr->name, (char *)(value->content)));
-			
-			// go to the next attribute
-			attr = attr->next;
-			
-			puts("hello world ==================");
-		}
-	}*/
-	
 	
 	
 	return g;
@@ -803,26 +735,27 @@ List* getRects(SVGimage* img) {
 		return NULL;
 	}
 	
+	List* list = initializeList(&rectangleToString, &deleteRectangle, &comparePaths);
+	
+	combineList(img->rectangles, list);
 	
 	// if there is at least one group in the group list
     if(getLength(img->groups)) {
         
         // iterate through each group and call goThroughGroup recursively
-        ListIterator itr = createIterator(g->groups);
+        ListIterator itr = createIterator(img->groups);
         
         Group* data = nextElement(&itr);
         while (data != NULL)
         {
             // 
-            goThroughGroup(data);
+            getAllRectsFromGroups(data, list);
 			
-			
-
             data = nextElement(&itr);
         }
     }
 	
-	return img->rectangles; // fix this
+	return list; // fix this
 }
 
 // Function that returns a list of all circles in the image.  
@@ -832,7 +765,27 @@ List* getCircles(SVGimage* img) {
 		return NULL;
 	}
 	
-	return img->circles; // fix this
+	List* list = initializeList(&circleToString, &deleteCircle, &comparePaths);
+	
+	combineList(img->circles, list);
+	
+	// if there is at least one group in the group list
+    if(getLength(img->groups)) {
+        
+        // iterate through each group and call goThroughGroup recursively
+        ListIterator itr = createIterator(img->groups);
+        
+        Group* data = nextElement(&itr);
+        while (data != NULL)
+        {
+            // 
+            getAllCirclesFromGroups(data, list);
+			
+            data = nextElement(&itr);
+        }
+    }
+	
+	return list; // fix this
 }
 
 // Function that returns a list of all groups in the image.  
@@ -852,7 +805,27 @@ List* getPaths(SVGimage* img) {
 		return NULL;
 	}
 	
-	return img->paths; // fix this
+	List* list = initializeList(&pathToString, &deletePath, &comparePaths);
+	
+	combineList(img->paths, list);
+	
+	// if there is at least one group in the group list
+    if(getLength(img->groups)) {
+        
+        // iterate through each group and call goThroughGroup recursively
+        ListIterator itr = createIterator(img->groups);
+        
+        Group* data = nextElement(&itr);
+        while (data != NULL)
+        {
+            // 
+            getAllCirclesFromGroups(data, list);
+			
+            data = nextElement(&itr);
+        }
+    }
+	
+	return list; // fix this
 }
 
 
@@ -869,7 +842,7 @@ int numRectsWithArea(SVGimage* img, float area) {
 	base->height = 1;
 	
 	// find the elements and put them in a list
-	int matches = findElements(img->rectangles, base, &compareRectangles);
+	int matches = findElements(getRects(img), base, &compareRectangles);
 	
 	// free rectangle
 	free(base);
@@ -891,7 +864,7 @@ int numCirclesWithArea(SVGimage* img, float area) {
 	base->r = sqrt(area / PI);
 	
 	// find the elements and put them in a list
-	int matches = findElements(img->circles, base, &compareCircles);
+	int matches = findElements(getCircles(img), base, &compareCircles);
 	
 	// free base
 	free(base);
@@ -913,7 +886,7 @@ int numPathsWithdata(SVGimage* img, char* data) {
 	base->data = data;
 	
 	// find the elements and put them in a list
-	int matches = findElements(img->paths, base, &comparePaths);
+	int matches = findElements(getPaths(img), base, &comparePaths);
 	
 	free(base);
 	

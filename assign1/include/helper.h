@@ -9,6 +9,10 @@ List* combineList(List* source, List* destination);
  *	
  */
 // rect
+List* getAllRectsFromGroups(Group* g, List* list);
+List* getAllCirclesFromGroups(Group* g, List* list);
+List* getAllGroupsFromGroups(Group* g, List* list);
+List* getAllPathsFromGroups(Group* g, List* list);
 
 
 // 

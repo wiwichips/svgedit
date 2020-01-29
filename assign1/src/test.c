@@ -5,24 +5,13 @@
 #include "helper.h"
 
 int main(int argc, char **argv) {
-	puts("hello1");
-
+	
+	puts("\n\ncreate svgimage");
 	SVGimage* gork = createSVGimage("testFiles/Emoji_poo.svg");
 	
-	puts("\n\n\ntesting stuff");
-	printf("\tnum attri = {%d}\n", numAttr(gork));
-
-/*
-	puts("\n\nreturn num att");
-	returnNumAttributes(gork, 0);
-*/
+	puts("\n\ntesting circles");
+	getCircles(gork);
 	
-	
-	
-/*	
-	puts("\ntesting groyp 2 string");
-	toString(gork->groups);
-*/	
 	puts("\n\ntesting delete");
 	deleteSVGimage(gork);
 	
