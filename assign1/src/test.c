@@ -16,7 +16,9 @@ int main(int argc, char **argv) {
 	puts("\n\nreturn num att");
 	returnNumAttributes(gork, 0);
 */
-
+	
+	
+	
 /*	
 	puts("\ntesting groyp 2 string");
 	toString(gork->groups);

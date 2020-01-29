@@ -44,7 +44,7 @@ printf("{{{{{%d}}}}}\n", getLength(g->otherAttributes));
 	
 	return 0;
 }
-*/
+
 //
 int groupAttributeHunter(Group* g) {
 	int numAttributes = 0;
@@ -69,10 +69,117 @@ int attributeHunter(xmlNode* root) {
 	
 	return numAttributes;
 }
+*/
 
+int attributeListCounter(List* list, int test) {
+	
+	int num = 0;
+	ListIterator itr = createIterator(list);
+	
+	
+	if(test == 1) {
+		// rectangle
+		Rectangle* data = NULL;
+		
+		data = nextElement(&itr);
+		while (data != NULL)
+		{
+			// 
+			num += getLength(data->otherAttributes);
+			
 
+			data = nextElement(&itr);
+		}
+		
+	} else if (test == 2) {
+		// circle
+		Circle* data = NULL;
+		
+		data = nextElement(&itr);
+		while (data != NULL)
+		{
+			// 
+			num += getLength(data->otherAttributes);
 
+			data = nextElement(&itr);
+		}
+		
+	} else if (test == 3) {
+		// path
+		Path* data = NULL;
+		
+		puts("hello world");
+		
+		data = nextElement(&itr);
+		while (data != NULL)
+		{
+			// 
+			
+			num += getLength(data->otherAttributes);
 
+			data = nextElement(&itr);
+		}
+		
+	} else if (test == 4) {
+		// group
+		Group* data = NULL;
+		
+		data = nextElement(&itr);
+		while (data != NULL)
+		{
+			// 
+			num += getLength(data->otherAttributes);
+
+			data = nextElement(&itr);
+		}
+		
+	} else {
+		puts("something went wrong");
+	}
+
+	
+	return num;
+	
+}
+
+int goThroughGroup(Group* g) {
+	
+	// if the group is null, return
+	if(!g) {
+puts("null group");
+		return -1;
+	}
+	
+	// do stuff
+	int attributes = 0;
+	
+	attributes += attributeListCounter(g->rectangles, 1);
+	attributes += attributeListCounter(g->circles, 2);
+	attributes += attributeListCounter(g->paths, 3);
+	attributes += getLength(g->otherAttributes);
+	
+	
+	// if there is at least one group in the group list
+	if(getLength(g->groups)) {
+		
+		// iterate through each group and call goThroughGroup recursively
+		ListIterator itr = createIterator(g->groups);
+		
+		Group* data = nextElement(&itr);
+		while (data != NULL)
+		{
+			// 
+			attributes += goThroughGroup(data);
+			
+			data = nextElement(&itr);
+			
+		}
+		
+	}
+	
+	return attributes;
+	
+}
 
 // will return a list of elements that match a criteria
 int findElements(List * list, const void* searchRecord,
@@ -333,7 +440,7 @@ Group* parseGroup(xmlNode* groupNode) {
 
 	// get all the circles, groups, rectangles, etc
 	// while the current node isn't null, set it to the next node
-    for (cur_node = groupNode->children; cur_node != NULL; cur_node = cur_node->next) {
+    for (cur_node = groupNode; cur_node != NULL; cur_node = cur_node->next) {
         if (cur_node->type == XML_ELEMENT_NODE) {
 //            printf("######type/element/name#######: %s\n", cur_node->name);
 			// place in rectangles, circles, paths, groups
@@ -341,21 +448,33 @@ Group* parseGroup(xmlNode* groupNode) {
 //				puts("rectangle ");
 				insertBack(g->rectangles, parseRect(cur_node));
 				
+				puts("\t\tG: rect");
+				
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
 //				puts("circle");
 				insertBack(g->circles, parseCircle(cur_node));
 				
+				puts("\t\tG: circle");
+				
 			} else if(!strcmpu(cur_node->name, "path")) {
 //				printf("path -> %s\n", (char*) parsePath(cur_node)->data);
 				insertBack(g->paths, parsePath(cur_node));
+				
+				puts("\t\tG: path");
 				
 			}
 			
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
 				
-				insertBack(g->groups, parseGroup(cur_node->next));
+				
+				puts("\t\tG: group");
+				insertBack(g->groups, parseGroup(cur_node->children));
+				
+				
+				
+				
 //				printf("groups -> %d\n",  getGroupLength(parseGroup(cur_node->next)));
 				
 			// all othre attributes go here
@@ -387,30 +506,28 @@ Group* parseGroup(xmlNode* groupNode) {
 		insertBack(g->otherAttributes, addAttribute(attrName, cont));
 	}*/
 	
-	
-	xmlAttr* attr = groupNode->properties;
-	
-	// cycle through attributes
-	while(attr != NULL) {
-		printf("attribute name %s\n", (char*) attr->name);
+	if(groupNode) {
+		xmlAttr* attr = groupNode->properties;
 		
-		//
-		xmlNode *value = attr->children;
-		
-		// add the attribute
-		insertBack(g->otherAttributes, addAttribute((char*) attr->name, (char *)(value->content)));
-		
-		// go to the next attribute
-		attr = attr->next;
+		// cycle through attributes
+		while(attr != NULL) {
+	//		printf("attribute name %s\n", (char*) attr->name);
+			
+			//
+			xmlNode *value = attr->children;
+			
+			// add the attribute
+			insertBack(g->otherAttributes, addAttribute((char*) attr->name, (char *)(value->content)));
+			
+			// go to the next attribute
+			attr = attr->next;
+		}
 	}
-		
 	return g;
 	
 }
 
 void bog(SVGimage* image, xmlNode *root) {
-	
-	
 	
 	xmlNode *cur_node = NULL;
 
@@ -438,12 +555,14 @@ void bog(SVGimage* image, xmlNode *root) {
 						insertBack(image->otherAttributes, addAttribute(attrName, cont));
 					}
 				}
+				
+				puts("makes perfect sense s");
 			}
 			
 			// place in title, description
 			else if(!strcmpu(cur_node->name, "title")) {
 				strcpy(image->title, (char*) cur_node->children->content);
-//				printf("{%s}", (char*) cur_node->children->content);
+				printf("{%s}", (char*) cur_node->children->content);
 				
 			} else if(!strcmpu(cur_node->name, "desc")) {
 				strcpy(image->description, (char*) cur_node->name);
@@ -452,25 +571,24 @@ void bog(SVGimage* image, xmlNode *root) {
 			
 			// place in rectangles, circles, paths, groups
 			else if(!strcmpu(cur_node->name, "rect")) {
-//				puts("rectangle ");
+				puts("rectangle ");
 				insertBack(image->rectangles, parseRect(cur_node));
 				
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
-//				puts("circle");
+				puts("circle");
 				insertBack(image->circles, parseCircle(cur_node));
 				
 			} else if(!strcmpu(cur_node->name, "path")) {
-//				puts("path");
+				puts("path");
 				insertBack(image->paths, parsePath(cur_node));
 				
 			}
 			
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
-				
-				insertBack(image->groups, parseGroup(cur_node));
-				
+				insertBack(image->groups, parseGroup(cur_node->children));
+				puts("group");
 				
 			}
 			
@@ -479,8 +597,9 @@ void bog(SVGimage* image, xmlNode *root) {
 		
 
 		// this will check successive groups
-		bog(image, cur_node->children);
-
+//		puts("bog has been called");
+//		bog(image, cur_node->children);
+		
     }
 	
 }
@@ -547,7 +666,7 @@ SVGimage* createSVGimage(char* fileName) {
 	image->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
 	
 	// populating the svgimage
-	bog(image, root_element);
+	bog(image, root_element->children);
 	
 	// frees
     xmlFreeDoc(doc); // free document
@@ -725,11 +844,23 @@ int numAttr(SVGimage* img) {
 	
 	int attributes = 0;
 	
-	attributes += getLength(img->rectangles);
-	attributes += getLength(img->circles);
-	attributes += getLength(img->paths);
-	attributes += getLength(img->groups);
+	attributes += attributeListCounter(img->rectangles, 1);
+	attributes += attributeListCounter(img->circles, 2);
+	attributes += attributeListCounter(img->paths, 3);
 	attributes += getLength(img->otherAttributes);
+	
+	// get the attributes from groups
+	ListIterator itr = createIterator(img->groups);
+		
+	Group* data = nextElement(&itr);
+	while (data != NULL)
+	{
+		// 
+		attributes += goThroughGroup(data);
+		
+		data = nextElement(&itr);
+		
+	}
 	
 	printf("number of attributes is {%d}\n", attributes);
 	
@@ -805,12 +936,11 @@ char* groupToString( void* data){
 	printf("\tnum groups  = %d\n", getLength(group->groups));
 	
 	char* string = malloc(sizeof(char) * 5);
-	string[0] = 'A';
+	string[0] = 'G';
 	string[1] = '\0';
 	
 	return string;
 }
-
 int compareGroups(const void *first, const void *second) {
 	// check for NULL
 	if(!(first&&second)) {
@@ -847,8 +977,11 @@ char* rectangleToString(void* data) {
 	}
 	
 	
+	char* string = malloc(sizeof(char) * 5);
+	string[0] = 'R';
+	string[1] = '\0';
 	
-	return "rect to string";
+	return string;
 }
 int compareRectangles(const void *first, const void *second) {
 	// check for NULL
@@ -901,8 +1034,11 @@ char* circleToString(void* data) {
 	printf("\tcx = %lf\n\tcy = %lf\n\tr = %lf\n", c->cx, c->cy, c->r);
 	printf("\tunits = %s\n", c->units);
 	
+	char* string = malloc(sizeof(char) * 5);
+	string[0] = 'C';
+	string[1] = '\0';
 	
-	return "circle to string";
+	return string;
 }
 int compareCircles(const void *first, const void *second) {
 	// check for NULL
@@ -948,7 +1084,11 @@ char* pathToString(void* data) {
 		return NULL;
 	}
 	
-	return "pathToString";
+	char* string = malloc(sizeof(char) * 5);
+	string[0] = 'P';
+	string[1] = '\0';
+	
+	return string;
 }
 int comparePaths(const void *first, const void *second) {
 	// check for NULL

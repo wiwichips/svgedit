@@ -1,7 +1,15 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-// image populator (recursive)
+
+int goThroughGroup(Group* g);
+
+// returns the number of otherAttributes in a given list
+// 1 = rectangles, 2 = circles, 3 = paths, 4 = groups, 0 = cancel
+int attributeListCounter(List* list, int test);
+
+
+// image populator BOG -- (build out groups)
 void bog(SVGimage* image, xmlNode *root);
 
 // unsigned string comparison
