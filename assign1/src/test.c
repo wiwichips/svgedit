@@ -10,7 +10,6 @@ int main(int argc, char **argv) {
 	SVGimage* gork = createSVGimage("testFiles/Emoji_poo.svg");
 	
 	puts("\n\ntesting circles");
-	getCircles(gork);
 	
 	puts("\n\ntesting delete");
 	deleteSVGimage(gork);

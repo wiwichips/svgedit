@@ -1,3 +1,19 @@
+/******************************************************************************
+ ******************************************************************************
+ **	Author: 	Will Pringle following Dennis Nikitenko's API 				 **
+ ** Student ID:	1056636														 **
+ **																			 **
+ ** Date: 		January 29 2020												 **
+ **																			 **
+ ** Citations:	(1)	libXmlExample.c written by Dodji Seketeli				 **
+ **					used lines: 31, 33, 34, 45, 46, 48, 49, 50.				 **
+ **				(2)	LinkedListAPI.h written by CIS*2750 S18					 **
+ **					used lines:322, 326, 328, 329, 334, 337.				 **
+ ******************************************************************************
+ ******************************************************************************/
+
+
+
 #include "SVGParser.h"
 #include "helper.h"
 #include <math.h>
@@ -31,7 +47,7 @@ List* combineList(List* source, List* destination) {
 List* getAllRectsFromGroups(Group* g, List* list) {
     
 	// add the list of rectangles to the lists
-	combineList(g->rectangles, list);
+	combineList(g->groups, list);
 
     // if there is at least one group in the group list
     if(getLength(g->groups)) {
@@ -55,9 +71,9 @@ List* getAllRectsFromGroups(Group* g, List* list) {
 List* getAllCirclesFromGroups(Group* g, List* list) {
     
 	// add the list of rectangles to the lists
-	printf("list before the combineList = {%d}\n", getLength(list));
+
 	combineList(g->circles, list);
-	printf("list after the combineList = {%d}\n", getLength(list));
+
 
     // if there is at least one group in the group list
     if(getLength(g->groups)) {
@@ -67,7 +83,7 @@ List* getAllCirclesFromGroups(Group* g, List* list) {
         
         Group* data = nextElement(&itr);
 		
-		puts("circle called and added");
+//		puts("circle called and added");
 		
 		// iterate through each thing 
         while (data != NULL) {
@@ -80,7 +96,33 @@ List* getAllCirclesFromGroups(Group* g, List* list) {
     return list;
 }
 
-// groups may be hard
+List* getAllGroupsFromGroups(Group* g, List* list) {
+    
+	// add the list of rectangles to the lists
+
+	combineList(g->circles, list);
+
+
+    // if there is at least one group in the group list
+    if(getLength(g->groups)) {
+        
+        // iterate through each group and call goThroughGroup recursively
+        ListIterator itr = createIterator(g->groups);
+        
+        Group* data = nextElement(&itr);
+		
+//		puts("circle called and added");
+		
+		// iterate through each thing 
+        while (data != NULL) {
+            getAllGroupsFromGroups(data, list);
+            data = nextElement(&itr);
+            
+        }
+    }
+    
+    return list;
+}
 
 List* getAllPathsFromGroups(Group* g, List* list) {
     
@@ -171,7 +213,7 @@ int attributeListCounter(List* list, int test) {
 		}
 		
 	} else {
-		puts("something went wrong");
+//		puts("something went wrong");
 	}
 
 	
@@ -183,7 +225,7 @@ int goThroughGroupAndAddAttributes(Group* g) {
 	
 	// if the group is null, return
 	if(!g) {
-puts("null group");
+//puts("null group");
 		return -1;
 	}
 	
@@ -504,20 +546,20 @@ Group* parseGroup(xmlNode* groupNode) {
 //				puts("rectangle ");
 				insertBack(g->rectangles, parseRect(cur_node));
 				
-				puts("\t\tG: rect");
+//				puts("\t\tG: rect");
 				
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
 //				puts("circle");
 				insertBack(g->circles, parseCircle(cur_node));
 				
-				puts("\t\tG: circle");
+//				puts("\t\tG: circle");
 				
 			} else if(!strcmpu(cur_node->name, "path")) {
 //				printf("path -> %s\n", (char*) parsePath(cur_node)->data);
 				insertBack(g->paths, parsePath(cur_node));
 				
-				puts("\t\tG: path");
+//				puts("\t\tG: path");
 				
 			}
 			
@@ -525,7 +567,7 @@ Group* parseGroup(xmlNode* groupNode) {
 			else if(!strcmpu(cur_node->name, "g")) {
 				
 				
-				puts("\t\tG: group");
+//				puts("\t\tG: group");
 				insertBack(g->groups, parseGroup(cur_node->children));
 				
 				
@@ -557,7 +599,7 @@ void bog(SVGimage* image, xmlNode *root) {
 			// place in title, description
 			if(!strcmpu(cur_node->name, "title")) {
 				strcpy(image->title, (char*) cur_node->children->content);
-				printf("{%s}", (char*) cur_node->children->content);
+//				printf("{%s}", (char*) cur_node->children->content);
 				
 			} else if(!strcmpu(cur_node->name, "desc")) {
 				strcpy(image->description, (char*) cur_node->name);
@@ -566,16 +608,16 @@ void bog(SVGimage* image, xmlNode *root) {
 			
 			// place in rectangles, circles, paths, groups
 			else if(!strcmpu(cur_node->name, "rect")) {
-				puts("rectangle ");
+//				puts("rectangle ");
 				insertBack(image->rectangles, parseRect(cur_node));
 				
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
-				puts("circle");
+//				puts("circle");
 				insertBack(image->circles, parseCircle(cur_node));
 				
 			} else if(!strcmpu(cur_node->name, "path")) {
-				puts("path");
+//				puts("path");
 				insertBack(image->paths, parsePath(cur_node));
 				
 			}
@@ -583,7 +625,7 @@ void bog(SVGimage* image, xmlNode *root) {
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
 				insertBack(image->groups, parseGroup(cur_node->children));
-				puts("group");
+//				puts("group");
 				
 			}
 			
@@ -637,7 +679,7 @@ SVGimage* createSVGimage(char* fileName) {
 	
 	// if xml had problems
 	if(doc == NULL) {
-		puts("LIB XML cannot open the file.");
+//		puts("LIB XML cannot open the file.");
 		return NULL;
 	}
 	
@@ -819,7 +861,7 @@ List* getPaths(SVGimage* img) {
         while (data != NULL)
         {
             // 
-            getAllCirclesFromGroups(data, list);
+            getAllPathsFromGroups(data, list);
 			
             data = nextElement(&itr);
         }
@@ -935,9 +977,7 @@ int numAttr(SVGimage* img) {
 		data = nextElement(&itr);
 		
 	}
-	
-	printf("number of attributes is {%d}\n", attributes);
-	
+		
 	return attributes;
 }
 
@@ -1001,13 +1041,13 @@ char* groupToString( void* data){
 		return NULL;
 	}
 	
-	Group* group = (Group*) data;
+//	Group* group = (Group*) data;
 	
-	printf("group length = %d\n", getGroupLength(group));
+/*	printf("group length = %d\n", getGroupLength(group));
 	printf("\tnum rectans = %d\n", getLength(group->rectangles));
 	printf("\tnum circles = %d\n", getLength(group->circles));
 	printf("\tnum paths   = %d\n", getLength(group->paths));
-	printf("\tnum groups  = %d\n", getLength(group->groups));
+	printf("\tnum groups  = %d\n", getLength(group->groups));*/
 	
 	char* string = malloc(sizeof(char) * 5);
 	string[0] = 'G';
@@ -1102,11 +1142,11 @@ char* circleToString(void* data) {
 		return NULL;
 	}
 	
-	Circle* c = (Circle*) data;
+//	Circle* c = (Circle*) data;
 	
-	printf("~~~ CIRCLE - %p ~~~\n", c);
+/*	printf("~~~ CIRCLE - %p ~~~\n", c);
 	printf("\tcx = %lf\n\tcy = %lf\n\tr = %lf\n", c->cx, c->cy, c->r);
-	printf("\tunits = %s\n", c->units);
+	printf("\tunits = %s\n", c->units);*/
 	
 	char* string = malloc(sizeof(char) * 5);
 	string[0] = 'C';
