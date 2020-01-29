@@ -51,33 +51,12 @@ int getGroupLength(Group* group);
 
 
 //
-int returnNumAttributes(Group* g, int is
+int returnNumAttributes(void* node, int isGroup);
 
 
 //
-int groupAttributeHunter(Group* g) {
-	int numAttributes = 0;
-	ListIterator itr = createIterator(list);
-	
-	// add the other attributes from the group
-	numAttributes += getLength(g->otherAttributes);
-	
-	for(getLength(g->groups)) {
-		//
-		numAttributes += groupAttributeHunter(g
-	}
-	
-	return numAttributes;
-}
-
+int groupAttributeHunter(Group* g);
 // 
-int attributeHunter(int* numAttributes, xmlNode* root) {
-	
-	
-	// add the other attributes
-	*numAttributes += getLength(
-	
-	
-}
+int attributeHunter(xmlNode* root);
 
 #endif

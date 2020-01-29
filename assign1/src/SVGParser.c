@@ -8,6 +8,72 @@
 
 // Will Pringle's Helper functions
 
+/*
+int returnNumAttributes(void* node, int isGroup) {
+	int numAttributes = 0;
+	
+	// if it is a group and not an image
+	if(isGroup) {
+		Group* g = (Group*) node;
+		
+		printf("{{{{{%d}}}}}\n", getLength(g->rectangles));
+	
+	} else {
+		SVGimage* g = (SVGimage*) node;
+printf("{{{{{%d}}}}}\n", getLength(g->otherAttributes));
+
+		// add the current one's attributes
+		numAttributes += getLength(g->otherAttributes);
+		
+		// get the attributes from rects, circles, paths, etc
+		
+		
+		// add up the attributes from inside all of the things
+		ListIterator itrRect = createIterator(g->rectangles);
+		
+		void* data = nextElement(&itr);
+		while (data != NULL)
+		{
+			
+			data = nextElement(&itr);
+		}
+		
+	}
+	
+	
+	
+	return 0;
+}
+*/
+//
+int groupAttributeHunter(Group* g) {
+	int numAttributes = 0;
+	
+	// add the other attributes from the group
+	numAttributes += getLength(g->otherAttributes);
+	
+	if(getLength(g->groups)) {
+		//
+//		numAttributes += groupAttributeHunter(g
+	}
+	
+	return numAttributes;
+}
+
+// 
+int attributeHunter(xmlNode* root) {
+	int numAttributes = 0;
+	
+	// add the other attributes
+//	*numAttributes += getLength(
+	
+	return numAttributes;
+}
+
+
+
+
+
 // will return a list of elements that match a criteria
 int findElements(List * list, const void* searchRecord,
 int (*compareFunction)(const void* first, const void* second)
@@ -897,7 +963,4 @@ int comparePaths(const void *first, const void *second) {
 	// return string comparison
 	return !strcmp(path1->data, path2->data);
 }
-
-
-
 

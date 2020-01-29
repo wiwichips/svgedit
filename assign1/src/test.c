@@ -2,6 +2,7 @@
 #include <string.h>
 #include "LinkedListAPI.h"
 #include "SVGParser.h"
+#include "helper.h"
 
 int main(int argc, char **argv) {
 	puts("hello1");
@@ -11,11 +12,16 @@ int main(int argc, char **argv) {
 	puts("\n\n\ntesting stuff");
 	printf("\tnum attri = {%d}\n", numAttr(gork));
 
+/*
+	puts("\n\nreturn num att");
+	returnNumAttributes(gork, 0);
+*/
+
 /*	
 	puts("\ntesting groyp 2 string");
 	toString(gork->groups);
 */	
-	puts("testing delete");
+	puts("\n\ntesting delete");
 	deleteSVGimage(gork);
 	
     return 0;
