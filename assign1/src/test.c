@@ -7,7 +7,7 @@
 int main(int argc, char **argv) {
 	puts("hello1");
 
-	SVGimage* gork = createSVGimage("testFiles/quad01.svg");
+	SVGimage* gork = createSVGimage("testFiles/Emoji_poo.svg");
 	
 	puts("\n\n\ntesting stuff");
 	printf("\tnum attri = {%d}\n", numAttr(gork));

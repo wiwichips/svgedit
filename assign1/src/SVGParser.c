@@ -71,6 +71,61 @@ int attributeHunter(xmlNode* root) {
 }
 */
 
+
+
+List* combineList(List* source, List* destination) {
+	
+	// iterate through each element in source and add it to destination
+	ListIterator itr = createIterator(source);
+	
+	void* data = nextElement(&itr);
+	while (data != NULL)
+	{
+		
+		//destination
+		insertBack(destination, data);
+		
+		// advance to the next data
+		data = nextElement(&itr);
+	}
+
+	
+}
+
+List* getAll(Group* g, List* list) {
+    
+    // initialize the list if necessary
+    if(list == NULL) {
+		initializeList 
+	}
+		
+    
+    // print the stuff inside
+    
+    
+    // if there is at least one group in the group list
+    if(getLength(g->groups)) {
+        
+        // iterate through each group and call goThroughGroup recursively
+        ListIterator itr = createIterator(g->groups);
+        
+        Group* data = nextElement(&itr);
+        while (data != NULL)
+        {
+            // 
+            goThroughGroup(data);
+            
+            data = nextElement(&itr);
+            
+        }
+        
+    }
+    
+    return NULL;
+    
+}
+
+
 int attributeListCounter(List* list, int test) {
 	
 	int num = 0;
@@ -108,7 +163,7 @@ int attributeListCounter(List* list, int test) {
 		// path
 		Path* data = NULL;
 		
-		puts("hello world");
+//		puts("hello world");
 		
 		data = nextElement(&itr);
 		while (data != NULL)
@@ -142,7 +197,7 @@ int attributeListCounter(List* list, int test) {
 	
 }
 
-int goThroughGroup(Group* g) {
+int goThroughGroupAndAddAttributes(Group* g) {
 	
 	// if the group is null, return
 	if(!g) {
@@ -162,14 +217,14 @@ puts("null group");
 	// if there is at least one group in the group list
 	if(getLength(g->groups)) {
 		
-		// iterate through each group and call goThroughGroup recursively
+		// iterate through each group and call goThroughGroupAndAddAttributes recursively
 		ListIterator itr = createIterator(g->groups);
 		
 		Group* data = nextElement(&itr);
 		while (data != NULL)
 		{
 			// 
-			attributes += goThroughGroup(data);
+			attributes += goThroughGroupAndAddAttributes(data);
 			
 			data = nextElement(&itr);
 			
@@ -225,7 +280,7 @@ int compareGroupLength(const void* first, const void* second) {
 	Group* group = (Group*) first;
 	int* len = (int*) second;
 	
-	printf("\t\tdata = {%d}\t sRecord = {%d}\n", getGroupLength(group), *len);
+//	printf("\t\tdata = {%d}\t sRecord = {%d}\n", getGroupLength(group), *len);
 	
 	if(getGroupLength(group) == *len) {
 		return 1;
@@ -438,6 +493,32 @@ Group* parseGroup(xmlNode* groupNode) {
 	g->groups = initializeList(&groupToString, &deleteGroup, &comparePaths);
 	g->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
 
+	
+	//
+	printf("\t\tpargeGroup attr == NULL --> %d\n", groupNode->properties == NULL);
+	
+	
+	// get attributes
+	// populate attributes
+	xmlAttr *attr;
+	for (attr = groupNode->parent->properties; attr != NULL; attr = attr->next)
+	{
+		
+		puts("\t\t\t\t\t\t\twe wanna be free");
+		
+		xmlNode *value = attr->children;
+		char *attrName = (char *)attr->name;
+		char *cont = (char *)(value->content);
+		
+		// if it is not xmlns
+		if(strcasecmp(attrName, "xmlns")) {
+			insertBack(g->otherAttributes, addAttribute(attrName, cont));
+		}
+	}
+
+
+
+
 	// get all the circles, groups, rectangles, etc
 	// while the current node isn't null, set it to the next node
     for (cur_node = groupNode; cur_node != NULL; cur_node = cur_node->next) {
@@ -506,7 +587,7 @@ Group* parseGroup(xmlNode* groupNode) {
 		insertBack(g->otherAttributes, addAttribute(attrName, cont));
 	}*/
 	
-	if(groupNode) {
+/*	if(groupNode) {
 		xmlAttr* attr = groupNode->properties;
 		
 		// cycle through attributes
@@ -521,8 +602,13 @@ Group* parseGroup(xmlNode* groupNode) {
 			
 			// go to the next attribute
 			attr = attr->next;
+			
+			puts("hello world ==================");
 		}
-	}
+	}*/
+	
+	
+	
 	return g;
 	
 }
@@ -536,31 +622,8 @@ void bog(SVGimage* image, xmlNode *root) {
         if (cur_node->type == XML_ELEMENT_NODE) {
 //            printf("######type/element/name#######: %s\n", cur_node->name);
 			
-			// copy namespace to svgimage
-			if(!strcmpu(cur_node->name, "svg")) {
-				strcpy(image->title, (char*) cur_node->ns->href);
-//				printf("(PF) %s\t(hr) %s\n", cur_node->ns->prefix, cur_node->ns->href);
-				
-				// populate attributes
-				xmlAttr *attr;
-				for (attr = cur_node->properties; attr != NULL; attr = attr->next)
-				{
-					
-					xmlNode *value = attr->children;
-					char *attrName = (char *)attr->name;
-					char *cont = (char *)(value->content);
-					
-					// if it is not xmlns
-					if(strcasecmp(attrName, "xmlns")) {
-						insertBack(image->otherAttributes, addAttribute(attrName, cont));
-					}
-				}
-				
-				puts("makes perfect sense s");
-			}
-			
 			// place in title, description
-			else if(!strcmpu(cur_node->name, "title")) {
+			if(!strcmpu(cur_node->name, "title")) {
 				strcpy(image->title, (char*) cur_node->children->content);
 				printf("{%s}", (char*) cur_node->children->content);
 				
@@ -665,6 +728,25 @@ SVGimage* createSVGimage(char* fileName) {
 	image->groups = initializeList(&groupToString, &deleteGroup, &comparePaths);
 	image->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
 	
+	// add other attributes to the thing
+	strcpy(image->title, (char*) root_element->ns->href);
+
+
+	// populate attributes
+	xmlAttr *attr;
+	for (attr = root_element->properties; attr != NULL; attr = attr->next)
+	{
+		
+		xmlNode *value = attr->children;
+		char *attrName = (char *)attr->name;
+		char *cont = (char *)(value->content);
+		
+		// if it is not xmlns
+		if(strcasecmp(attrName, "xmlns")) {
+			insertBack(image->otherAttributes, addAttribute(attrName, cont));
+		}
+	}
+	
 	// populating the svgimage
 	bog(image, root_element->children);
 	
@@ -720,6 +802,25 @@ List* getRects(SVGimage* img) {
 	if(!(img)) {
 		return NULL;
 	}
+	
+	
+	// if there is at least one group in the group list
+    if(getLength(img->groups)) {
+        
+        // iterate through each group and call goThroughGroup recursively
+        ListIterator itr = createIterator(g->groups);
+        
+        Group* data = nextElement(&itr);
+        while (data != NULL)
+        {
+            // 
+            goThroughGroup(data);
+			
+			
+
+            data = nextElement(&itr);
+        }
+    }
 	
 	return img->rectangles; // fix this
 }
@@ -856,7 +957,7 @@ int numAttr(SVGimage* img) {
 	while (data != NULL)
 	{
 		// 
-		attributes += goThroughGroup(data);
+		attributes += goThroughGroupAndAddAttributes(data);
 		
 		data = nextElement(&itr);
 		

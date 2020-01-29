@@ -1,8 +1,21 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+// puts two lists of the same type into one longer list
+List* combineList(List* source, List* destination);
 
-int goThroughGroup(Group* g);
+
+/*
+ *	
+ */
+// rect
+
+
+// 
+void* goThroughGroup(Group* g);
+
+// return all the attributes collected in groups
+int goThroughGroupAndAddAttributes(Group* g);
 
 // returns the number of otherAttributes in a given list
 // 1 = rectangles, 2 = circles, 3 = paths, 4 = groups, 0 = cancel
