@@ -1,0 +1,9 @@
+get the list of rectangles
+
+iterate through each element in the list 
+
+get the data somehow
+
+parse the data 
+
+compare the values
