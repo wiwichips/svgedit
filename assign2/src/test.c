@@ -7,7 +7,7 @@
 int main(int argc, char **argv) {
 	
 	puts("\n\ncreate svgimage");
-	SVGimage* gork = createSVGimage("testFilesA2/rects.svg");
+	SVGimage* gork = createSVGimage("quad01.svg");
 	
 	freeListDataStructure(getRects(gork));
 	freeListDataStructure(getCircles(gork));

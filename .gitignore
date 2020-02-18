@@ -3,3 +3,6 @@
 *.pdf
 *.o
 l
+*.so
+test
+

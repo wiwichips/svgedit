@@ -85,25 +85,29 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 
 bool validateDoc(xmlDoc* doc, char* schemaFile) {
 	xmlSchemaParserCtxtPtr context = NULL;
+	xmlSchemaPtr schema = NULL;
+	xmlSchemaValidCtxtPtr validContext = NULL;
 	int isValid = 0;
 	
-		xmlDoc* dog = xmlReadFile(schemaFile, NULL, 0);	context = xmlSchemaNewDocParserCtxt(dog);
-	
-	
 	// use the file to get the cotext
-//	context = xmlSchemaNewParserCtxt((const char*)schemaFile);
+	context = xmlSchemaNewParserCtxt((const char*)schemaFile);
 
 	// create schema using context
-	xmlSchemaPtr schema = xmlSchemaParse(context);
+	schema = xmlSchemaParse(context);
 	
 	// create validcontext using schema
-	xmlSchemaValidCtxtPtr validContext = xmlSchemaNewValidCtxt(schema);
+	validContext = xmlSchemaNewValidCtxt(schema);
 	
 	// check if it is valid
 	isValid = xmlSchemaValidateDoc(validContext, doc);
 
 	printf("isValid = %d\n", !isValid);
-
+	
+	// frees
+	xmlSchemaFreeParserCtxt(context);
+	xmlSchemaFreeValidCtxt(validContext);
+	xmlSchemaFree(schema);
+	
 	return !isValid;
 	
 }
