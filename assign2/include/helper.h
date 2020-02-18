@@ -15,6 +15,17 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+/// helper functions a2
+// frees a list data structure without freeing the elements within
+void freeListDataStructure(List* list);
+
+
+
+
+
+
+/// helper functions a1
+
 // puts two lists of the same type into one longer list
 List* combineList(List* source, List* destination);
 

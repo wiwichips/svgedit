@@ -542,6 +542,9 @@ Group* parseGroup(xmlNode* groupNode) {
         if (cur_node->type == XML_ELEMENT_NODE) {
 //            printf("######type/element/name#######: %s\n", cur_node->name);
 			// place in rectangles, circles, paths, groups
+			
+			puts("before if statements in parseGroup");
+			
 			if(!strcmpu(cur_node->name, "rect")) {
 //				puts("rectangle ");
 				insertBack(g->rectangles, parseRect(cur_node));
@@ -553,7 +556,7 @@ Group* parseGroup(xmlNode* groupNode) {
 //				puts("circle");
 				insertBack(g->circles, parseCircle(cur_node));
 				
-//				puts("\t\tG: circle");
+				puts("\t\tG: circle");
 				
 			} else if(!strcmpu(cur_node->name, "path")) {
 //				printf("path -> %s\n", (char*) parsePath(cur_node)->data);

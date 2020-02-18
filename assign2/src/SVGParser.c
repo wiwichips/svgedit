@@ -12,8 +12,6 @@
  ******************************************************************************
  ******************************************************************************/
 
-
-
 #include "SVGParser.h"
 #include "helper.h"
 #include <math.h>
@@ -21,10 +19,32 @@
 
 #define PI 3.14159265359
 
+// Will Pringle's Helper Functions A2
+void freeListDataStructure(List* list) {
+	
+	if(!list) {
+		return;
+	}
+	
+	Node* tmp = list->head;
+	Node* freeMe = NULL;
+	
+	while(tmp) {
+		freeMe = tmp;
+		tmp = tmp->next;
+		free(freeMe);
+		freeMe = NULL;
+	}
+	
+	free(list);
+	return;
+}
 
-// Will Pringle's Helper functions
+List* copyList(List* list) {
+	List* copiedList;
+}
 
-
+// Will Pringle's Helper functions A1
 List* combineList(List* source, List* destination) {
 	
 	// iterate through each element in source and add it to destination
@@ -147,8 +167,6 @@ List* getAllPathsFromGroups(Group* g, List* list) {
     
     return list;
 }
-
-
 
 int attributeListCounter(List* list, int test) {
 	
@@ -290,11 +308,24 @@ int (*compareFunction)(const void* first, const void* second)
 // 
 int getGroupLength(Group* group) {
 	
-	int size = getLength(group->rectangles) 
-	+ getLength(group->circles) 
-	+ getLength(group->paths)
-	+ getLength(group->groups);
+	if(!group) {
+		return 0;
+	}
 	
+	printf("group = %p\n", group);
+	
+	puts("");
+	
+	printf("group->rectangles = %p\n", group->rectangles);
+	printf("group->circles = %p\n", group->circles);
+	printf("group->paths = %p\n", group->paths);
+	printf("group->groups = %p\n", group->groups);
+	
+	int size = 0;
+    size += getLength(group->rectangles);
+	size += getLength(group->circles);
+	size += getLength(group->paths);
+	size += getLength(group->groups);
 	
 	return size;
 }
@@ -306,6 +337,7 @@ int compareGroupLength(const void* first, const void* second) {
 	
 //	printf("\t\tdata = {%d}\t sRecord = {%d}\n", getGroupLength(group), *len);
 	
+	puts("right before getGroupLength(group) == *len");
 	if(getGroupLength(group) == *len) {
 		return 1;
 	}
@@ -679,7 +711,7 @@ SVGimage* createSVGimage(char* fileName) {
 	
 	// if xml had problems
 	if(doc == NULL) {
-//		puts("LIB XML cannot open the file.");
+		puts("LIB XML cannot open the file.");
 		return NULL;
 	}
 	
@@ -742,8 +774,10 @@ SVGimage* createSVGimage(char* fileName) {
  *@param obj - a pointer to an SVG struct
 **/
 char* SVGimageToString(SVGimage* img) {
-	
-	return "hello";
+	char* temp = malloc(sizeof(char) * 2);
+	temp[0] = 's';
+	temp[1] = '\0';
+	return temp;
 }
 /////TODO TODO
 /** Function to delete image content and free all the memory.
@@ -837,6 +871,8 @@ List* getGroups(SVGimage* img) {
 		return NULL;
 	}
 	
+	
+	
 	return img->groups; // fix this
 }
 
@@ -870,7 +906,6 @@ List* getPaths(SVGimage* img) {
 	return list; // fix this
 }
 
-
 // Function that returns the number of all rectangles with the specified area
 int numRectsWithArea(SVGimage* img, float area) {
 	// check for NULL
@@ -883,11 +918,15 @@ int numRectsWithArea(SVGimage* img, float area) {
 	base->width = area;
 	base->height = 1;
 	
-	// find the elements and put them in a list
-	int matches = findElements(getRects(img), base, &compareRectangles);
+	// get a list of the rectangles
+	List* list = getRects(img);
 	
-	// free rectangle
+	// find the elements and put them in a list
+	int matches = findElements(list, base, &compareRectangles);
+	
+	// free 
 	free(base);
+	freeListDataStructure(list);
 	
 	return matches;
 }
@@ -905,11 +944,15 @@ int numCirclesWithArea(SVGimage* img, float area) {
 	// set the radius to the radius (since comparing area using radius)
 	base->r = sqrt(area / PI);
 	
-	// find the elements and put them in a list
-	int matches = findElements(getCircles(img), base, &compareCircles);
+	// get a list of the rectangles
+	List* list = getCircles(img);
 	
-	// free base
+	// find the elements and put them in a list
+	int matches = findElements(list, base, &compareCircles);
+	
+	// free 
 	free(base);
+	freeListDataStructure(list);
 	
 	return matches;
 }
@@ -927,28 +970,35 @@ int numPathsWithdata(SVGimage* img, char* data) {
 	// set the string to point to the same data as the data string
 	base->data = data;
 	
+	List* list = getPaths(img);
+	
 	// find the elements and put them in a list
-	int matches = findElements(getPaths(img), base, &comparePaths);
+	int matches = findElements(list, base, &comparePaths);
 	
 	free(base);
+	freeListDataStructure(list);
 	
 	return matches;
 }
 
 // Function that returns the number of all groups with the specified length - see A1 Module 2 for details
 int numGroupsWithLen(SVGimage* img, int len) {
-	
+	int matches = 0;
 	// check for NULL
 	if(!(img) || len < 0) {
 		return 0;
 	}
 	
-	int matches = findElements(img->groups, &len, &compareGroupLength);
+	List* list = getGroups(img);
+	
+	printf("list->length = %d\n", getLength(list));
+	
+	matches = findElements(list, &len, &compareGroupLength);
+	
+//	freeListDataStructure(list);
 	
 	return matches;
-	
 }
-
 
 
 // Sums all the attributes
