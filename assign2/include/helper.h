@@ -19,8 +19,11 @@
 // frees a list data structure without freeing the elements within
 void freeListDataStructure(List* list);
 
+// creates an SVG image from a doc
+SVGimage* createSVGimageFromDoc(xmlDoc* doc);
 
-
+// validates a doc
+bool validateDoc(xmlDoc* doc, char* schemaFile);
 
 
 
