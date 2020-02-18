@@ -34,26 +34,31 @@
  *@param fileName - a string containing the name of the SVG file
 **/
 SVGimage* createValidSVGimage(char* fileName, char* schemaFile) {
-/*	
-	
-			// check if fileName or schemaFile are NULL, return NUll if either one is...
+	/// check if fileName or schemaFile are NULL, return NUll if either one is...
+	if(!fileName || !schemaFile) {
+		return NULL;
+	}
 	
 	// call xmlReadFile
 	xmlDoc* doc = xmlReadFile(fileName, NULL, 0);
 	
-			// check if doc is NULl, return NULL if it is
+	/// check if doc is NULl, return NULL if it is
+	if(!doc) {
+		return NULL;
+	}
 	
 	// validate doc
 	bool isValid = validateDoc(doc, schemaFile);
 	
-			// check if its valid, return NULL if it is invalid
+	/// check if its valid, return NULL if it is invalid
+	if(!isValid) {
+		return NULL;
+	}
 	
 	// turn Doc into svgimage
 	SVGimage* img = createSVGimageFromDoc(doc);
 	
 	return img;
-	*/
-	return NULL;
 }
 
 /** Function to validating an existing a SVGimage object against a SVG schema file
@@ -71,6 +76,8 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 	
 /*	// convert image to doc
 	
+
+	
 	// call this
 	isValid = validateDoc(doc, schemaFile)
 	
@@ -82,6 +89,52 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 
 
 // Will Pringle's Helper Functions A2
+
+// tools: 
+/*
+	xmlNewProp		ex. xmlNewProp(node3, BAD_CAST "attrName", BAD_CAST "a")
+		adds attributes to a node
+		ex: adds attribute of type attrName with value a to (node3)
+	
+	xmlNewChild		ex. node3 = xmlNewChild(node2, NULL, BAD_CAST buff, NULL);
+		adds a child to the node 
+		ex:	makes a new child for node2, and passes the nodepointer to (node3)
+
+*/
+xmlDoc* SVGimageToDoc(SVGimage* image) {
+	xmlDoc* doc = NULL;
+	xmlNode* root_node = NULL; 
+	xmlNode* title = NULL; 
+	xmlNode* desc = NULL; 
+	xmlNode** nodeLevel = NULL; // dynamic array of nodes representing each layer
+	
+//	LIBXML_TEST_VERSION
+	
+	// Creates a new document, a node and set it as a root node
+	doc = xmlNewDoc(BAD_CAST "1.0"); 
+    root_node = xmlNewNode(NULL, BAD_CAST "svg"); // make the svg thing
+    xmlDocSetRootElement(doc, root_node);
+	
+	// 
+	printf("desc = %s\n", image->description);
+
+	// populate title and description
+	xmlNewChild(root_node, NULL, BAD_CAST "title", BAD_CAST image->title);
+	xmlNewChild(root_node, NULL, BAD_CAST "desc", BAD_CAST image->description);
+	
+	// 
+	
+	
+	
+	//recursive function call
+
+// prints the format (for testing)
+xmlSaveFormatFileEnc(0 > 1 ? NULL : "-", doc, "UTF-8", 1); xmlCleanupParser();
+	
+	
+	
+	return doc;
+}
 
 bool validateDoc(xmlDoc* doc, char* schemaFile) {
 	xmlSchemaParserCtxtPtr context = NULL;
@@ -156,7 +209,6 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc) {
 	
 	return image;
 }
-
 
 void freeListDataStructure(List* list) {
 	
@@ -773,8 +825,7 @@ void bog(SVGimage* image, xmlNode *root) {
 //				printf("{%s}", (char*) cur_node->children->content);
 				
 			} else if(!strcmpu(cur_node->name, "desc")) {
-				strcpy(image->description, (char*) cur_node->name);
-				
+				strcpy(image->description, (char*) cur_node->children->content);
 			}
 			
 			// place in rectangles, circles, paths, groups
@@ -847,8 +898,8 @@ SVGimage* createSVGimage(char* fileName) {
 		return NULL;
 	}
 	
-	puts("validate doc");
-	validateDoc(doc, "testFilesA2/svg.xsd");
+//	puts("validate doc");
+//	validateDoc(doc, "testFilesA2/svg.xsd");
 	
 	puts("createSVGimageFromDoc");
 	image = createSVGimageFromDoc(doc);

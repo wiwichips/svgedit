@@ -25,6 +25,8 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc);
 // validates a doc
 bool validateDoc(xmlDoc* doc, char* schemaFile);
 
+// translates an SVGimage struct to a doc tree
+xmlDoc* SVGimageToDoc(SVGimage* image);
 
 
 /// helper functions a1
