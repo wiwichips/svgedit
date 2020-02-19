@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
 	
 	puts("\n\ncreate svgimage");
 //	SVGimage* gork = createValidSVGimage("quad01.svg", "testFilesA2/svg.xsd");
-	SVGimage* gork = createSVGimage("quad01.svg");
+	SVGimage* gork = createSVGimage("quad02.svg");
 	
 	puts("SVGimageToDoc");
 	xmlFreeDoc(SVGimageToDoc(gork));

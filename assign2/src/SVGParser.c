@@ -72,6 +72,10 @@ SVGimage* createValidSVGimage(char* fileName, char* schemaFile) {
  **/
 bool validateSVGimage(SVGimage* image, char* schemaFile) {
 	
+	if(!image || !schemaFile) {
+		return false;
+	}
+	
 	bool isValid = false;
 	
 /*	// convert image to doc
@@ -87,53 +91,154 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 	return isValid;
 }
 
+bool writeSVGimage(SVGimage* image, char* fileName) {
+	return false;
+}
+
 
 // Will Pringle's Helper Functions A2
 
 // tools: 
 /*
-	xmlNewProp		ex. xmlNewProp(node3, BAD_CAST "attrName", BAD_CAST "a")
+	xmlNewProp		ex. xmlNewProp(node3, BAD_CAST "attrName", BAD_CAST "a");
 		adds attributes to a node
 		ex: adds attribute of type attrName with value a to (node3)
 	
-	xmlNewChild		ex. node3 = xmlNewChild(node2, NULL, BAD_CAST buff, NULL);
+	xmlNewChild		
+				ex1. node3 = xmlNewChild(node2, NULL, BAD_CAST buff, NULL);
+				ex2. xmlNewChild(g, NULL, BAD_CAST "title", BAD_CAST image->title);
 		adds a child to the node 
-		ex:	makes a new child for node2, and passes the nodepointer to (node3)
+		ex1:	makes a new child for node2, and passes the nodepointer to (node3)
+		ex2:	makes a new child for g, and adds text for it
 
 */
 xmlDoc* SVGimageToDoc(SVGimage* image) {
+	
+	if(!image) {
+		return NULL;
+	}
+	
+	
 	xmlDoc* doc = NULL;
 	xmlNode* root_node = NULL; 
-	xmlNode* title = NULL; 
-	xmlNode* desc = NULL; 
-	xmlNode** nodeLevel = NULL; // dynamic array of nodes representing each layer
+	xmlNode* temp = NULL; 
+	xmlNs* ns = NULL;
+	
+	char* floatString = NULL; // used to hold floats
+	
+//	xmlNode** nodeLevel = NULL; // dynamic array of nodes representing each layer
 	
 //	LIBXML_TEST_VERSION
 	
+
 	// Creates a new document, a node and set it as a root node
 	doc = xmlNewDoc(BAD_CAST "1.0"); 
     root_node = xmlNewNode(NULL, BAD_CAST "svg"); // make the svg thing
     xmlDocSetRootElement(doc, root_node);
 	
-	// 
-	printf("desc = %s\n", image->description);
+	printf("namespace = %s\n", image->namespace);
+	
+	ns = xmlNewNs(root_node, BAD_CAST image->namespace, NULL);
+	xmlSetNs(root_node, ns);
 
 	// populate title and description
 	xmlNewChild(root_node, NULL, BAD_CAST "title", BAD_CAST image->title);
 	xmlNewChild(root_node, NULL, BAD_CAST "desc", BAD_CAST image->description);
 	
-	// 
+	ListIterator itr;
 	
+	/// rectangles 
+	itr = createIterator(image->rectangles);
 	
+	for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		// make a rectangle child of the current node
+		temp = xmlNewChild(root_node, NULL, BAD_CAST "rect", NULL);
+		
+		// add the x value
+		floatString = floatToString(data->x);
+		xmlNewProp(temp, BAD_CAST "x", BAD_CAST floatString);
+		free(floatString);
+		
+		// add the y value
+		floatString = floatToString(data->y);
+		xmlNewProp(temp, BAD_CAST "y", BAD_CAST floatString);
+		free(floatString);
+		
+		// add the width value
+		floatString = floatToString(data->width);
+		xmlNewProp(temp, BAD_CAST "width", BAD_CAST floatString);
+		free(floatString);
+		
+		// add the height
+		floatString = floatToString(data->height);
+		xmlNewProp(temp, BAD_CAST "height", BAD_CAST floatString); // WHY THE &??????!!!
+		free(floatString);
+		
+		// add other attributes
+		addAttributeNodesToTree(temp, data->otherAttributes);
+	}
+	
+	/// circles 
+	
+	itr = createIterator(image->circles);
+	
+	for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		// make a circle child of the current node
+		temp = xmlNewChild(root_node, NULL, BAD_CAST "circle", NULL);
+		
+		// set the cx
+		floatString = floatToString(data->cx);
+		xmlNewProp(temp, BAD_CAST "cx", BAD_CAST floatString); // WHY THE &??????!!!
+		free(floatString);
+		
+		// set the cy
+		floatString = floatToString(data->cy);
+		xmlNewProp(temp, BAD_CAST "cy", BAD_CAST floatString); // WHY THE &??????!!!
+		free(floatString);
+		
+		// set the r
+		floatString = floatToString(data->r);
+		xmlNewProp(temp, BAD_CAST "r", BAD_CAST floatString); // WHY THE &??????!!!
+		free(floatString);
+		
+		// add other attributes
+		addAttributeNodesToTree(temp, data->otherAttributes);
+	}
+	
+	/// paths
+	
+	itr = createIterator(image->paths);
+
+	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		// make a path child of the current node
+		temp = xmlNewChild(root_node, NULL, BAD_CAST "path", NULL);
+		xmlNewProp(temp, BAD_CAST "d", BAD_CAST data->data);
+		
+		// add other attributes
+		addAttributeNodesToTree(temp, data->otherAttributes);
+	}
 	
 	//recursive function call
 
-// prints the format (for testing)
+// prints the doc (for testing)
 xmlSaveFormatFileEnc(0 > 1 ? NULL : "-", doc, "UTF-8", 1); xmlCleanupParser();
 	
-	
-	
 	return doc;
+}
+
+int addAttributeNodesToTree(xmlNode* node, List* otherAttributes) {
+	
+	ListIterator itr = createIterator(otherAttributes);
+	
+	for(Attribute* attData = nextElement(&itr); attData != NULL;) {
+		// add the new attribute
+		xmlNewProp(node, BAD_CAST attData->name, BAD_CAST attData->value);
+		
+		// advance the LL to the next attribute
+		attData = nextElement(&itr);
+	}
+
+	return 0;
 }
 
 bool validateDoc(xmlDoc* doc, char* schemaFile) {
@@ -182,9 +287,8 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc) {
 	image->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
 	
 	// add other attributes to the thing
-	strcpy(image->title, (char*) root_element->ns->href);
-
-
+	strcpy(image->namespace, (char*) root_element->ns->href);
+	
 	// populate attributes
 	xmlAttr *attr;
 	for (attr = root_element->properties; attr != NULL; attr = attr->next)
@@ -234,6 +338,18 @@ List* copyList(List* list) {
 	List* copiedList;
 }
 */
+
+
+char* floatToString(float num) {
+	int floatLength = 0;
+	char* floatString = NULL;
+	
+	floatLength = snprintf(NULL, 0, "%f", num);
+	floatString = malloc(sizeof(char) * (floatLength + 1));
+	snprintf(floatString, floatLength + 1, "%f", num);
+	
+	return floatString;
+}
 
 // Will Pringle's Helper functions A1
 List* combineList(List* source, List* destination) {
@@ -635,8 +751,8 @@ Rectangle* parseRect(xmlNode* cur_node) {
 }
 
 Circle* parseCircle(xmlNode* cur_node) {
-	xmlAttr* attr;
-	Circle* circle;
+	xmlAttr* attr = NULL;
+	Circle* circle = NULL;
 	float cx = 0;
 	float cy = 0;
 	float r = 0;
@@ -826,6 +942,7 @@ void bog(SVGimage* image, xmlNode *root) {
 				
 			} else if(!strcmpu(cur_node->name, "desc")) {
 				strcpy(image->description, (char*) cur_node->children->content);
+			
 			}
 			
 			// place in rectangles, circles, paths, groups
@@ -894,7 +1011,8 @@ SVGimage* createSVGimage(char* fileName) {
 	
 	// if xml had problems
 	if(doc == NULL) {
-		puts("LIB XML cannot open the file.");
+		// cleanup the aprser
+		xmlCleanupParser();
 		return NULL;
 	}
 	
@@ -903,7 +1021,11 @@ SVGimage* createSVGimage(char* fileName) {
 	
 	puts("createSVGimageFromDoc");
 	image = createSVGimageFromDoc(doc);
-	doc = NULL;
+	
+	
+	if(!image) {
+		return NULL;
+	}
 
 	/*
 	 * return the svgimage

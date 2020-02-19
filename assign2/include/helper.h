@@ -28,6 +28,11 @@ bool validateDoc(xmlDoc* doc, char* schemaFile);
 // translates an SVGimage struct to a doc tree
 xmlDoc* SVGimageToDoc(SVGimage* image);
 
+// adds attributes to a node tree at a certain node
+int addAttributeNodesToTree(xmlNode* node, List* otherAttributes);
+
+// converts a float to a string - returns a malloced string
+char* floatToString(float num);
 
 /// helper functions a1
 
