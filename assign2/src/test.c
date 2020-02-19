@@ -3,26 +3,48 @@
 #include "LinkedListAPI.h"
 #include "SVGParser.h"
 #include "helper.h"
+
+#define sch "testFilesA2/svg.xsd"
+
+int testingNumber = 0;
+int debug = 0;
+
 int dain(int argc, char **argv);
 void test1(SVGimage* gork);
+void putsError(char* string);
 
 int main(int argc, char **argv) {
+	putsError("createValidSvgImage from quad01_A2.svg");
+	SVGimage* img1 = createValidSVGimage("quad01_A2.svg", "testFilesA2/svg.xsd");
 	
-	puts("\n\ncreate svgimage");
-//	SVGimage* gork = createValidSVGimage("quad01.svg", "testFilesA2/svg.xsd");
-	SVGimage* gork = createSVGimage("quad02.svg");
+	putsError("validateSVGimage on img1 created from img1 -> ");
+	validateSVGimage(img1, "quad01_A2.svg");
 	
-	puts("SVGimageToDoc");
-	xmlFreeDoc(SVGimageToDoc(gork));
+	putsError("SVGimageToDoc from img1 ->  ");
+	xmlDoc* doc = SVGimageToDoc(img1);
+
+	putsError("validateDoc on doc from img1");
+	printf("validateDoc = %d\n", validateDoc(doc, "testFilesA2/svg.xsd"));
 	
-	
-	puts("\n\ntesting delete");
-	deleteSVGimage(gork);
-	
-	
-//	dain(0, NULL);
-	
+	putsError("xmlFreeDoc on doc from img1");
+	xmlFreeDoc(doc);
+
+	putsError("deleteSVGimage on img1");
+	deleteSVGimage(img1);
+
+
+	xmlCleanupParser();
+	puts("");
     return 0;
+}
+
+void putsError(char* string) {
+	printf("\033[0;3%dm", 4);
+	printf("\n\n%d:\t%s", testingNumber, string);
+	printf("\033[0m");
+	
+	testingNumber++;
+	return;
 }
 
 void test1(SVGimage* gork) {
@@ -39,12 +61,10 @@ void test1(SVGimage* gork) {
 	
 	printf("numAttr = %d\n", numAttr(gork));
 	
-	
 	return;
 }
 
-int dain(int argc, char **argv)
-{
+int dain(int argc, char **argv) {
     xmlDocPtr doc = NULL;       /* document pointer */
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;/* node pointers */
     char buff[256];

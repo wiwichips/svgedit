@@ -25,6 +25,9 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc);
 // validates a doc
 bool validateDoc(xmlDoc* doc, char* schemaFile);
 
+// validates the svgimage based off of the header file constraints
+bool validateHeaderConditions(SVGimage* image);
+
 // translates an SVGimage struct to a doc tree
 xmlDoc* SVGimageToDoc(SVGimage* image);
 
@@ -33,6 +36,28 @@ int addAttributeNodesToTree(xmlNode* node, List* otherAttributes);
 
 // converts a float to a string - returns a malloced string
 char* floatToString(float num);
+
+// appends a string to another string, expects a malloc'd string to be passed
+char* addUnitsToString(char* string, char units[50]);
+
+// adds rects, circles, paths but not groups to a specific node
+void addAllElementsToDoc(List* rects, List* circles, List* paths, xmlNode* node);
+
+// adds groups to a specific node (separated this from addAllElementsToDoc for simplicity
+void addGroupsToDoc(List* groups, xmlNode* node);
+
+// adds a rectangle to the doc
+void addRectangleToDoc(Rectangle* rect, xmlNode* parentNode);
+
+// adds a circle to the doc
+void addCircleToDoc(Circle* circle, xmlNode* parentNode);
+
+// adds a path to the doc
+void addPathToDoc(Path* path, xmlNode* parentNode);
+
+// adds a group to the doc tree
+void addGroupToDoc(Group* g, xmlNode* parentNode);
+
 
 /// helper functions a1
 
