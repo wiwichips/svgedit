@@ -15,27 +15,17 @@ void putsError(char* string);
 int bain();
 
 int main(int argc, char **argv) {
-	putsError("createValidSvgImage from quad01.svg");
-//	SVGimage* img1 = createSVGimage("quad01.svg");
-	SVGimage* img1 = createValidSVGimage("quad01.svg", "testFilesA2/svg.xsd");
+	putsError("createValidSvgImage from svg");
+	SVGimage* img1 = createSVGimage("testFilesA2/Emoji_grinning.svg");
+//	SVGimage* img1 = createValidSVGimage("quad01.svg", "testFilesA2/svg.xsd");
 	printf("img1 = %p\n", img1);
 	
 	if(!img1) {
 		return 0;
 	}
-	
+
 	putsError("validateSVGimage on img1 created from img1 -> ");
 	printf("validateSVGimage = %d\n", validateSVGimage(img1, "testFilesA2/svg.xsd"));
-/*	
-	putsError("SVGimageToDoc from img1 ->  ");
-	xmlDoc* doc = SVGimageToDoc(img1);
-
-	putsError("validateDoc on doc from img1");
-	printf("validateDoc = %d\n", validateDoc(doc, "testFilesA2/svg.xsd"));
-	
-	putsError("xmlFreeDoc on doc from img1");
-	xmlFreeDoc(doc);
-*/	
 	
 	putsError("write the svg to file");
 	printf("write svg = %d\n", writeSVGimage(img1, "will.svg"));
