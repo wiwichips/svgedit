@@ -49,6 +49,7 @@ SVGimage* createValidSVGimage(char* fileName, char* schemaFile) {
 	
 	// validate doc
 	bool isValid = validateDoc(doc, schemaFile);
+	printf("isValid = %d\n", isValid);
 	
 	/// check if its valid, return NULL if it is invalid
 	if(!isValid) {
@@ -77,18 +78,20 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 	}
 	
 	// check if it follows the header file standards
-	validateHeaderConditions(image);
+//	validateHeaderConditions(image);
 	
 	// convert the SVGimage* to an XMLdoc*
 	xmlDoc* doc = SVGimageToDoc(image);
 	
 	if(!doc) {
+		puts("!doc");
 		return false;
 	}
 	
 	// check if its valid
 	bool isValid = validateDoc(doc, schemaFile);
 	
+printf("isValid = %d\n", isValid);
 	// free doc
 	xmlFreeDoc(doc);
 	
@@ -98,18 +101,23 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 bool validateHeaderConditions(SVGimage* image) {
 	ListIterator itr;
 	
+	
+	
 	/// rectangle check
 	List* rects = getRects(image);
 	itr = createIterator(rects);
 	for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
 		// check basic conditions
-		if(data->width < 0 || data->height < 0 || !(data->units) || !(data->otherAttributes)) {
+		if(data->width < 0 || data->height < 0 || !(data->units) /*|| !(data->otherAttributes)*/) {
 			freeListDataStructure(rects);
 			return false;
 		}
 		
-		// check the otherattributes list
-		/////
+		if(validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
+			freeListDataStructure(rects);
+			return false;
+		}
+		
 	}
 	freeListDataStructure(rects); // frees the list
 	
@@ -124,7 +132,10 @@ bool validateHeaderConditions(SVGimage* image) {
 		}
 		
 		// check the otherattributes list
-		/////
+		if(validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
+			freeListDataStructure(circles);
+			return false;
+		}
 	}
 	freeListDataStructure(circles);
 	
@@ -133,17 +144,48 @@ bool validateHeaderConditions(SVGimage* image) {
 	itr = createIterator(paths);
 	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
 		// check basic conditions
-		if(!(data->data) /*|| !(data->otherAttributes)*/) {
+		if(!(data->data) /*|| !(data->otherAttributes)*/) { // TODO
 			freeListDataStructure(paths);
 			return false;
 		}
 		
 		// check the otherattributes list
-		/////
+		if(validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
+			freeListDataStructure(paths);
+			return false;
+		}
 	}
 	freeListDataStructure(paths);
 	
 	/// group check
+	List* groups = getGroups(image);
+	itr = createIterator(groups);
+	for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		// check basic conditions
+/*		if(!(data->data) || !(data->otherAttributes)) { // TODO
+			freeListDataStructure(paths);
+			return false;
+		}
+*/
+		// check the otherattributes list
+		if(validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
+			freeListDataStructure(paths);
+			return false;
+		}
+	}
+	freeListDataStructure(paths);
+	
+	return true;
+}
+
+bool validateAttributesAgainstHeaderConditions(List* attributes) {
+	
+	ListIterator itr = createIterator(attributes);
+	for(Attribute* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		if(!(data->name) || !(data->value)) {
+			return false;
+		}
+	}
 	
 	return true;
 }
@@ -155,18 +197,25 @@ bool writeSVGimage(SVGimage* image, char* fileName) {
 	}
 	
 	// convert it to a doc
-	xmlDoc* doc = SVGimageToDoc(image);
+	xmlDoc* doc = NULL;
+	doc = SVGimageToDoc(image);
 	
 	// check if the doc is NULL
 	if(!doc) {
+		puts("test");
 		return false;
 	}
 	
 	// write the doc to file
-	int result = xmlSaveFormatFileEnc(fileName, doc, "UTF-8", 1);
+	int result = -1;
+	result = xmlSaveFormatFileEnc(fileName, doc, "UTF-8", 1);
+	
+	
+	xmlFreeDoc(doc);
+	xmlCleanupParser();
 	
 	//
-	if(result > -1) {
+	if(result > 0) {
 		return true;
 	}
 	
@@ -252,10 +301,16 @@ xmlDoc* SVGimageToDoc(SVGimage* image) {
 	if(image->title[0] != '\0'){
 		xmlNewChild(root_node, NULL, BAD_CAST "title", BAD_CAST image->title);
 	}
+	else {
+		puts("image->title[0] == '\0'");
+	}
 	
 	if(image->description[0] != '\0') {
 		xmlNewChild(root_node, NULL, BAD_CAST "desc", BAD_CAST image->description);
 	}
+	
+	// add attributes to svg image base node
+	addAttributeNodesToTree(root_node, image->otherAttributes);
 	
 	// add rects, circles, and paths from the node to the root_node
 	addAllElementsToDoc(image->rectangles, image->circles, image->paths, root_node);
@@ -471,6 +526,10 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc) {
 	bool descFlag = false;
 	bool nsFlag = false; // there must be a namespace, so this must be true
 	
+	// est the title and desc to empty
+	strcpy(image->title, "");
+	strcpy(image->description, "");
+	
 	// 
 	for (attr = root_element->properties; attr != NULL; attr = attr->next) {
 		xmlNode *value = attr->children;
@@ -478,31 +537,34 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc) {
 		char *cont = (char *)(value->content);
 		
 		// if it is not xmlns
-		if(strcasecmp(attrName, "xmlns")) {
-			insertBack(image->otherAttributes, addAttribute(attrName, cont));
-			nsFlag = true;
-		}
-		
 		if(!strcmpu(attr->name, "title")) {
 			strcpy(image->title, (char*) attr->children->content);
 			titleFlag = true;
+puts("!strcmpu(attr->name, \"title\"");
 			
 		} else if(!strcmpu(attr->name, "desc")) {
 			strcpy(image->description, (char*) attr->children->content);
 			descFlag = true;
+puts("!strcmpu(attr->name, \"desc\"");
+		} else {
+			insertBack(image->otherAttributes, addAttribute(attrName, cont));
+			nsFlag = true;
+			printf("this should never be called --> attrName = %s\tcont = %s", attrName, cont);
 			
 		}
 	}
-	
+
 	// check if there is not a desc or title
 	if(!titleFlag) {
 		strcpy(image->title, "");
+		puts("!titleFlag");
 	}
 	
 	if(!descFlag) {
 		strcpy(image->description, "");
+		puts("!descFlag");
 	}
-	
+
 	// if there is no ns it is not valid
 	if(!nsFlag) {
 		deleteSVGimage(image);
@@ -1161,30 +1223,25 @@ void bog(SVGimage* image, xmlNode *root) {
 	// while the current node isn't null, set it to the next node
     for (cur_node = root; cur_node != NULL; cur_node = cur_node->next) {
         if (cur_node->type == XML_ELEMENT_NODE) {
-//            printf("######type/element/name#######: %s\n", cur_node->name);
 			
 			// place in title, description
-/*			if(!strcmpu(cur_node->name, "title")) {
+			if(!strcmpu(cur_node->name, "title")) {
 				strcpy(image->title, (char*) cur_node->children->content);
-//				printf("{%s}", (char*) cur_node->children->content);
 				
 			} else if(!strcmpu(cur_node->name, "desc")) {
 				strcpy(image->description, (char*) cur_node->children->content);
-			
-			}*/
+				
+			}
 			
 			// place in rectangles, circles, paths, groups
 			/*else*/ if(!strcmpu(cur_node->name, "rect")) {
-//				puts("rectangle ");
 				insertBack(image->rectangles, parseRect(cur_node));
 				
 				
 			} else if(!strcmpu(cur_node->name, "circle")) {
-//				puts("circle");
 				insertBack(image->circles, parseCircle(cur_node));
 				
 			} else if(!strcmpu(cur_node->name, "path")) {
-//				puts("path");
 				insertBack(image->paths, parsePath(cur_node));
 				
 			}
@@ -1192,20 +1249,9 @@ void bog(SVGimage* image, xmlNode *root) {
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
 				insertBack(image->groups, parseGroup(cur_node->children));
-//				puts("group");
-				
 			}
-			
         }
-		
-		
-
-		// this will check successive groups
-//		puts("bog has been called");
-//		bog(image, cur_node->children);
-		
     }
-	
 }
 
 

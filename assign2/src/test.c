@@ -12,14 +12,21 @@ int debug = 0;
 int dain(int argc, char **argv);
 void test1(SVGimage* gork);
 void putsError(char* string);
+int bain();
 
 int main(int argc, char **argv) {
-	putsError("createValidSvgImage from quad01_A2.svg");
-	SVGimage* img1 = createValidSVGimage("quad01_A2.svg", "testFilesA2/svg.xsd");
+	putsError("createValidSvgImage from quad01.svg");
+//	SVGimage* img1 = createSVGimage("quad01.svg");
+	SVGimage* img1 = createValidSVGimage("quad01.svg", "testFilesA2/svg.xsd");
+	printf("img1 = %p\n", img1);
+	
+	if(!img1) {
+		return 0;
+	}
 	
 	putsError("validateSVGimage on img1 created from img1 -> ");
-	validateSVGimage(img1, "quad01_A2.svg");
-	
+	printf("validateSVGimage = %d\n", validateSVGimage(img1, "testFilesA2/svg.xsd"));
+/*	
 	putsError("SVGimageToDoc from img1 ->  ");
 	xmlDoc* doc = SVGimageToDoc(img1);
 
@@ -28,13 +35,25 @@ int main(int argc, char **argv) {
 	
 	putsError("xmlFreeDoc on doc from img1");
 	xmlFreeDoc(doc);
+*/	
+	
+	putsError("write the svg to file");
+	printf("write svg = %d\n", writeSVGimage(img1, "will.svg"));
 
-	putsError("deleteSVGimage on img1");
+
+	putsError("try to open the svg file I wrote");
+	SVGimage* img2 = createValidSVGimage("will.svg", "testFilesA2/svg.xsd");
+	printf("img2 = %p\n", img2);
+
+	putsError("deleteSVGimage on img1 and img2");
 	deleteSVGimage(img1);
+	deleteSVGimage(img2);
 
 
 	xmlCleanupParser();
 	puts("");
+
+//	bain();
     return 0;
 }
 
@@ -150,3 +169,22 @@ int dain(int argc, char **argv) {
 }
 
 
+int bain() {
+	
+	puts("\n\ncreate svgimage");
+//	SVGimage* gork = createValidSVGimage("quad02.svg", "testFilesA2/svg.xsd");
+	SVGimage* gork = createSVGimage("Emoji_poo_A2.svg");
+
+	xmlDoc* doc = SVGimageToDoc(gork);
+	
+	printf("is it valid tho? : %d\n", validateDoc(doc, "testFilesA2/svg.xsd"));
+
+	xmlSaveFormatFileEnc(0 > 1 ? NULL : "-", doc, "UTF-8", 1); 
+	
+	// clean up
+	xmlFreeDoc(doc);
+	deleteSVGimage(gork);
+	xmlCleanupParser();
+	
+    return 0;
+}

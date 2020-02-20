@@ -28,6 +28,9 @@ bool validateDoc(xmlDoc* doc, char* schemaFile);
 // validates the svgimage based off of the header file constraints
 bool validateHeaderConditions(SVGimage* image);
 
+// checks through a list of attributes
+bool validateAttributesAgainstHeaderConditions(List* attributes);
+
 // translates an SVGimage struct to a doc tree
 xmlDoc* SVGimageToDoc(SVGimage* image);
 
