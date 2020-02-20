@@ -114,13 +114,11 @@ puts("rectangle check");
 		// check basic conditions
 		if(data->width < 0 || data->height < 0 || !(data->units) /*|| !(data->otherAttributes)*/) {
 			freeListDataStructure(rects);
-puts("rect - data->width < 0 || data->height < 0 || !(data->units)");
 			return false;
 		}
 		
 		if(!validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
 			freeListDataStructure(rects);
-puts("rect - validateAttributesAgainstHeaderConditions(data->otherAttributes)");
 			return false;
 		}
 		
@@ -135,14 +133,12 @@ puts("circle check");
 		// check basic conditions
 		if(data->r < 0 || !(data->units) || !(data->otherAttributes)) {
 			freeListDataStructure(circles);
-puts("circ - (data->r < 0 || !(data->units) || !(data->otherAttributes))");
 			return false;
 		}
 		
 		// check the otherattributes list
 		if(!validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
 //			freeListDataStructure(circles);
-puts("circ - validateAttributesAgainstHeaderConditions(data->otherAttributes)");
 			return false;
 		}
 	}
@@ -154,16 +150,14 @@ puts("path check");
 	itr = createIterator(paths);
 	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
 		// check basic conditions
-		if(!(data->data) /*|| !(data->otherAttributes)*/) { // TODO
+		if(!(data->data) || !(data->otherAttributes)) { // TODO
 			freeListDataStructure(paths);
-puts("path - !(data->data)");
 			return false;
 		}
 		
 		// check the otherattributes list
 		if(!validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
 			freeListDataStructure(paths);
-puts("path - validateAttributesAgainstHeaderConditions(data->otherAttributes)");
 			return false;
 		}
 	}
@@ -235,6 +229,134 @@ bool writeSVGimage(SVGimage* image, char* fileName) {
 }
 
 void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribute* newAttribute) {
+	if(!image || !newAttribute) {
+		return;
+	}
+	
+	// validate the svgimage against the header conditions, need schemafile
+	if(!validateHeaderConditions(image)) {
+		return;
+	}
+	
+	if(!(newAttribute->name) || !(newAttribute->value)) {
+		return;
+	}
+	
+	List* list = NULL;
+	ListIterator itr;
+	
+	int i = 0;
+	
+	if(elemType == SVG_IMAGE) {
+		puts("SVG_IMAGE");
+		list = image->otherAttributes;
+		insertBack(list, newAttribute);
+		
+		return;
+	}
+	
+	
+	
+	switch(elemType){
+		case CIRC:
+			puts("CIRC");
+			
+			i = 0;
+			
+			list = image->circles;
+			itr = createIterator(list);
+
+			// check if the index is valid
+			if(elemIndex >= getLength(list)) {
+				return;
+			}
+			
+			// check for i
+			for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+				
+				if(i == elemIndex) {
+					insertBack(list, data->otherAttributes);
+				}
+				
+				i++;
+			}
+			
+			break;
+		case RECT:
+			puts("RECT");
+			
+			i = 0;
+			
+			list = image->rectangles;
+			itr = createIterator(list);
+
+			// check if the index is valid
+			if(elemIndex >= getLength(list)) {
+				return;
+			}
+			
+			// check for i
+			for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+				
+				if(i == elemIndex) {
+					insertBack(list, data->otherAttributes);
+				}
+				
+				i++;
+			}
+			
+			break;
+		case PATH:
+			puts("PATH");
+			
+			i = 0;
+			
+			list = image->paths;
+			itr = createIterator(list);
+
+			// check if the index is valid
+			if(elemIndex >= getLength(list)) {
+				return;
+			}
+			
+			// check for i
+			for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+				
+				if(i == elemIndex) {
+					insertBack(list, data->otherAttributes);
+				}
+				
+				i++;
+			}
+			
+			break;
+		case GROUP:
+			puts("GROUP");
+			
+			i = 0;
+			
+			list = image->groups;
+			itr = createIterator(list);
+
+			// check if the index is valid
+			if(elemIndex >= getLength(list)) {
+				return;
+			}
+			
+			// check for i
+			for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+				
+				if(i == elemIndex) {
+					insertBack(list, data->otherAttributes);
+				}
+				
+				i++;
+			}
+			
+			break;
+		default:
+			return;
+	}
 	
 	return;
 }
@@ -245,23 +367,139 @@ void addComponent(SVGimage* image, elementType type, void* newElement) {
 }
 
 char* attrToJSON(const Attribute *a) {
-	return NULL;
+	int size = 0;
+	char* string = NULL;
+	
+	if(!a) {
+		string = calloc(4, sizeof(char));
+		snprintf(string, 3, "{}");
+		
+		return string;
+	}
+	
+	if(!(a->name) || !(a->value)) {
+		return NULL;
+	}
+	
+	// calculate the size
+	size = snprintf(NULL, 0, "{\"name\":\"%s\",\"value\":\"%s\"}", a->name, a->value);
+
+	// allocte space for the new string
+	string = calloc(size, sizeof(char));
+	
+	// copy the json formatted text to the string
+	snprintf(string, size+1, "{\"name\":\"%s\",\"value\":\"%s\"}", a->name, a->value);
+	
+	return string;
 }
 
 char* circleToJSON(const Circle *c) {
-	return NULL;
+	int size = 0;
+	char* string = NULL;
+	
+	if(!c) {
+		string = calloc(4, sizeof(char));
+		snprintf(string, 3, "{}");
+		
+		return string;
+	}
+	
+	// calculate the size
+	size = snprintf(NULL, 0, 
+	"{\"cx\":%.2f,\"cy\":%.2f,\"r\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}", 
+	c->cx, c->cy, c->r, getLength(c->otherAttributes), c->units);
+
+	// allocte space for the new string
+	string = calloc(size, sizeof(char));
+	
+	// copy the json formatted text to the string
+	snprintf(string, size + 1, 
+	"{\"cx\":%.2f,\"cy\":%.2f,\"r\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}", 
+	c->cx, c->cy, c->r, getLength(c->otherAttributes), c->units);
+	
+	return string;
 }
 
 char* rectToJSON(const Rectangle *r) {
-	return NULL;
+	int size = 0;
+	char* string = NULL;
+	
+	if(!r) {
+		string = calloc(4, sizeof(char));
+		snprintf(string, 3, "{}");
+		
+		return string;
+	}
+	
+	// calculate the size
+	size = snprintf(NULL, 0, "{\"x\":%.2f,\"y\":%.2f,\"w\":%.2f,\"h\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}",r->x, r->y, r->width, r->height, getLength(r->otherAttributes), r->units);
+
+	// allocte space for the new string
+	string = calloc(size, sizeof(char));
+	
+	// copy the json formatted text to the string
+	snprintf(string, size+1, "{\"x\":%.2f,\"y\":%.2f,\"w\":%.2f,\"h\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}",r->x, r->y, r->width, r->height, getLength(r->otherAttributes), r->units);
+	
+	return string;
 }
 
 char* pathToJSON(const Path *p) {
-	return NULL;
+	int size = 0;
+	char* string = NULL;
+	
+	if(!p) {
+		string = calloc(4, sizeof(char));
+		snprintf(string, 3, "{}");
+		
+		return string;
+	}
+	
+	if(!(p->data)) {
+		string = calloc(4, sizeof(char));
+		snprintf(string, 3, "{}");
+		
+		return string;
+	}
+	
+	// calculate the size
+	size = snprintf(NULL, 0, "{\"d\":\"%s\",\"numAttr\":%d}", p->data, getLength(p->otherAttributes));
+
+	// allocte space for the new string
+	string = calloc(size, sizeof(char));
+	
+	// copy the json formatted text to the string
+	snprintf(string, size+1, "{\"d\":\"%s\",\"numAttr\":%d}", p->data, getLength(p->otherAttributes));
+	
+	return string;
 }
 
 char* groupToJSON(const Group *g) {
-	return NULL;
+	int size = 0;
+	int numElements = 0;
+	char* string = NULL;
+	
+	if(!g) {
+		string = calloc(4, sizeof(char));
+		snprintf(string, 3, "{}");
+		
+		return string;
+	}
+	
+	numElements += getLength(g->rectangles);
+	numElements += getLength(g->circles);
+	numElements += getLength(g->paths);
+	numElements += getLength(g->groups);
+	
+	// calculate the size
+	size = snprintf(NULL, 0, "{\"children\":%d,\"numAttr\":%d}", numElements, getLength(g->otherAttributes));
+
+	// allocte space for the new string
+	string = calloc(size, sizeof(char));
+	
+	// copy the json formatted text to the string
+	snprintf(string, size+1, "{\"children\":%d,\"numAttr\":%d}", numElements, getLength(g->otherAttributes));
+	
+	return string;
 }
 
 char* attrListToJSON(const List *list) {
@@ -285,7 +523,28 @@ char* groupListToJSON(const List *list) {
 }
 
 char* SVGtoJSON(const SVGimage* imge) {
-	return NULL;
+	int size = 0;
+	char* string = NULL;
+	
+	if(!imge) {
+		string = calloc(4, sizeof(char));
+		snprintf(string, 3, "{}");
+		
+		return string;
+	}
+	
+	// calculate the size
+	size = snprintf(NULL, 0, "{\"numRect\":%d,\"numCirc\":%d,\"numPaths\":%d,\"numGroups\":%d}", 
+	getLength(imge->rectangles), getLength(imge->circles), getLength(imge->paths), getLength(imge->groups));
+
+	// allocte space for the new string
+	string = calloc(size, sizeof(char));
+	
+	// copy the json formatted text to the string
+	snprintf(string, size+1, "{\"numRect\":%d,\"numCirc\":%d,\"numPaths\":%d,\"numGroups\":%d}", 
+	getLength(imge->rectangles), getLength(imge->circles), getLength(imge->paths), getLength(imge->groups));
+	
+	return string;
 }
 
 /// Will Pringle's Helper Functions A2
