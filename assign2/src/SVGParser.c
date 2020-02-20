@@ -901,6 +901,11 @@ char* addUnitsToString(char* string, char units[50]) {
 	return string;
 }
 
+void dummyDelete(void* data) {
+	return;
+}
+
+
 
 /// Will Pringle's Helper functions A1
 List* combineList(List* source, List* destination) {

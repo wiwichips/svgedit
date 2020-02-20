@@ -61,6 +61,8 @@ void addPathToDoc(Path* path, xmlNode* parentNode);
 // adds a group to the doc tree
 void addGroupToDoc(Group* g, xmlNode* parentNode);
 
+// does nothing; used as a dummy function to satisy initializeNode
+void dummyDelete(void* data);
 
 /// helper functions a1
 
