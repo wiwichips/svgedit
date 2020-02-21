@@ -1208,34 +1208,6 @@ List* getAllCirclesFromGroups(Group* g, List* list) {
     return list;
 }
 
-List* getAllGroupsFromGroups(Group* g, List* list) {
-    
-	// add the list of rectangles to the lists
-
-	combineList(g->circles, list);
-
-
-    // if there is at least one group in the group list
-    if(getLength(g->groups)) {
-        
-        // iterate through each group and call goThroughGroup recursively
-        ListIterator itr = createIterator(g->groups);
-        
-        Group* data = nextElement(&itr);
-		
-//		puts("circle called and added");
-		
-		// iterate through each thing 
-        while (data != NULL) {
-            getAllGroupsFromGroups(data, list);
-            data = nextElement(&itr);
-            
-        }
-    }
-    
-    return list;
-}
-
 List* getAllPathsFromGroups(Group* g, List* list) {
     
 	// add the list of rectangles to the lists
@@ -1911,9 +1883,42 @@ List* getGroups(SVGimage* img) {
 		return NULL;
 	}
 	
-//	getAllGroupsFromGroups();
+	// create an iterator for the base level of the function
+	ListIterator itrBaseLevel = createIterator(img->groups);
 	
-	return img->groups; // fix this
+	// create a lits full of ALL the groups in the image (not just abse top level)
+	List* groups = initializeList(&groupToString, &dummyDelete, &comparePaths);
+	
+	// put all the groups in the base level in the groups list
+	combineList(img->groups, groups);
+	
+	// go through every group in the base level of the SVGimage
+	for(Group* tempG = nextElement(&itrBaseLevel); tempG; tempG = nextElement(&itrBaseLevel)) {
+		// 
+		getAllGroupsFromGroups(tempG, groups);
+		
+		
+	}
+	
+	return groups;
+}
+
+List* getAllGroupsFromGroups(Group* g, List* groups) {
+    
+	// add the list of groups from this group to the master group list
+
+	// iterate through each group and call goThroughGroup recursively
+	ListIterator itr = createIterator(g->groups);
+	
+	// go through every group in the base level of the SVGimage
+	for(Group* tempG = nextElement(&itr); tempG; tempG = nextElement(&itr)) {
+		// 
+		getAllGroupsFromGroups(tempG, groups);
+		insertBack(groups, tempG);
+		puts("getAllGroupsFromGroups");
+	}
+    
+    return NULL;
 }
 
 // Function that returns a list of all paths in the image.  

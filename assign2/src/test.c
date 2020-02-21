@@ -27,12 +27,15 @@ int main(int argc, char **argv) {
 
 	putsError("getGroups length");
 	List* g = getGroups(img1);
-	printf("\tthe number of groups is: %d\n", getLength(g));
-//	freeList(g);
+	printf("\tthe number of groups is: %d\t\tshold be 3\n", getLength(g));
+	freeList(g);
+	
+	putsError("getLength(img1->groups)");
+	printf("\tgetLength(img1->groups) = %d\n", getLength(img1->groups));
 
 	putsError("getRects length");
 	List* r = getRects(img1);
-	printf("\tthe number of rectangles is: %d\t\tshould be 4\n", getLength(r));
+	printf("\tthe number of rectangles is: %d\t\tshould be 5\n", getLength(r));
 	freeList(r);
 
 /*	
@@ -85,7 +88,7 @@ int gain() {
 
 void putsError(char* string) {
 	printf("\033[0;3%dm", 4);
-	printf("\n\n%d:\t%s", testingNumber, string);
+	printf("\n\n%d:%s\n", testingNumber, string);
 	printf("\033[0m");
 	
 	testingNumber++;
