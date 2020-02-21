@@ -16,32 +16,55 @@ int bain();
 int gain();
 int tesingGroups();
 
+
+
+
+
+
 int main(int argc, char **argv) {
 	putsError("createSVGimage");
+	int result = 0;
+	
 //	SVGimage* img1 = createValidSVGimage("Wink_Brutal_Test_2.svg", "testFilesA2/svg.xsd");
-	SVGimage* img1 = createSVGimage("Wink_Brutal_Test_2.svg");
+	SVGimage* img1 = createSVGimage("quad01_A2.svg");
 	
 	if(!img1) {
 		puts("\timg1 is NULL");
 	}
+	
+	
 
 	putsError("getGroups length");
 	List* g = getGroups(img1);
-	printf("\tthe number of groups is: %d\t\tshold be 3\n", getLength(g));
+	result = getLength(g);
+	printf("\tthe number of groups is: %d\t\tshold be 3\n", result);
 	freeList(g);
 	
-	putsError("getLength(img1->groups)");
-	printf("\tgetLength(img1->groups) = %d\n", getLength(img1->groups));
-
 	putsError("getRects length");
 	List* r = getRects(img1);
-	printf("\tthe number of rectangles is: %d\t\tshould be 5\n", getLength(r));
+	printf("\tthe number of rectangles is: %d\t\tshould be 1\n", getLength(r));
 	freeList(r);
+	
+	putsError("getCircles length");
+	List* c = getCircles(img1);
+	printf("\tthe number of circles is: %d\t\tshould be 5\n", getLength(c));
+	freeList(c);
+	
+	putsError("getPaths length");
+	List* p = getPaths(img1);
+	printf("\tthe number of paths is: %d\t\tshould be 2\n", getLength(p));
+	freeList(p);
+	
+	putsError("SVGtoJSON string");
+	char* svgtojason = SVGtoJSON(img1);
+	printf("\t%s\n", svgtojason);
+	free(svgtojason);
 
-/*	
+
 	putsError("writeSVGimage");
-	printf("\twrite svg = %d\n", writeSVGimage(img1, "willGroup.svg"));
-*/
+	printf("\twrite svg = %d\n", writeSVGimage(img1, "willTest.svg"));
+
+
 /*	
 	putsError("validateSVGimage");
 	printf("validateSVGimage = %d\n", validateSVGimage(img1, "testFilesA2/svg.xsd"));
@@ -87,7 +110,7 @@ int gain() {
 }
 
 void putsError(char* string) {
-	printf("\033[0;3%dm", 4);
+	printf("\033[0;3%dm", testingNumber%7 + 1);
 	printf("\n\n%d:%s\n", testingNumber, string);
 	printf("\033[0m");
 	

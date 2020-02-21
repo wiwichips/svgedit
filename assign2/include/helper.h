@@ -76,11 +76,12 @@ char* listToJson(const List *list, char* itemToJson(const void* e));
  *	
  */
 // rect
-List* getAllRectsFromGroups(Group* g, List* list);
+void getAllRectsFromGroups(Group* g, List* list);
 List* getAllCirclesFromGroups(Group* g, List* list);
 List* getAllGroupsFromGroups(Group* g, List* list);
 List* getAllPathsFromGroups(Group* g, List* list);
 
+void getAllElementsFromGroups(Group* g, List* list, elementType e);
 
 // 
 void* goThroughGroup(Group* g);
