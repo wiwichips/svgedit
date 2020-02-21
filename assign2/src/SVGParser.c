@@ -161,7 +161,7 @@ puts("path check");
 			return false;
 		}
 	}
-	freeListDataStructure(paths);
+	freeList(paths);
 	
 	/// group check
 puts("group check");
@@ -503,7 +503,40 @@ char* groupToJSON(const Group *g) {
 }
 
 char* attrListToJSON(const List *list) {
-	return NULL;
+	char* string = NULL;
+	char* copy = NULL;
+	ListIterator itr = createIterator((List*) list);
+	
+	int size = 2;
+	
+	string = malloc(sizeof(char) * size);
+	
+	string[0] = '[';
+	string[1] = '\0';
+	
+	
+	for(Attribute* attData = nextElement(&itr); attData != NULL; attData = nextElement(&itr)) {
+		
+		// create a new copy 
+		copy = calloc(size + 2, sizeof(char));
+		strcpy(copy, string);
+		
+		// get new size of attData to json
+		size = snprintf(NULL, 0, "%s%s,D", string, attrToJSON(attData));
+		
+		// realloc space for this size
+		string = realloc(string, sizeof(char) * (size + 1));
+		
+		// copy old data to string
+		snprintf(string, size, "%s%s,D", copy, attrToJSON(attData));
+		
+		free(copy);
+	}
+	
+	string[size - 2] = ']';
+	string[size - 1] = '\0';
+	
+	return string;
 }
 
 char* circListToJSON(const List *list) {
@@ -852,7 +885,7 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc) {
 	return image;
 }
 
-// misc functions
+// misc functions // depricated 
 void freeListDataStructure(List* list) {
 	
 	if(!list) {
@@ -1622,7 +1655,7 @@ List* getRects(SVGimage* img) {
 		return NULL;
 	}
 	
-	List* list = initializeList(&rectangleToString, &deleteRectangle, &comparePaths);
+	List* list = initializeList(&rectangleToString, &dummyDelete, &comparePaths);
 	
 	combineList(img->rectangles, list);
 	
@@ -1652,7 +1685,7 @@ List* getCircles(SVGimage* img) {
 		return NULL;
 	}
 	
-	List* list = initializeList(&circleToString, &deleteCircle, &comparePaths);
+	List* list = initializeList(&circleToString, &dummyDelete, &comparePaths);
 	
 	combineList(img->circles, list);
 	
@@ -1682,7 +1715,7 @@ List* getGroups(SVGimage* img) {
 		return NULL;
 	}
 	
-	
+//	getAllGroupsFromGroups();
 	
 	return img->groups; // fix this
 }
@@ -1694,7 +1727,7 @@ List* getPaths(SVGimage* img) {
 		return NULL;
 	}
 	
-	List* list = initializeList(&pathToString, &deletePath, &comparePaths);
+	List* list = initializeList(&pathToString, &dummyDelete, &comparePaths);
 	
 	combineList(img->paths, list);
 	
@@ -1787,7 +1820,7 @@ int numPathsWithdata(SVGimage* img, char* data) {
 	int matches = findElements(list, base, &comparePaths);
 	
 	free(base);
-	freeListDataStructure(list);
+	freeList(list);
 	
 	return matches;
 }
