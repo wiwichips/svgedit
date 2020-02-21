@@ -79,7 +79,7 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 
 	// check if it follows the header file standards
 	if(!validateHeaderConditions(image)) {
-		puts("!validateHeaderConditions(image)");
+//		puts("!validateHeaderConditions(image)");
 		return false;
 	}
 
@@ -87,7 +87,7 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 	xmlDoc* doc = SVGimageToDoc(image);
 	
 	if(!doc) {
-		puts("!doc");
+//		puts("!doc");
 		return false;
 	}
 	
@@ -164,20 +164,24 @@ bool validateHeaderConditions(SVGimage* image) {
 	freeList(paths);
 	
 	/// group check
-//puts("group check");
-/*	List* groups = getGroups(image); TODO
+	List* groups = getPaths(image);
 	itr = createIterator(groups);
-	for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		// check basic conditions
+		if(!(data->data) || !(data->otherAttributes)) {
+			freeListDataStructure(groups);
+			return false;
+		}
 		
 		// check the otherattributes list
-		if(validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
-			freeListDataStructure(paths);
-puts("grou - validateAttributesAgainstHeaderConditions(data->otherAttributes)");
+		if(!validateAttributesAgainstHeaderConditions(data->otherAttributes)) {
+			freeListDataStructure(groups);
 			return false;
 		}
 	}
-	freeListDataStructure(paths);
-	*/
+	freeList(groups);
+
+	
 	return true;
 }
 
@@ -249,17 +253,17 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 	int i = 0;
 	
 	if(elemType == SVG_IMAGE) {
-		puts("SVG_IMAGE");
+//		puts("SVG_IMAGE");
 		list = image->otherAttributes;
 		insertBack(list, newAttribute);
 		
 		return;
 	}
 	
-	if(elemType == CIRC){
-		puts("CIRC");
+	else if(elemType == CIRC){
+//		puts("CIRC");
 		
-		
+		list = image->circles;
 
 		// check if the index is valid
 		if(elemIndex >= getLength(list)) {
@@ -270,7 +274,7 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 		// variables for looping
 		i = 0;
 		
-		list = image->circles;
+		
 		itr = createIterator(list);
 		
 		// check for i
@@ -280,26 +284,234 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 				// check if the new attribute is a mandatory type
 				if(!strcmp(newAttribute->name, "r")) {
 					data->r = strtof(newAttribute->value, NULL);
+					deleteAttribute(newAttribute);
 					return;
 				}
 				
 				else if(!strcmp(newAttribute->name, "cx")) {
 					data->cx = strtof(newAttribute->value, NULL);
+					deleteAttribute(newAttribute);
 					return;
 				}
 				
 				else if(!strcmp(newAttribute->name, "cy")) {
 					data->cy = strtof(newAttribute->value, NULL);
+					deleteAttribute(newAttribute);
 					return;
 				}
+				else {
 				
-				insertBack(list, data->otherAttributes);
+					
+				
+					
+					insertBack(data->otherAttributes, newAttribute);
+				}
 			}
 			
 			i++;
 		}
-	}	
+	}
+
+	else if(elemType == RECT){
+		list = image->rectangles;
+		// check if the index is valid
+		if(elemIndex >= getLength(list)) {
+			return;
+		}
+		
+		// variables for looping
+		i = 0;
+		
+		itr = createIterator(list);
+		
+		// check for i
+		for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+			if(i == elemIndex) {
+				
+				// check if the new attribute is a mandatory type
+				if(!strcmp(newAttribute->name, "x")) {
+					data->x = strtof(newAttribute->value, NULL);
+					deleteAttribute(newAttribute);
+					return;
+				}
+				
+				else if(!strcmp(newAttribute->name, "y")) {
+					data->y = strtof(newAttribute->value, NULL);
+					deleteAttribute(newAttribute);
+					return;
+				}
+				
+				else if(!strcmp(newAttribute->name, "width")) {
+					data->width = strtof(newAttribute->value, NULL);
+					deleteAttribute(newAttribute);
+					return;
+				}
+				
+				else if(!strcmp(newAttribute->name, "height")) {
+					data->height = strtof(newAttribute->value, NULL);
+					deleteAttribute(newAttribute);
+					return;
+				}
+				
+				else {
+				
+					insertBack(data->otherAttributes, newAttribute);
+				}
+			}
+			
+			i++;
+		}
+		
+	}
 	
+	else if(elemType == PATH){
+		list = image->paths;
+		// check if the index is valid
+		if(elemIndex >= getLength(list)) {
+			return;
+		}
+		
+		// variables for looping
+		i = 0;
+		
+		
+		itr = createIterator(list);
+		
+		// check for i
+		for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+			if(i == elemIndex) {
+				
+				// check if the new attribute is a mandatory type
+				if(!strcmp(newAttribute->name, "d")) {
+					strcpy(data->data, newAttribute->value);
+					deleteAttribute(newAttribute);
+					return;
+				}
+				
+				else {
+				
+					insertBack(data->otherAttributes, newAttribute);
+				}
+			}
+			
+			i++;
+		}
+	}
+	
+	else if(elemType == GROUP){
+		list = image->groups;
+		// check if the index is valid
+		if(elemIndex >= getLength(list)) {
+			return;
+		}
+		
+		// variables for looping
+		i = 0;
+		
+		
+		itr = createIterator(list);
+		
+		// check for i
+		for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+			if(i == elemIndex) {
+				insertBack(data->otherAttributes, newAttribute);
+			}
+			
+			i++;
+		}
+	}
+	
+/*	
+	switch(elemType) {
+	
+		// rectangle
+		case CIRC:
+		
+			// find it
+			// check if the index is valid
+			if(elemIndex >= getLength(list)) {
+				return;
+			}
+
+			i = 0;
+			list = image->circles;
+			itr = createIterator(list);
+			Circle* circle;
+			
+			// check for i
+			for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+				if(i == elemIndex) {
+					
+					// check if the new attribute is a mandatory type
+					if(!strcmp(newAttribute->name, "r")) {
+						data->r = strtof(newAttribute->value, NULL);
+						return;
+					}
+					
+					else if(!strcmp(newAttribute->name, "cx")) {
+						data->cx = strtof(newAttribute->value, NULL);
+						return;
+					}
+					
+					else if(!strcmp(newAttribute->name, "cy")) {
+						data->cy = strtof(newAttribute->value, NULL);
+						return;
+					}
+					
+					insertBack(list, data->otherAttributes);
+				}
+				
+				i++;
+			}
+		
+			// chceck if its r, cy, or cx - then repalce the value if it is
+			if(!strcmp(newAttribute->name, "r")) {
+				circle->r = strtof(newAttribute->value, NULL);
+				deleteAttribute(newAttribute);
+				break;
+			} 
+			else if(!strcmp(newAttribute->name, "cx")) {
+				circle->cx = strtof(newAttribute->value, NULL);
+				deleteAttribute(newAttribute);
+				break;
+			}
+			else if(!strcmp(newAttribute->name, "cy")) {
+				circle->cy = strtof(newAttribute->value, NULL);
+				deleteAttribute(newAttribute);
+				break;
+			}
+			
+			// otherwise, add it to the list of attributes
+			
+			break;
+			
+		case RECT:
+			// check if its x, y, width, height
+			
+			break;
+			
+		case PATH:
+			// check if d
+			
+			break;
+			
+		case GROUP: 
+			
+			
+			
+			
+			break;
+			
+		case: SVG_IMAGE:
+			
+			
+			
+			
+			break;
+		default:
+			break;
+	}
+*/	
 	return;
 }
 
@@ -330,6 +542,8 @@ void addComponent(SVGimage* image, elementType type, void* newElement) {
 	
 	return;
 }
+
+
 
 char* attrToJSON(const Attribute *a) {
 	int size = 0;
@@ -1670,8 +1884,11 @@ Group* parseGroup(xmlNode* groupNode) {
 	
 	// get attributes
 	// populate attributes
-	xmlAttr *attr;
-	for (attr = groupNode->parent->properties; attr != NULL; attr = attr->next)
+	if(!(groupNode)) {
+		return g;
+	}
+	
+	for (xmlAttr* attr = groupNode->parent->properties; attr != NULL; attr = attr->next)
 	{		
 		xmlNode *value = attr->children;
 		char *attrName = (char *)attr->name;
@@ -1689,6 +1906,8 @@ Group* parseGroup(xmlNode* groupNode) {
 			insertBack(g->otherAttributes, addAttribute(attrName, cont));
 		}
 	}
+	
+	
 
 	// get all the circles, groups, rectangles, etc
 	// while the current node isn't null, set it to the next node
@@ -1708,7 +1927,15 @@ Group* parseGroup(xmlNode* groupNode) {
 			
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
-				insertBack(g->groups, parseGroup(cur_node->children));
+				
+				// if the group is empty don't do anything
+				
+				if(cur_node->next) {
+					
+					insertBack(g->groups, parseGroup(cur_node->children));
+				} else {
+					puts("suepr suepr syeper");
+				}
 			}
         }
     }
@@ -1750,6 +1977,7 @@ void bog(SVGimage* image, xmlNode *root) {
 			// groups
 			else if(!strcmpu(cur_node->name, "g")) {
 				insertBack(image->groups, parseGroup(cur_node->children));
+				
 			}
         }
     }
@@ -1925,7 +2153,7 @@ List* getAllGroupsFromGroups(Group* g, List* groups) {
 		// 
 		getAllGroupsFromGroups(tempG, groups);
 		insertBack(groups, tempG);
-		puts("getAllGroupsFromGroups");
+//		puts("getAllGroupsFromGroups");
 	}
     
     return NULL;
