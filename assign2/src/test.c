@@ -13,8 +13,44 @@ int dain(int argc, char **argv);
 void test1(SVGimage* gork);
 void putsError(char* string);
 int bain();
+int gain();
+int tesingGroups();
 
 int main(int argc, char **argv) {
+	putsError("createSVGimage");
+//	SVGimage* img1 = createValidSVGimage("Wink_Brutal_Test_2.svg", "testFilesA2/svg.xsd");
+	SVGimage* img1 = createSVGimage("Wink_Brutal_Test_2.svg");
+	
+	if(!img1) {
+		puts("\timg1 is NULL");
+	}
+
+	putsError("getGroups length");
+	List* g = getGroups(img1);
+	printf("\tthe number of groups is: %d\n", getLength(g));
+//	freeList(g);
+
+	putsError("getRects length");
+	List* r = getRects(img1);
+	printf("\tthe number of rectangles is: %d\t\tshould be 4\n", getLength(r));
+	freeList(r);
+
+/*	
+	putsError("writeSVGimage");
+	printf("\twrite svg = %d\n", writeSVGimage(img1, "willGroup.svg"));
+*/
+/*	
+	putsError("validateSVGimage");
+	printf("validateSVGimage = %d\n", validateSVGimage(img1, "testFilesA2/svg.xsd"));
+*/	
+	putsError("frees");
+	deleteSVGimage(img1);
+	xmlCleanupParser();
+	
+    return 0;
+}
+
+int gain() {
 	putsError("createValidSvgImage from svg");
 	SVGimage* img1 = createSVGimage("testFilesA2/Emoji_grinning.svg");
 //	SVGimage* img1 = createValidSVGimage("quad01.svg", "testFilesA2/svg.xsd");
@@ -44,7 +80,7 @@ int main(int argc, char **argv) {
 	puts("");
 
 //	bain();
-    return 0;
+	return 0;
 }
 
 void putsError(char* string) {

@@ -503,6 +503,11 @@ char* groupToJSON(const Group *g) {
 }
 
 char* attrListToJSON(const List *list) {
+	
+	if(!list) {
+		return NULL;
+	}
+	
 	char* string = NULL;
 	char* copy = NULL;
 	ListIterator itr = createIterator((List*) list);
@@ -540,19 +545,169 @@ char* attrListToJSON(const List *list) {
 }
 
 char* circListToJSON(const List *list) {
-	return NULL;
+	if(!list) {
+		return NULL;
+	}
+	
+	char* string = NULL;
+	char* copy = NULL;
+	ListIterator itr = createIterator((List*) list);
+	
+	int size = 2;
+	
+	string = malloc(sizeof(char) * size);
+	
+	string[0] = '[';
+	string[1] = '\0';
+	
+	
+	for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		
+		// create a new copy 
+		copy = calloc(size + 2, sizeof(char));
+		strcpy(copy, string);
+		
+		// get new size of data to json
+		size = snprintf(NULL, 0, "%s%s,D", string, circleToJSON(data));
+		
+		// realloc space for this size
+		string = realloc(string, sizeof(char) * (size + 1));
+		
+		// copy old data to string
+		snprintf(string, size, "%s%s,D", copy, circleToJSON(data));
+		
+		free(copy);
+	}
+	
+	string[size - 2] = ']';
+	string[size - 1] = '\0';
+	
+	return string;
 }
 
 char* rectListToJSON(const List *list) {
-	return NULL;
+	if(!list) {
+		return NULL;
+	}
+	
+	char* string = NULL;
+	char* copy = NULL;
+	ListIterator itr = createIterator((List*) list);
+	
+	int size = 2;
+	
+	string = malloc(sizeof(char) * size);
+	
+	string[0] = '[';
+	string[1] = '\0';
+	
+	
+	for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		
+		// create a new copy 
+		copy = calloc(size + 2, sizeof(char));
+		strcpy(copy, string);
+		
+		// get new size of data to json
+		size = snprintf(NULL, 0, "%s%s,D", string, rectToJSON(data));
+		
+		// realloc space for this size
+		string = realloc(string, sizeof(char) * (size + 1));
+		
+		// copy old data to string
+		snprintf(string, size, "%s%s,D", copy, rectToJSON(data));
+		
+		free(copy);
+	}
+	
+	string[size - 2] = ']';
+	string[size - 1] = '\0';
+	
+	return string;
 }
 
 char* pathListToJSON(const List *list) {
-	return NULL;
+	if(!list) {
+		return NULL;
+	}
+	
+	char* string = NULL;
+	char* copy = NULL;
+	ListIterator itr = createIterator((List*) list);
+	
+	int size = 2;
+	
+	string = malloc(sizeof(char) * size);
+	
+	string[0] = '[';
+	string[1] = '\0';
+	
+	
+	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		
+		// create a new copy 
+		copy = calloc(size + 2, sizeof(char));
+		strcpy(copy, string);
+		
+		// get new size of data to json
+		size = snprintf(NULL, 0, "%s%s,D", string, pathToJSON(data));
+		
+		// realloc space for this size
+		string = realloc(string, sizeof(char) * (size + 1));
+		
+		// copy old data to string
+		snprintf(string, size, "%s%s,D", copy, pathToJSON(data));
+		
+		free(copy);
+	}
+	
+	string[size - 2] = ']';
+	string[size - 1] = '\0';
+	
+	return string;
 }
 
 char* groupListToJSON(const List *list) {
-	return NULL;
+	if(!list) {
+		return NULL;
+	}
+	
+	char* string = NULL;
+	char* copy = NULL;
+	ListIterator itr = createIterator((List*) list);
+	
+	int size = 2;
+	
+	string = malloc(sizeof(char) * size);
+	
+	string[0] = '[';
+	string[1] = '\0';
+	
+	
+	for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		
+		// create a new copy 
+		copy = calloc(size + 2, sizeof(char));
+		strcpy(copy, string);
+		
+		// get new size of data to json
+		size = snprintf(NULL, 0, "%s%s,D", string, groupToJSON(data));
+		
+		// realloc space for this size
+		string = realloc(string, sizeof(char) * (size + 1));
+		
+		// copy old data to string
+		snprintf(string, size, "%s%s,D", copy, groupToJSON(data));
+		
+		free(copy);
+	}
+	
+	string[size - 2] = ']';
+	string[size - 1] = '\0';
+	
+//	char* string = listToJson(list, &groupToJSON);
+	
+	return string;
 }
 
 char* SVGtoJSON(const SVGimage* imge) {
@@ -581,6 +736,47 @@ char* SVGtoJSON(const SVGimage* imge) {
 }
 
 /// Will Pringle's Helper Functions A2
+
+char* listToJson(const List *list, char* itemToJson(const void* e)) {
+	if(!list) {
+		return NULL;
+	}
+	
+	char* string = NULL;
+	char* copy = NULL;
+	ListIterator itr = createIterator((List*) list);
+	
+	int size = 2;
+	
+	string = malloc(sizeof(char) * size);
+	
+	string[0] = '[';
+	string[1] = '\0';
+	
+	
+	for(void* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		
+		// create a new copy 
+		copy = calloc(size + 2, sizeof(char));
+		strcpy(copy, string);
+		
+		// get new size of data to json
+		size = snprintf(NULL, 0, "%s%s,D", string, itemToJson(data));
+		
+		// realloc space for this size
+		string = realloc(string, sizeof(char) * (size + 1));
+		
+		// copy old data to string
+		snprintf(string, size, "%s%s,D", copy, itemToJson(data));
+		
+		free(copy);
+	}
+	
+	string[size - 2] = ']';
+	string[size - 1] = '\0';
+	
+	return string;
+}
 
 // creating a doc from an svgimage functions
 xmlDoc* SVGimageToDoc(SVGimage* image) {

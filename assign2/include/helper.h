@@ -69,6 +69,8 @@ void dummyDelete(void* data);
 // puts two lists of the same type into one longer list
 List* combineList(List* source, List* destination);
 
+// 
+char* listToJson(const List *list, char* itemToJson(const void* e));
 
 /*
  *	
