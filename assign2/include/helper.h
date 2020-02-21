@@ -64,6 +64,9 @@ void addGroupToDoc(Group* g, xmlNode* parentNode);
 // does nothing; used as a dummy function to satisy initializeNode
 void dummyDelete(void* data);
 
+// returns true if there is another attribute ofthe same name
+bool isDuplicateAttribute(List* otherAttributes, Attribute* newAttribute);
+
 /// helper functions a1
 
 // puts two lists of the same type into one longer list

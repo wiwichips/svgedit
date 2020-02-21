@@ -255,7 +255,9 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 	if(elemType == SVG_IMAGE) {
 //		puts("SVG_IMAGE");
 		list = image->otherAttributes;
-		insertBack(list, newAttribute);
+		if(!isDuplicateAttribute(image->otherAttributes, newAttribute)) {
+			insertBack(image->otherAttributes, newAttribute);
+		}
 		
 		return;
 	}
@@ -300,11 +302,9 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 					return;
 				}
 				else {
-				
-					
-				
-					
-					insertBack(data->otherAttributes, newAttribute);
+					if(!isDuplicateAttribute(data->otherAttributes, newAttribute)) {
+						insertBack(data->otherAttributes, newAttribute);
+					}
 				}
 			}
 			
@@ -354,8 +354,9 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 				}
 				
 				else {
-				
-					insertBack(data->otherAttributes, newAttribute);
+					if(!isDuplicateAttribute(data->otherAttributes, newAttribute)) {
+						insertBack(data->otherAttributes, newAttribute);
+					}
 				}
 			}
 			
@@ -389,8 +390,9 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 				}
 				
 				else {
-				
-					insertBack(data->otherAttributes, newAttribute);
+					if(!isDuplicateAttribute(data->otherAttributes, newAttribute)) {
+						insertBack(data->otherAttributes, newAttribute);
+					}
 				}
 			}
 			
@@ -414,7 +416,9 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 		// check for i
 		for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
 			if(i == elemIndex) {
-				insertBack(data->otherAttributes, newAttribute);
+				if(!isDuplicateAttribute(data->otherAttributes, newAttribute)) {
+					insertBack(data->otherAttributes, newAttribute);
+				}
 			}
 			
 			i++;
@@ -543,7 +547,23 @@ void addComponent(SVGimage* image, elementType type, void* newElement) {
 	return;
 }
 
+// returns true if there is another attribute ofthe same name
+bool isDuplicateAttribute(List* otherAttributes, Attribute* newAttribute) {
 
+	ListIterator itr = createIterator(otherAttributes);
+
+	for(Attribute* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		
+		if(!strcmp(data->name, newAttribute->name)) {
+			strcpy(data->value, newAttribute->value);
+			deleteAttribute(newAttribute);
+			return true;
+		}
+		
+	}
+	
+	return false;
+}
 
 char* attrToJSON(const Attribute *a) {
 	int size = 0;
