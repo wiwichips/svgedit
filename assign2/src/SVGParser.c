@@ -572,7 +572,7 @@ char* pathToJSON(const Path *p) {
 	
 	// 
 	pData = calloc(65, sizeof(char));
-	snprintf(pData, 64, "%s", p->data);
+	snprintf(pData, 65, "%s", p->data);
 	
 	// calculate the size
 	size = snprintf(NULL, 0, "{\"d\":\"%s\",\"numAttr\":%d}", pData, getLength(p->otherAttributes));

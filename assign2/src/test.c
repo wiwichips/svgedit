@@ -20,7 +20,7 @@ void hen_and_chicksToFile();
 
 int main() {
 	
-	hen_and_chicksToFile();
+	oldmain(2, NULL);
 	
 	return 0;
 }
@@ -84,7 +84,7 @@ int oldmain(int argc, char **argv) {
 	char* svgtojason = SVGtoJSON(img1);
 	printf("\tSVGtoJSON : %s\n", svgtojason);
 	free(svgtojason);
-/*
+
 	putsError("validateSVGimage");
 	if(validateSVGimage(img1, "testFilesA2/svg.xsd")) {
 		printf("validateSVGimage = true (:");
@@ -106,10 +106,10 @@ int oldmain(int argc, char **argv) {
 			printf("validateSVGimage = false ):");
 		}
 	}
-	*/
+	
 	putsError("frees");
 	deleteSVGimage(img1);
-//	deleteSVGimage(img2);
+	deleteSVGimage(img2);
 	xmlCleanupParser();
 	
     return 0;
@@ -123,7 +123,12 @@ void hen_and_chicksToFile() {
 	printf("%s", pathListToJaSON);
 	free(pathListToJaSON);
 	freeList(l);
-	
+/*
+	putsError("SVGtoJSON string");
+	char* svgtojason = SVGtoJSON(img1);
+	printf("\tSVGtoJSON : %s\n", svgtojason);
+	free(svgtojason);
+*/
 	deleteSVGimage(img1);
 	xmlCleanupParser();
 	
