@@ -628,12 +628,13 @@ char* attrListToJSON(const List *list) {
 	char* copy = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
-	int size = 2;
+	int size = 3;
 	
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = '\0';
+	string[1] = ']';
+	string[2] = '\0';
 	
 	
 	for(Attribute* attData = nextElement(&itr); attData != NULL; attData = nextElement(&itr)) {
@@ -670,12 +671,13 @@ char* circListToJSON(const List *list) {
 	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
-	int size = 2;
+	int size = 3;
 	
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = '\0';
+	string[1] = ']';
+	string[2] = '\0';
 	
 	
 	for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -716,12 +718,13 @@ char* rectListToJSON(const List *list) {
 	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
-	int size = 2;
+	int size = 3;
 	
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = '\0';
+	string[1] = ']';
+	string[2] = '\0';
 	
 	
 	for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -762,12 +765,13 @@ char* pathListToJSON(const List *list) {
 	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
-	int size = 2;
+	int size = 3;
 	
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = '\0';
+	string[1] = ']';
+	string[2] = '\0';
 	
 	
 	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -807,12 +811,13 @@ char* groupListToJSON(const List *list) {
 	char* copy = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
-	int size = 2;
+	int size = 3;
 	
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = '\0';
+	string[1] = ']';
+	string[2] = '\0';
 	
 	
 	for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -942,9 +947,6 @@ xmlDoc* SVGimageToDoc(SVGimage* image) {
 	// populate title and description if there is one
 	if(image->title[0] != '\0'){
 		xmlNewChild(root_node, NULL, BAD_CAST "title", BAD_CAST image->title);
-	}
-	else {
-//		puts("image->title[0] == '\0'");
 	}
 	
 	if(image->description[0] != '\0') {
@@ -1651,6 +1653,8 @@ Rectangle* parseRect(xmlNode* cur_node) {
 	float height = 0;
 	char* end;
 
+	// check if x y width and height are given
+	bool isX = false, isY = false, isWidth = false, isHeight = false;
 	
 	// allocate space for a rectanle and create list of other Attributes
 	rect = malloc(sizeof(Rectangle));
@@ -1675,20 +1679,24 @@ Rectangle* parseRect(xmlNode* cur_node) {
 		
 		
 		if(!strcmp(attrName, "x")) {
-			x = strtof(cont, NULL);
+			x = strtof(cont, &end);
 			rect->x = x;
+			isX = true;
 			
 		} else if(!strcmp(attrName, "y")) {
-			y = strtof(cont, NULL);
+			y = strtof(cont, &end);
 			rect->y = y;
+			isY = true;
 			
 		} else if(!strcmp(attrName, "width")) {
 			width = strtof(cont, &end);
 			rect->width = width;
+			isWidth = true;
 			
 		} else if(!strcmp(attrName, "height")) {
-			height = strtof(cont, NULL);	
+			height = strtof(cont, &end);	
 			rect->height = height;
+			isHeight = true;
 			
 		// all othre attributes go here
 		} else {
@@ -1696,11 +1704,31 @@ Rectangle* parseRect(xmlNode* cur_node) {
 			// add the attribute to the list
 			insertBack(rect->otherAttributes, addAttribute(attrName, cont));
 		}
-		
+	}
+	
+	// if there is no attribute setthem to 0
+	if(!isX) {
+		rect->x = 0;
+	}
+	
+	if(!isY) {
+		rect->y = 0;
+	}
+	
+	if(!isWidth) {
+		rect->width = 0;
+	}
+	
+	if(!isHeight) {
+		rect->height = 0;
 	}
 	
 	// copy the units from the x to the units in the struct
-	strcpy(rect->units, end);
+	if(isX || isY || isWidth || isHeight) {
+		strcpy(rect->units, end);
+	} else {
+		strcpy(rect->units, "");
+	}
 
 	return rect;
 }
@@ -1713,6 +1741,8 @@ Circle* parseCircle(xmlNode* cur_node) {
 	float r = 0;
 	char* end; // used to get units
 
+	// check if cx cy and r
+	bool isCx = false, isCy = false, isR = false;
 	
 	// allocate space for a rectanle and create list of other Attributes
 	circle = malloc(sizeof(Rectangle));
@@ -1736,15 +1766,18 @@ Circle* parseCircle(xmlNode* cur_node) {
 		}
 		
 		if(!strcmp(attrName, "cx")) {
-			cx = strtof(cont, NULL);
+			cx = strtof(cont, &end);
 			circle->cx = cx;
+			isCx = true;
 			
 		} else if(!strcmp(attrName, "cy")) {
-			cy = strtof(cont, NULL);
+			cy = strtof(cont, &end);
 			circle->cy = cy;
+			isCy = true;
 			
 		} else if(!strcmp(attrName, "r")) {
 			r = strtof(cont, &end);
+			isR = true;
 			
 			// check if r < 0
 			if(r < 0) {
@@ -1766,9 +1799,25 @@ Circle* parseCircle(xmlNode* cur_node) {
 		}
 		
 	}
-		
-	// copy the units from the x to the units in the struct
-	strcpy(circle->units, end);
+	
+	//
+	if(!isCx) {
+		circle->cx = 0;
+	}
+	if(!isCy) {
+		circle->cy = 0;
+	}
+	if(!isR) {
+		circle->r = 0;
+	}
+	
+	if(isCx || isCy || isR) {
+		// copy the units from the x to the units in the struct
+		strcpy(circle->units, end);
+	}
+	else {
+		strcpy(circle->units, "");
+	}
 
 	return circle;
 }

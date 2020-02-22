@@ -32,7 +32,7 @@ int oldmain(int argc, char **argv) {
 	SVGimage* img2 = NULL;
 	
 //	SVGimage* img1 = createValidSVGimage("Wink_Brutal_Test_2.svg", "testFilesA2/svg.xsd");
-	SVGimage* img1 = createSVGimage("hen_and_chicks.svg");
+	SVGimage* img1 = createSVGimage("winkcopu.svg");
 	
 	if(!img1) {
 		puts("\timg1 is NULL");
