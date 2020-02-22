@@ -32,12 +32,16 @@ int oldmain(int argc, char **argv) {
 	SVGimage* img2 = NULL;
 	
 //	SVGimage* img1 = createValidSVGimage("Wink_Brutal_Test_2.svg", "testFilesA2/svg.xsd");
-	SVGimage* img1 = createSVGimage("Wink_Brutal_Test_3.svg");
+	SVGimage* img1 = createSVGimage("hen_and_chicks.svg");
 	
 	if(!img1) {
 		puts("\timg1 is NULL");
 	}
 	
+	if(img1) {
+		putsError("numAttr for the image");
+		printf("\tnumAttr(img) = %d\n", numAttr(img1));
+	}
 	
 		putsError("getGroups length");
 		List* g = getGroups(img1);
