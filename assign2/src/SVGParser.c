@@ -1772,12 +1772,14 @@ Circle* parseCircle(xmlNode* cur_node) {
 			
 		} else if(!strcmp(attrName, "r")) {
 			r = strtof(cont, &end);
-			isR = true;
+			
 			
 			// check if r < 0
 			if(r < 0) {
 //				puts("BAD2 - invalid r < 0");
 				
+				
+				freeList(circle->otherAttributes);
 				free(circle);
 				return NULL;
 			}

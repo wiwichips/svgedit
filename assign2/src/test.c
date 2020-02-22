@@ -32,7 +32,7 @@ int oldmain(int argc, char **argv) {
 	SVGimage* img2 = NULL;
 	
 //	SVGimage* img1 = createValidSVGimage("Wink_Brutal_Test_2.svg", "testFilesA2/svg.xsd");
-	SVGimage* img1 = createSVGimage("winkcopu.svg");
+	SVGimage* img1 = createSVGimage("Wink_Brutal_Test_3.svg");
 	
 	if(!img1) {
 		puts("\timg1 is NULL");
@@ -46,7 +46,6 @@ int oldmain(int argc, char **argv) {
 		printf("\tthe number of groups is: %d\n", result);
 		freeList(g);
 	}
-	
 	
 	putsError("getRects length");
 	List* r = getRects(img1);
@@ -69,7 +68,6 @@ int oldmain(int argc, char **argv) {
 		freeList(p);
 	}
 	
-	
 	putsError("circListToJSON string");
 	char* circtojason = circListToJSON(img1->circles);
 	printf("\tcircleToJSON : %s\n", circtojason);
@@ -77,7 +75,7 @@ int oldmain(int argc, char **argv) {
 	
 	putsError("pathToJSON string");
 	char* pathListToJaSON = pathListToJSON(img1->paths);
-	printf("\tcircleToJSON : %s\n", pathListToJaSON);
+	printf("\tpathToJSON : %s\n", pathListToJaSON);
 	free(pathListToJaSON);
 	
 	putsError("SVGtoJSON string");
