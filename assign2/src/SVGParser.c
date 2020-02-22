@@ -633,8 +633,7 @@ char* attrListToJSON(const List *list) {
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = ']';
-	string[2] = '\0';
+	string[1] = '\0';
 	
 	
 	for(Attribute* attData = nextElement(&itr); attData != NULL; attData = nextElement(&itr)) {
@@ -676,8 +675,7 @@ char* circListToJSON(const List *list) {
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = ']';
-	string[2] = '\0';
+	string[1] = '\0';
 	
 	
 	for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -723,8 +721,7 @@ char* rectListToJSON(const List *list) {
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = ']';
-	string[2] = '\0';
+	string[1] = '\0';
 	
 	
 	for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -770,8 +767,7 @@ char* pathListToJSON(const List *list) {
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = ']';
-	string[2] = '\0';
+	string[1] = '\0';
 	
 	
 	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -816,8 +812,7 @@ char* groupListToJSON(const List *list) {
 	string = malloc(sizeof(char) * size);
 	
 	string[0] = '[';
-	string[1] = ']';
-	string[2] = '\0';
+	string[1] = '\0';
 	
 	
 	for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
