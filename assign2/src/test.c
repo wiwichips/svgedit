@@ -15,17 +15,24 @@ void putsError(char* string);
 int bain();
 int gain();
 int tesingGroups();
+int oldmain(int argc, char **argv);
+void hen_and_chicksToFile();
+
+int main() {
+	
+	hen_and_chicksToFile();
+	
+	return 0;
+}
 
 
-
-
-int main(int argc, char **argv) {
+int oldmain(int argc, char **argv) {
 	putsError("createSVGimage");
 	int result = 0;
 	SVGimage* img2 = NULL;
 	
 //	SVGimage* img1 = createValidSVGimage("Wink_Brutal_Test_2.svg", "testFilesA2/svg.xsd");
-	SVGimage* img1 = createSVGimage("Wink_Brutal_Test_2.svg");
+	SVGimage* img1 = createSVGimage("hen_and_chicks.svg");
 	
 	if(!img1) {
 		puts("\timg1 is NULL");
@@ -63,11 +70,21 @@ int main(int argc, char **argv) {
 	}
 	
 	
+	putsError("circListToJSON string");
+	char* circtojason = circListToJSON(img1->circles);
+	printf("\tcircleToJSON : %s\n", circtojason);
+	free(circtojason);
+	
+	putsError("pathToJSON string");
+	char* pathListToJaSON = pathListToJSON(img1->paths);
+	printf("\tcircleToJSON : %s\n", pathListToJaSON);
+	free(pathListToJaSON);
+	
 	putsError("SVGtoJSON string");
 	char* svgtojason = SVGtoJSON(img1);
 	printf("\tSVGtoJSON : %s\n", svgtojason);
 	free(svgtojason);
-
+/*
 	putsError("validateSVGimage");
 	if(validateSVGimage(img1, "testFilesA2/svg.xsd")) {
 		printf("validateSVGimage = true (:");
@@ -89,13 +106,27 @@ int main(int argc, char **argv) {
 			printf("validateSVGimage = false ):");
 		}
 	}
-	
+	*/
 	putsError("frees");
 	deleteSVGimage(img1);
-	deleteSVGimage(img2);
+//	deleteSVGimage(img2);
 	xmlCleanupParser();
 	
     return 0;
+}
+
+void hen_and_chicksToFile() {
+	SVGimage* img1 = createSVGimage("hen_and_chicks.svg");
+	
+	List* l = getPaths(img1);
+	char* pathListToJaSON = pathListToJSON(l);
+	printf("%s", pathListToJaSON);
+	free(pathListToJaSON);
+	freeList(l);
+	
+	deleteSVGimage(img1);
+	xmlCleanupParser();
+	
 }
 
 int gain() {

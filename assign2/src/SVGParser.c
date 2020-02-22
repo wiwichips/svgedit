@@ -213,7 +213,7 @@ bool writeSVGimage(SVGimage* image, char* fileName) {
 	
 	// check if the doc is NULL
 	if(!doc) {
-		puts("test");
+//		puts("test");
 		return false;
 	}
 	
@@ -425,98 +425,6 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 			i++;
 		}
 	}
-	
-/*	
-	switch(elemType) {
-	
-		// rectangle
-		case CIRC:
-		
-			// find it
-			// check if the index is valid
-			if(elemIndex >= getLength(list)) {
-				return;
-			}
-
-			i = 0;
-			list = image->circles;
-			itr = createIterator(list);
-			Circle* circle;
-			
-			// check for i
-			for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
-				if(i == elemIndex) {
-					
-					// check if the new attribute is a mandatory type
-					if(!strcmp(newAttribute->name, "r")) {
-						data->r = strtof(newAttribute->value, NULL);
-						return;
-					}
-					
-					else if(!strcmp(newAttribute->name, "cx")) {
-						data->cx = strtof(newAttribute->value, NULL);
-						return;
-					}
-					
-					else if(!strcmp(newAttribute->name, "cy")) {
-						data->cy = strtof(newAttribute->value, NULL);
-						return;
-					}
-					
-					insertBack(list, data->otherAttributes);
-				}
-				
-				i++;
-			}
-		
-			// chceck if its r, cy, or cx - then repalce the value if it is
-			if(!strcmp(newAttribute->name, "r")) {
-				circle->r = strtof(newAttribute->value, NULL);
-				deleteAttribute(newAttribute);
-				break;
-			} 
-			else if(!strcmp(newAttribute->name, "cx")) {
-				circle->cx = strtof(newAttribute->value, NULL);
-				deleteAttribute(newAttribute);
-				break;
-			}
-			else if(!strcmp(newAttribute->name, "cy")) {
-				circle->cy = strtof(newAttribute->value, NULL);
-				deleteAttribute(newAttribute);
-				break;
-			}
-			
-			// otherwise, add it to the list of attributes
-			
-			break;
-			
-		case RECT:
-			// check if its x, y, width, height
-			
-			break;
-			
-		case PATH:
-			// check if d
-			
-			break;
-			
-		case GROUP: 
-			
-			
-			
-			
-			break;
-			
-		case: SVG_IMAGE:
-			
-			
-			
-			
-			break;
-		default:
-			break;
-	}
-*/	
 	return;
 }
 
@@ -610,7 +518,7 @@ char* circleToJSON(const Circle *c) {
 	c->cx, c->cy, c->r, getLength(c->otherAttributes), c->units);
 
 	// allocte space for the new string
-	string = calloc(size, sizeof(char));
+	string = calloc(size+1, sizeof(char));
 	
 	// copy the json formatted text to the string
 	snprintf(string, size + 1, 
@@ -646,6 +554,7 @@ char* rectToJSON(const Rectangle *r) {
 char* pathToJSON(const Path *p) {
 	int size = 0;
 	char* string = NULL;
+	char* pData = NULL;
 	
 	if(!p) {
 		string = calloc(4, sizeof(char));
@@ -661,14 +570,21 @@ char* pathToJSON(const Path *p) {
 		return string;
 	}
 	
+	// 
+	pData = calloc(65, sizeof(char));
+	snprintf(pData, 64, "%s", p->data);
+	
 	// calculate the size
-	size = snprintf(NULL, 0, "{\"d\":\"%s\",\"numAttr\":%d}", p->data, getLength(p->otherAttributes));
+	size = snprintf(NULL, 0, "{\"d\":\"%s\",\"numAttr\":%d}", pData, getLength(p->otherAttributes));
 
 	// allocte space for the new string
-	string = calloc(size, sizeof(char));
+	string = calloc(size + 1, sizeof(char));
 	
 	// copy the json formatted text to the string
-	snprintf(string, size+1, "{\"d\":\"%s\",\"numAttr\":%d}", p->data, getLength(p->otherAttributes));
+	snprintf(string, size + 1, "{\"d\":\"%s\",\"numAttr\":%d}", pData, getLength(p->otherAttributes));
+	
+	// free
+	free(pData);
 	
 	return string;
 }
@@ -751,6 +667,7 @@ char* circListToJSON(const List *list) {
 	
 	char* string = NULL;
 	char* copy = NULL;
+	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
 	int size = 2;
@@ -767,16 +684,20 @@ char* circListToJSON(const List *list) {
 		copy = calloc(size + 2, sizeof(char));
 		strcpy(copy, string);
 		
+		// get the item to json
+		itemToJSON = circleToJSON(data);
+		
 		// get new size of data to json
-		size = snprintf(NULL, 0, "%s%s,D", string, circleToJSON(data));
+		size = snprintf(NULL, 0, "%s%s,D", string, itemToJSON);
 		
 		// realloc space for this size
 		string = realloc(string, sizeof(char) * (size + 1));
 		
 		// copy old data to string
-		snprintf(string, size, "%s%s,D", copy, circleToJSON(data));
+		snprintf(string, size, "%s%s,D", copy, itemToJSON);
 		
 		free(copy);
+		free(itemToJSON);
 	}
 	
 	string[size - 2] = ']';
@@ -792,6 +713,7 @@ char* rectListToJSON(const List *list) {
 	
 	char* string = NULL;
 	char* copy = NULL;
+	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
 	int size = 2;
@@ -808,16 +730,20 @@ char* rectListToJSON(const List *list) {
 		copy = calloc(size + 2, sizeof(char));
 		strcpy(copy, string);
 		
+		// get the item to json
+		itemToJSON = rectToJSON(data);
+		
 		// get new size of data to json
-		size = snprintf(NULL, 0, "%s%s,D", string, rectToJSON(data));
+		size = snprintf(NULL, 0, "%s%s,D", string, itemToJSON);
 		
 		// realloc space for this size
 		string = realloc(string, sizeof(char) * (size + 1));
 		
 		// copy old data to string
-		snprintf(string, size, "%s%s,D", copy, rectToJSON(data));
+		snprintf(string, size, "%s%s,D", copy, itemToJSON);
 		
 		free(copy);
+		free(itemToJSON);
 	}
 	
 	string[size - 2] = ']';
@@ -833,6 +759,7 @@ char* pathListToJSON(const List *list) {
 	
 	char* string = NULL;
 	char* copy = NULL;
+	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
 	int size = 2;
@@ -849,16 +776,20 @@ char* pathListToJSON(const List *list) {
 		copy = calloc(size + 2, sizeof(char));
 		strcpy(copy, string);
 		
+		// get the item to json
+		itemToJSON = pathToJSON(data);
+		
 		// get new size of data to json
-		size = snprintf(NULL, 0, "%s%s,D", string, pathToJSON(data));
+		size = snprintf(NULL, 0, "%s%s,D", string, itemToJSON);
 		
 		// realloc space for this size
 		string = realloc(string, sizeof(char) * (size + 1));
 		
 		// copy old data to string
-		snprintf(string, size, "%s%s,D", copy, pathToJSON(data));
+		snprintf(string, size, "%s%s,D", copy, itemToJSON);
 		
 		free(copy);
+		free(itemToJSON);
 	}
 	
 	string[size - 2] = ']';
@@ -1153,6 +1084,7 @@ void addGroupsToDoc(List* groups, xmlNode* node) {
 		addGroupToDoc(data, node);
 		
 		// add all the elements within the group
+		
 	}
 	
 }
@@ -1229,7 +1161,7 @@ SVGimage* createSVGimageFromDoc(xmlDoc* doc) {
 	image->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
 	
 	// add other attributes to the thing
-	strcpy(image->namespace, (char*) root_element->ns->href);
+	snprintf(image->namespace, 256, (char*) root_element->ns->href);
 	
 	// populate attributes
 	xmlAttr *attr = NULL;
@@ -1637,13 +1569,13 @@ int getGroupLength(Group* group) {
 	
 //	printf("group = %p\n", group);
 	
-	puts("");
+/*	puts("");
 	
 	printf("group->rectangles = %p\n", group->rectangles);
 	printf("group->circles = %p\n", group->circles);
 	printf("group->paths = %p\n", group->paths);
 	printf("group->groups = %p\n", group->groups);
-	
+*/	
 	int size = 0;
     size += getLength(group->rectangles);
 	size += getLength(group->circles);
@@ -1660,7 +1592,7 @@ int compareGroupLength(const void* first, const void* second) {
 	
 //	printf("\t\tdata = {%d}\t sRecord = {%d}\n", getGroupLength(group), *len);
 	
-	puts("right before getGroupLength(group) == *len");
+//	puts("right before getGroupLength(group) == *len");
 	if(getGroupLength(group) == *len) {
 		return 1;
 	}
@@ -1736,7 +1668,7 @@ Rectangle* parseRect(xmlNode* cur_node) {
 		
 		// check if its valid
 		if(!attrName || !(value->content)) {
-			puts("BAD1 - invalid attrName == NULL");
+//			puts("BAD1 - invalid attrName == NULL");
 			free(rect);
 			return NULL;
 		}
@@ -1798,7 +1730,7 @@ Circle* parseCircle(xmlNode* cur_node) {
 		
 		// check if its valid
 		if(!attrName || !(value->content)) {
-			puts("BAD1 - invalid attrName == NULL");
+	//		puts("BAD1 - invalid attrName == NULL");
 			free(circle);
 			return NULL;
 		}
@@ -1816,7 +1748,7 @@ Circle* parseCircle(xmlNode* cur_node) {
 			
 			// check if r < 0
 			if(r < 0) {
-				puts("BAD2 - invalid r < 0");
+//				puts("BAD2 - invalid r < 0");
 				
 				free(circle);
 				return NULL;
@@ -1862,7 +1794,7 @@ Path* parsePath(xmlNode* cur_node) {
 		
 		// check if its valid
 		if(!attrName || !(value->content)) {
-			puts("BAD1 - invalid attrName == NULL");
+//			puts("BAD1 - invalid attrName == NULL");
 			free(path);
 			return NULL;
 		}
@@ -1917,7 +1849,7 @@ Group* parseGroup(xmlNode* groupNode) {
 		
 		// check if its valid
 		if(!attrName || !(value->content)) {
-			puts("BAD1 - invalid attrName == NULL");
+//			puts("BAD1 - invalid attrName == NULL");
 			free(g);
 			return NULL;
 		}
@@ -1955,7 +1887,7 @@ Group* parseGroup(xmlNode* groupNode) {
 					
 					insertBack(g->groups, parseGroup(cur_node->children));
 				} else {
-					puts("suepr suepr syeper");
+//					puts("suepr suepr syeper");
 				}
 			}
         }
@@ -1974,11 +1906,11 @@ void bog(SVGimage* image, xmlNode *root) {
         if (cur_node->type == XML_ELEMENT_NODE) {
 			
 			// place in title, description
-			if(!strcmpu(cur_node->name, "title")) {
-				strcpy(image->title, (char*) cur_node->children->content);
-				
+			if(!strcmpu(cur_node->name, "title")) {		
+				snprintf(image->title, 256, (char*) cur_node->children->content);
 			} else if(!strcmpu(cur_node->name, "desc")) {
-				strcpy(image->description, (char*) cur_node->children->content);
+//				strcpy(image->description, (char*) cur_node->children->content);
+				snprintf(image->description, 256, (char*) cur_node->children->content);
 				
 			}
 			
