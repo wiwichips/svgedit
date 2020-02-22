@@ -53,6 +53,7 @@ SVGimage* createValidSVGimage(char* fileName, char* schemaFile) {
 	
 	/// check if its valid, return NULL if it is invalid
 	if(!isValid) {
+		xmlFreeDoc(doc);
 		return NULL;
 	}
 	

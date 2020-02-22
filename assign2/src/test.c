@@ -22,62 +22,73 @@ int tesingGroups();
 int main(int argc, char **argv) {
 	putsError("createSVGimage");
 	int result = 0;
+	SVGimage* img2 = NULL;
 	
 //	SVGimage* img1 = createValidSVGimage("Wink_Brutal_Test_2.svg", "testFilesA2/svg.xsd");
-	SVGimage* img1 = createSVGimage("Big.svg");
+	SVGimage* img1 = createSVGimage("Wink_Brutal_Test_2.svg");
 	
 	if(!img1) {
 		puts("\timg1 is NULL");
 	}
 	
-	putsError("getGroups length");
-	List* g = getGroups(img1);
-	result = getLength(g);
-	printf("\tthe number of groups is: %d\t\tshold be 3\n", result);
-	freeList(g);
+	
+		putsError("getGroups length");
+		List* g = getGroups(img1);
+	if(img1) {
+		result = getLength(g);
+		printf("\tthe number of groups is: %d\n", result);
+		freeList(g);
+	}
+	
 	
 	putsError("getRects length");
 	List* r = getRects(img1);
-	printf("\tthe number of rectangles is: %d\t\tshould be 1\n", getLength(r));
-	freeList(r);
+	if(img1) {
+		printf("\tthe number of rectangles is: %d\n", getLength(r));
+		freeList(r);
+	}
 	
 	putsError("getCircles length");
 	List* c = getCircles(img1);
-	printf("\tthe number of circles is: %d\t\tshould be 5\n", getLength(c));
-	freeList(c);
+	if(img1) {
+		printf("\tthe number of circles is: %d\n", getLength(c));
+		freeList(c);
+	}
 	
 	putsError("getPaths length");
 	List* p = getPaths(img1);
-	printf("\tthe number of paths is: %d\t\tshould be 2\n", getLength(p));
-	freeList(p);
+	if(img1) {
+		printf("\tthe number of paths is: %d\n", getLength(p));
+		freeList(p);
+	}
+	
 	
 	putsError("SVGtoJSON string");
 	char* svgtojason = SVGtoJSON(img1);
-	printf("\tYour answer : %s\n", svgtojason);
-	printf("\tShould be   : %s\n", "{\"numRect\":1,\"numCirc\":5,\"numPaths\":2,\"numGroups\":3}");
+	printf("\tSVGtoJSON : %s\n", svgtojason);
 	free(svgtojason);
 
 	putsError("validateSVGimage");
 	if(validateSVGimage(img1, "testFilesA2/svg.xsd")) {
 		printf("validateSVGimage = true (:");
 	} else {
-		printf("validateSVGimage = false ): (this is incorrect)");
+		printf("validateSVGimage = false ):");
 	}
 	
+	if(img1) {
+		putsError("writeSVGimage (writes the svg you opened to file)");
+		printf("\twrite svg = %d\n", writeSVGimage(img1, "willTest.svg"));
 
-	putsError("writeSVGimage (writes the svg you opened to file)");
-	printf("\twrite svg = %d\n", writeSVGimage(img1, "willTest.svg"));
-
-	putsError("opens the svg you wrote to file");
-	SVGimage* img2 = createSVGimage("willTest.svg");
-	
-	putsError("validates the svg you wrote to file");
-	if(validateSVGimage(img2, "testFilesA2/svg.xsd")) {
-		printf("validateSVGimage = true (:");
-	} else {
-		printf("validateSVGimage = false ): (this is incorrect.. fuck you)");
+		putsError("opens the svg you wrote to file");
+		img2 = createSVGimage("willTest.svg");
+		
+		putsError("validates the svg you wrote to file");
+		if(validateSVGimage(img2, "testFilesA2/svg.xsd")) {
+			printf("validateSVGimage = true (:");
+		} else {
+			printf("validateSVGimage = false ):");
+		}
 	}
-	
 	
 	putsError("frees");
 	deleteSVGimage(img1);
@@ -121,7 +132,7 @@ int gain() {
 }
 
 void putsError(char* string) {
-	printf("\033[0;3%dm", testingNumber%7 + 1);
+	printf("\033[0;3%dm", testingNumber%6 + 1);
 	printf("\n\n%d:%s\n", testingNumber, string);
 	printf("\033[0m");
 	
