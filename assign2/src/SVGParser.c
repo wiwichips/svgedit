@@ -305,7 +305,6 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 		// variables for looping
 		i = 0;
 		
-		
 		itr = createIterator(list);
 		
 		// check for i
@@ -474,6 +473,9 @@ void addComponent(SVGimage* image, elementType type, void* newElement) {
 		case RECT:
 			insertBack(image->rectangles, newElement);
 			break;
+		case PATH:
+			insertBack(image->paths, newElement);
+			break;
 		case GROUP:
 			insertBack(image->paths, newElement);
 			break;
@@ -486,7 +488,6 @@ void addComponent(SVGimage* image, elementType type, void* newElement) {
 
 // returns true if there is another attribute ofthe same name
 bool isDuplicateAttribute(List* otherAttributes, Attribute* newAttribute) {
-
 	ListIterator itr = createIterator(otherAttributes);
 
 	for(Attribute* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {

@@ -20,6 +20,7 @@ void hen_and_chicksToFile();
 void david();
 void chris();
 void mainTestThing(char* fileName1, char* fileName2);
+int minDriver();
 
 
 SVGimage* SVGtest(char* fileName) {
@@ -393,11 +394,55 @@ void pathTest() {
  * Simple main for testing of library
  */
 int main() {
+/*
+	char* filename = "quad01.svg";
+
+    SVGimage* testImg = createSVGimage(filename);
+	
+	// create an attribute
+	Attribute* newA = malloc(sizeof(Attribute));
+	newA->name = calloc(64, sizeof(char));
+	newA->value = calloc(64, sizeof(char));
+	strcpy(newA->name, "cx");
+	strcpy(newA->value, "200");
+
+	Attribute* newA1 = malloc(sizeof(Attribute));
+	newA1->name = calloc(64, sizeof(char));
+	newA1->value = calloc(64, sizeof(char));
+	strcpy(newA1->name, "dog");
+	strcpy(newA1->value, "200");
+	
+	// attempt setting the attribute (replace)
+	setAttribute(testImg, CIRC, 0, newA);
+	
+	// attempt setting an attribute as NULL
+	setAttribute(testImg, CIRC, 0, NULL);
+	setAttribute(testImg, SVG_IMAGE, 0, NULL);
+	setAttribute(testImg, PATH, 0, NULL);
+	
+	// attempt setting the attribute (replace)
+	setAttribute(testImg, CIRC, 0, newA1);
+	
+	//
+	
+	
+    // delete svg image 
+	deleteSVGimage(testImg);
+*/
+
+
+	mainTestThing("quad01.svg", SCH);
+
+    return 0;
+}
+
+int minDriver() {
 
     SVGimage* test = SVGtestA2("quad01.svg", "testFilesA2/svg.xsd");
 	
 	
-    mainTestThing("quad01.svg", "testFilesA2/svg.xsd");
+    mainTestThing("quad01_A2.svg", "testFilesA2/svg.xsd");
+
 
     attributeTest();
     rectTest();
@@ -411,6 +456,7 @@ int main() {
     //JSONTest();
 
     deleteSVGimage(test);
+
 
     return 0;
 }
@@ -481,13 +527,13 @@ void mainTestThing(char* fileName1, char* fileName2) {
 
         newRect = (Rectangle*)calloc(1, sizeof(Rectangle));
         newCircle = (Circle*)calloc(1, sizeof(Circle));
-        newPath = (Path*)calloc(1, sizeof(Path));
-putsError("484");
+        newPath = (Path*)calloc(1, sizeof(Path));/////////////////////////////
+
         strcpy(tmpStr, "width");
 		memLen = strlen(tmpStr)+2;
 		newAttribute->name = (char*)malloc(sizeof(char)*memLen);
 		strcpy(newAttribute->name, tmpStr);
-putsError("489");
+
 		strcpy(tmpStr, "90000");
 		memLen = strlen(tmpStr)+2;
 		newAttribute->value = (char*)malloc(sizeof(char)*memLen);
@@ -496,12 +542,12 @@ putsError("489");
         testString = attrToJSON(newAttribute);
         printf ("%s\n", testString);
         free(testString);
-putsError("498");
+
         strcpy(tmpStr, "r");
 		memLen = strlen(tmpStr)+2;
 		newAttribute2->name = (char*)malloc(sizeof(char)*memLen);
 		strcpy(newAttribute2->name, tmpStr);
-putsError("503");
+
 		strcpy(tmpStr, "60");
 		memLen = strlen(tmpStr)+2;
 		newAttribute2->value = (char*)malloc(sizeof(char)*memLen);
@@ -510,7 +556,7 @@ putsError("503");
         testString = attrToJSON(newAttribute2);
         printf ("%s\n", testString);
         free(testString);
-putsError("512");
+
         strcpy(tmpStr, "data");
 		memLen = strlen(tmpStr)+2;
 		newAttribute3->name = (char*)malloc(sizeof(char)*memLen);
@@ -520,7 +566,7 @@ putsError("512");
 		memLen = strlen(tmpStr)+2;
 		newAttribute3->value = (char*)malloc(sizeof(char)*memLen);
 		strcpy(newAttribute3->value, tmpStr);
-putsError("522");
+
         strcpy(tmpStr, "fill");
 		memLen = strlen(tmpStr)+2;
 		newAttribute4->name = (char*)malloc(sizeof(char)*memLen);
@@ -530,7 +576,7 @@ putsError("522");
 		memLen = strlen(tmpStr)+2;
 		newAttribute4->value = (char*)malloc(sizeof(char)*memLen);
 		strcpy(newAttribute4->value, tmpStr);
-putsError("532");
+
         strcpy(tmpStr, "title");
 		memLen = strlen(tmpStr)+2;
 		newAttribute5->name = (char*)malloc(sizeof(char)*memLen);
@@ -540,7 +586,7 @@ putsError("532");
 		memLen = strlen(tmpStr)+2;
 		newAttribute5->value = (char*)malloc(sizeof(char)*memLen);
 		strcpy(newAttribute5->value, tmpStr);
-putsError("542");
+
         newRect->x = 30;
         newRect->y = 30;
         newRect->width = 100;
@@ -562,12 +608,13 @@ putsError("542");
         setAttribute(testImg, PATH, 0, newAttribute3);
         setAttribute(testImg, GROUP, 0, newAttribute4);
         setAttribute(testImg, SVG_IMAGE, 0, newAttribute5);
-putsError("564");
+
         addComponent(testImg, GROUP, newGroup);
         addComponent(testImg, RECT, newRect);
         addComponent(testImg, CIRC, newCircle);
         addComponent(testImg, PATH, newPath);
-putsError("569");
+
+/*
         if (writeSVGimage(testImg, "test") == false) {
             printf ("failed write\n");
         }
@@ -576,28 +623,12 @@ putsError("569");
         } else {
             printf ("validation success\n");
         }
-putsError("578");
-//        deleteSVGimage(testImg);
+*/
+
+        deleteSVGimage(testImg);
     }
-putsError("581 DONE");
 
-
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
-puts("I should not be getting a seg fault because the function is done running");
 	return;
-	
 }
 
 
