@@ -105,7 +105,20 @@ bool validateSVGimage(SVGimage* image, char* schemaFile) {
 bool validateHeaderConditions(SVGimage* image) {
 	ListIterator itr;
 	
+	// check ifthe lists are NULL
+	if(!image->rectangles || !image->circles || !image->paths || !image->groups) {
+		return false;
+	}
 	
+	// check if the arrays are NULL
+	if(!image->namespace || !image->title || !image->description) {
+		return false;
+	}
+	
+	// check if otherAttributes is NULL
+	if(!image->otherAttributes) {
+		return false;
+	}
 	
 	/// rectangle check
 //puts("rectangle check");
@@ -165,11 +178,11 @@ bool validateHeaderConditions(SVGimage* image) {
 	freeList(paths);
 	
 	/// group check
-	List* groups = getPaths(image);
+	List* groups = getGroups(image);
 	itr = createIterator(groups);
-	for(Path* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+	for(Group* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
 		// check basic conditions
-		if(!(data->data) || !(data->otherAttributes)) {
+		if(!(data->otherAttributes) || !(data->rectangles) || !(data->circles) || !(data->paths) || !(data->groups)) {
 			freeListDataStructure(groups);
 			return false;
 		}
@@ -182,13 +195,15 @@ bool validateHeaderConditions(SVGimage* image) {
 	}
 	freeList(groups);
 
-	
 	return true;
 }
 
 bool validateAttributesAgainstHeaderConditions(List* attributes) {
 	
-//	printf("attributes = %p\n", attributes);
+	// if the attributes list is NULL
+	if(!attributes) {
+		return false;
+	}
 	
 	ListIterator itr = createIterator(attributes);
 	for(Attribute* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
@@ -476,7 +491,8 @@ bool isDuplicateAttribute(List* otherAttributes, Attribute* newAttribute) {
 			
 			// copy the new value over
 			strcpy(data->value, newAttribute->value);
-
+			
+			// delete new attribute if its a duplicate
 			deleteAttribute(newAttribute);
 			return true;
 		}

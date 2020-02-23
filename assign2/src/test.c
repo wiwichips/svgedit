@@ -61,10 +61,10 @@ void chris() {
 	
 	if (true) {
         Attribute* atr = malloc(sizeof(Attribute));
-        char* name = calloc(50, sizeof(char));
-        char* value = calloc(50, sizeof(char));
-        strcpy(name, "fill");
-        strcpy(value, "asdfasdfasdfawqeasdf");
+        char* name = malloc(50);
+        char* value = malloc(50);
+        strncpy(name, "asdf", 40);
+        strncpy(value, "asdfasdfasdfawqeasdf", 40);
         atr->name = name;
         atr->value = value;
         setAttribute(image, RECT, 0, atr);
@@ -75,7 +75,6 @@ void chris() {
         if (validateSVGimage(image, "testFilesA2/svg.xsd") == 1) {
             writeSVGimage(image, "output.svg");
         }
-        
         
     }
 	
