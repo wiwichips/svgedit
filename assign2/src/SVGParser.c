@@ -2101,6 +2101,7 @@ char* SVGimageToString(SVGimage* img) {
  *@param obj - a pointer to an SVG struct
 **/
 void deleteSVGimage(SVGimage* img) {
+	
 	// check for NULL
 	if(img == NULL) {
 		return;
@@ -2115,6 +2116,7 @@ void deleteSVGimage(SVGimage* img) {
 	
 	// frees the space that held the struct
 	free(img);
+	
 }
 
 
