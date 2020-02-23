@@ -17,14 +17,71 @@ int gain();
 int tesingGroups();
 int oldmain(int argc, char **argv);
 void hen_and_chicksToFile();
+void david();
+void chris();
 
 int main() {
 	
-	oldmain(2, NULL);
+//	oldmain(2, NULL);
+//david();
+
+	chris();
 	
 	return 0;
 }
 
+void david() {
+	SVGimage* image = NULL;
+
+    char *SVGname = "Wink_Brutal_Test_21.svg";
+    char *XSDname = "testFilesA2/svg.xsd";
+
+
+    image = createValidSVGimage(SVGname, XSDname);
+
+    // image = createSVGimage(SVGname); // Create
+
+    Attribute* attribute = malloc(sizeof(Attribute));
+    attribute->name = malloc((strlen("d") + 1) * sizeof(char));
+    attribute->value = malloc((strlen("plzwork.....") + 1) * sizeof(char));
+
+    strcpy(attribute->name, "d");
+    strcpy(attribute->value, "plzwork.....");
+
+    setAttribute(image, PATH, 1, attribute);
+    writeSVGimage(image, "test.svg");
+    xmlCleanupParser();
+	deleteSVGimage(image);
+    return;
+}
+
+void chris() {
+	
+	SVGimage* image = createValidSVGimage("Wink_Brutal_Test_21.svg", "testFilesA2/svg.xsd");
+	
+	if (true) {
+        Attribute* atr = malloc(sizeof(Attribute));
+        char* name = calloc(50, sizeof(char));
+        char* value = calloc(50, sizeof(char));
+        strcpy(name, "fill");
+        strcpy(value, "asdfasdfasdfawqeasdf");
+        atr->name = name;
+        atr->value = value;
+        setAttribute(image, RECT, 0, atr);
+    }
+    if (true) {
+        printf("isvalid: %d\n", validateSVGimage(image, "testFilesA2/svg.xsd"));
+
+        if (validateSVGimage(image, "testFilesA2/svg.xsd") == 1) {
+            writeSVGimage(image, "output.svg");
+        }
+        
+        
+    }
+	
+	deleteSVGimage(image);
+	xmlCleanupParser();
+}
 
 int oldmain(int argc, char **argv) {
 	putsError("createSVGimage");

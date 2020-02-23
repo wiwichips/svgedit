@@ -463,12 +463,23 @@ bool isDuplicateAttribute(List* otherAttributes, Attribute* newAttribute) {
 
 	for(Attribute* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
 		
-		if(!strcmp(data->name, newAttribute->name)) {
+		// replace
+		if(strcmp(data->name, newAttribute->name) == 0) {
+//			strcpy(data->value, newAttribute->value);
+
+			// free the old value
+			free(data->value);
+			
+			// allocate space for the new value
+			data->value = calloc(strlen(newAttribute->value) + 1, sizeof(char));
+			data->value[0] = '\0';
+			
+			// copy the new value over
 			strcpy(data->value, newAttribute->value);
+
 			deleteAttribute(newAttribute);
 			return true;
 		}
-		
 	}
 	
 	return false;
