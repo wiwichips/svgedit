@@ -583,7 +583,7 @@ char* rectToJSON(const Rectangle *r) {
 	size = snprintf(NULL, 0, "{\"x\":%.2f,\"y\":%.2f,\"w\":%.2f,\"h\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}",r->x, r->y, r->width, r->height, getLength(r->otherAttributes), r->units);
 
 	// allocte space for the new string
-	string = calloc(size, sizeof(char));
+	string = calloc(size + 2, sizeof(char));
 	
 	// copy the json formatted text to the string
 	snprintf(string, size+1, "{\"x\":%.2f,\"y\":%.2f,\"w\":%.2f,\"h\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}",r->x, r->y, r->width, r->height, getLength(r->otherAttributes), r->units);
@@ -650,7 +650,7 @@ char* groupToJSON(const Group *g) {
 	size = snprintf(NULL, 0, "{\"children\":%d,\"numAttr\":%d}", numElements, getLength(g->otherAttributes));
 
 	// allocte space for the new string
-	string = calloc(size, sizeof(char));
+	string = calloc(size + 2, sizeof(char));
 	
 	// copy the json formatted text to the string
 	snprintf(string, size+1, "{\"children\":%d,\"numAttr\":%d}", numElements, getLength(g->otherAttributes));
@@ -666,6 +666,7 @@ char* attrListToJSON(const List *list) {
 	
 	char* string = NULL;
 	char* copy = NULL;
+	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
 	int size = 3;
@@ -682,16 +683,19 @@ char* attrListToJSON(const List *list) {
 		copy = calloc(size + 2, sizeof(char));
 		strcpy(copy, string);
 		
+		itemToJSON = attrToJSON(attData);
+		
 		// get new size of attData to json
-		size = snprintf(NULL, 0, "%s%s,D", string, attrToJSON(attData));
+		size = snprintf(NULL, 0, "%s%s,D", string, itemToJSON);
 		
 		// realloc space for this size
 		string = realloc(string, sizeof(char) * (size + 1));
 		
 		// copy old data to string
-		snprintf(string, size, "%s%s,D", copy, attrToJSON(attData));
+		snprintf(string, size, "%s%s,D", copy, itemToJSON);
 		
 		free(copy);
+		free(itemToJSON);
 	}
 	
 	string[size - 2] = ']';
@@ -845,6 +849,7 @@ char* groupListToJSON(const List *list) {
 	
 	char* string = NULL;
 	char* copy = NULL;
+	char* itemToJSON = NULL;
 	ListIterator itr = createIterator((List*) list);
 	
 	int size = 3;
@@ -861,16 +866,20 @@ char* groupListToJSON(const List *list) {
 		copy = calloc(size + 2, sizeof(char));
 		strcpy(copy, string);
 		
+		// get the item to json
+		itemToJSON = groupToJSON(data);
+		
 		// get new size of data to json
-		size = snprintf(NULL, 0, "%s%s,D", string, groupToJSON(data));
+		size = snprintf(NULL, 0, "%s%s,D", string, itemToJSON);
 		
 		// realloc space for this size
 		string = realloc(string, sizeof(char) * (size + 1));
 		
 		// copy old data to string
-		snprintf(string, size, "%s%s,D", copy, groupToJSON(data));
+		snprintf(string, size, "%s%s,D", copy, itemToJSON);
 		
 		free(copy);
+		free(itemToJSON);
 	}
 	
 	string[size - 2] = ']';
@@ -2373,7 +2382,12 @@ char* attributeToString( void* data) {
 		return NULL;
 	}
 	
-	return "attributeToString";
+	char* string = calloc(3, sizeof(char));
+	string[0] = 'a';
+	string[1] = '\0';
+	
+	
+	return string;
 }
 int compareAttributes(const void *first, const void *second) {
 	// check for NULL

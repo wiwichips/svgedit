@@ -4,7 +4,7 @@
 #include "SVGParser.h"
 #include "helper.h"
 
-#define sch "testFilesA2/svg.xsd"
+#define SCH "testFilesA2/svg.xsd"
 
 int testingNumber = 0;
 int debug = 0;
@@ -467,7 +467,7 @@ void mainTest(char* fileName1, char* fileName2) {
         testString = attrToJSON(newAttribute);
         printf ("%s\n", testString);
         free(testString);
-
+//
         strcpy(tmpStr, "r");
 		memLen = strlen(tmpStr)+2;
 		newAttribute2->name = (char*)malloc(sizeof(char)*memLen);
@@ -555,14 +555,14 @@ void mainTest(char* fileName1, char* fileName2) {
 /**
  * Simple main for testing of library
  */
-int main(int argc, char **argv) {
+int main() {
 
 
 //    SVGimage* test = SVGtestA2(argv[1], argv[2]);
     SVGimage* test = SVGtestA2("Wink_Brutal_Test_21.svg", "testFilesA2/svg.xsd");
 
 //    mainTest(argv[1], argv[2]);
-    mainTest("Wink_Brutal_Test_21.svg", "testFilesA2/svg.xsd");
+//    mainTest("Wink_Brutal_Test_21.svg", "testFilesA2/svg.xsd");
 
     attributeTest();
     rectTest();
