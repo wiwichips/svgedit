@@ -1162,8 +1162,20 @@ bool validateDoc(xmlDoc* doc, char* schemaFile) {
 	// use the file to get the cotext
 	context = xmlSchemaNewParserCtxt((const char*)schemaFile);
 
+	if(!context) {
+		xmlSchemaFreeParserCtxt(context);
+		xmlCleanupParser();
+		return false;
+	}
+
 	// create schema using context
 	schema = xmlSchemaParse(context);
+	
+	if(!schema) {
+		xmlSchemaFreeParserCtxt(context);
+		xmlCleanupParser();
+		return false;
+	}
 	
 	// create validcontext using schema
 	validContext = xmlSchemaNewValidCtxt(schema);
@@ -1171,13 +1183,13 @@ bool validateDoc(xmlDoc* doc, char* schemaFile) {
 	if(!validContext) {
 		xmlSchemaFree(schema);
 		xmlSchemaFreeParserCtxt(context);
-//		puts("validContext is bad");
-//		xmlSchemaFreeValidCtxt(validContext);
+		xmlCleanupParser();
 		return false;
 	}
 	
 	// check if it is valid
 	isValid = xmlSchemaValidateDoc(validContext, doc);
+	
 
 //	printf("isValid = %d\n", !isValid);
 	
@@ -1185,6 +1197,9 @@ bool validateDoc(xmlDoc* doc, char* schemaFile) {
 	xmlSchemaFree(schema);
 	xmlSchemaFreeParserCtxt(context);
 	xmlSchemaFreeValidCtxt(validContext);
+	
+	// cleanup
+	xmlCleanupParser();
 	
 //	puts("validateDoc");
 	return !isValid;

@@ -614,16 +614,18 @@ void mainTestThing(char* fileName1, char* fileName2) {
         addComponent(testImg, CIRC, newCircle);
         addComponent(testImg, PATH, newPath);
 
-/*
-        if (writeSVGimage(testImg, "test") == false) {
+
+        if (writeSVGimage(testImg, "test.svg") == false) {
             printf ("failed write\n");
         }
-        if (validateSVGimage(testImg, fileName2) == false){
+		
+
+        if (validateSVGimage(testImg, SCH) == false){
             printf ("validation failed\n");
         } else {
             printf ("validation success\n");
         }
-*/
+
 
         deleteSVGimage(testImg);
     }
