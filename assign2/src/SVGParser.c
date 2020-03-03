@@ -128,6 +128,11 @@ bool validateHeaderConditions(SVGimage* image) {
 		return false;
 	}
 	
+	// check if namespace is empty
+	if(image->namespace[0] == '\0') {
+		return false;
+	}
+	
 	// check if otherAttributes is NULL
 	if(!image->otherAttributes) {
 		return false;

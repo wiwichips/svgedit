@@ -431,7 +431,7 @@ int main() {
 */
 
 
-	mainTestThing("quad01.svg", SCH);
+	minDriver();
 
     return 0;
 }
@@ -441,7 +441,7 @@ int minDriver() {
     SVGimage* test = SVGtestA2("quad01.svg", "testFilesA2/svg.xsd");
 	
 	
-    mainTestThing("quad01_A2.svg", "testFilesA2/svg.xsd");
+    mainTestThing("quad01.svg", "testFilesA2/svg.xsd");
 
 
     attributeTest();
@@ -520,14 +520,14 @@ void mainTestThing(char* fileName1, char* fileName2) {
         freeList(groups);
 
         newAttribute = (Attribute*)calloc(1, sizeof(Attribute));
-        newAttribute2 = (Attribute*)calloc(1, sizeof(Attribute));
+        newAttribute2 = (Attribute*)calloc(1, sizeof(Attribute));///////////////
         newAttribute3 = (Attribute*)calloc(1, sizeof(Attribute));
         newAttribute4 = (Attribute*)calloc(1, sizeof(Attribute));
         newAttribute5 = (Attribute*)calloc(1, sizeof(Attribute));
 
         newRect = (Rectangle*)calloc(1, sizeof(Rectangle));
         newCircle = (Circle*)calloc(1, sizeof(Circle));
-        newPath = (Path*)calloc(1, sizeof(Path));/////////////////////////////
+        newPath = (Path*)calloc(1, sizeof(Path));
 
         strcpy(tmpStr, "width");
 		memLen = strlen(tmpStr)+2;
@@ -545,12 +545,12 @@ void mainTestThing(char* fileName1, char* fileName2) {
 
         strcpy(tmpStr, "r");
 		memLen = strlen(tmpStr)+2;
-		newAttribute2->name = (char*)malloc(sizeof(char)*memLen);
+		newAttribute2->name = (char*)malloc(sizeof(char)*memLen);///////////////
 		strcpy(newAttribute2->name, tmpStr);
 
 		strcpy(tmpStr, "60");
 		memLen = strlen(tmpStr)+2;
-		newAttribute2->value = (char*)malloc(sizeof(char)*memLen);
+		newAttribute2->value = (char*)malloc(sizeof(char)*memLen);//////////////
 		strcpy(newAttribute2->value, tmpStr);
 
         testString = attrToJSON(newAttribute2);
