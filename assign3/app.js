@@ -71,6 +71,16 @@ app.get('/uploads/:name', function(req , res){
 
 //******************** Your code goes here ******************** 
 
+
+
+// does nothing
+// app.getElementById("willTest").innerHTML = "itworked?";
+
+/*
+
+
+*/
+
 //Sample endpoint
 app.get('/someendpoint', function(req , res){
   let retStr = req.query.name1 + " " + req.query.name2;

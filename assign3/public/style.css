@@ -4,13 +4,17 @@ html {
     min-height: 100%;
     margin: 0 auto;
     font-size: 16px;
-    background-color: #FFFFFF;
+    background-color: #ffe;
+	color: maroon;
+	font-family: "Times New Roman", Times, serif;
 }
 body {
     height: 100%;
     min-height: 100%;
     line-height: 1.75;
-    background-color: #FFFFFF;
+    background-color: #f0e0d6;
+	color: maroon;
+	font-family: "Times New Roman", Times, serif;
 }
 a:link:hover {
     -webkit-transition: all 0.3s ease;
@@ -19,26 +23,39 @@ a:link:hover {
     text-decoration: underline;
     cursor: pointer;
     cursor: hand;
+	color: maroon;
+	font-family: "Times New Roman", Times, serif;
 }
 input[type=submit], button {
     cursor: pointer;
     cursor: hand;
+	background-color: white;
+	border-color: light grey;
+	color: maroon;
+	font-family: "Times New Roman", Times, serif;
+	
 }
 @media(max-width: 900px) {
     html {
         font-size: 14px !important;
         width: 80% !important;
+		color: maroon;
+		font-family: "Times New Roman", Times, serif;
     }
 }
 @media(max-width: 480px) {
     html {
         font-size: 12px !important;
         width: 90% !important;
+		color: maroon;
+		font-family: "Times New Roman", Times, serif;
     }
 }
 @media(max-width: 320px) {
     html {
         font-size: 12px !important;
         width: 100% !important;
+		color: maroon;
+		font-family: "Times New Roman", Times, serif;
     }
 }
