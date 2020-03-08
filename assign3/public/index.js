@@ -38,10 +38,9 @@ $(document).ready(function() {
         $.ajax({
 			type: 'get',            //Request type
 			dataType: 'json',       //Data type - we will use JSON for almost everything 
-			url: '/upload',   //The server endpoint we are connecting to
+			url: '/test',   //The server endpoint we are connecting to
 			data: {
 				name1: $('#entryBox').val(),
-				name2: "Value 2"
 			},
 			success: function (data) {
 				console.log('write object to screen on page load: ' + data.foo); 

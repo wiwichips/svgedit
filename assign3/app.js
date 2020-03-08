@@ -72,18 +72,18 @@ app.get('/uploads/:name', function(req , res){
 //******************** Your code goes here ******************** 
 
 
+let testString = '';
+app.get('/test', function(req , res){
+	console.log(req.query.name1 + '   ' + testString);
+	
+	let retStr = req.query.name1 + " " + testString;
 
-app.get('/upload', function(req , res){
-	let retStr = req.query.name1 + " " + req.query.name2;
-
-	console.log(req.query.name1 + '   ' + req.query.name2);
-
+	testString = req.query.name1
+	
 	res.send({
 		foo: retStr
 	});
 });
-
-
 
 
 //Sample endpoint
