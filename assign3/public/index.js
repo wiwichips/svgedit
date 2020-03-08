@@ -15,9 +15,10 @@ $(document).ready(function() {
                 so we do not need to parse it on the server.
                 JavaScript really does handle JSONs seamlessly
             */
+			
             $('#blah').html("On page load, received string '"+data.foo+"' from server");
             //We write the object to the console to show that the request was successful
-            console.log(data); 
+            console.log('write object to screen on page load: ' + data); 
 
         },
         fail: function(error) {
@@ -30,11 +31,30 @@ $(document).ready(function() {
     // Event listener form example , we can use this instead explicitly listening for events
     // No redirects if possible
     $('#someform').submit(function(e){
-        $('#blah').html("Form has data: "+$('#entryBox').val());
+		console.log('value in entry box = ' + $('#entryBox').val());
         e.preventDefault();
+		
         //Pass data to the Ajax call, so it gets passed to the server
         $.ajax({
-            //Create an object for connecting to another waypoint
-        });
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/upload',   //The server endpoint we are connecting to
+			data: {
+				name1: $('#entryBox').val(),
+				name2: "Value 2"
+			},
+			success: function (data) {
+				console.log('write object to screen on page load: ' + data.foo); 
+
+			},
+			fail: function(error) {
+				console.log(error); 
+			}
+		});
     });
+	
+
+	
+	
+	
 });

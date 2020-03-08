@@ -73,21 +73,29 @@ app.get('/uploads/:name', function(req , res){
 
 
 
-// does nothing
-// app.getElementById("willTest").innerHTML = "itworked?";
+app.get('/upload', function(req , res){
+	let retStr = req.query.name1 + " " + req.query.name2;
 
-/*
+	console.log(req.query.name1 + '   ' + req.query.name2);
+
+	res.send({
+		foo: retStr
+	});
+});
 
 
-*/
+
 
 //Sample endpoint
 app.get('/someendpoint', function(req , res){
   let retStr = req.query.name1 + " " + req.query.name2;
+  
+  console.log(req.query.name1 + '   ' + req.query.name2);
+  
   res.send({
     foo: retStr
   });
 });
 
 app.listen(portNum);
-console.log('Running app at localhost: ' + portNum);
+console.log('Running app at localhost: ' + portNum + '!!');
