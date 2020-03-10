@@ -52,8 +52,30 @@ $(document).ready(function() {
 		});
     });
 	
+	$('#uploadForm').submit(function(e) {
+		e.preventDefault();
 
-	
-	
+		var form = document.getElementById('uploadForm');
+		var formData = new FormData(form);
+		
+		$.ajax({
+			type: "POST",
+			url: '/upload',
+			data: formData,
+			contentType: false,
+			processData: false,
+			cache: false,
+			
+			beforeSend: function() {
+				// 
+			},
+			success: function(msg) {
+				console.log();
+			},
+			error: function() {
+				// error
+			}
+		});
+	});
 	
 });

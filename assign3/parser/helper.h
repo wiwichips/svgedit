@@ -15,11 +15,6 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-
-/// extra helper functions for a3
-char* printHelloWorld(int num);
-
-
 /// bonus functions a3
 SVGimage* createEmptySVG();
 

@@ -41,6 +41,9 @@ app.get('/index.js',function(req,res){
 
 //Respond to POST requests that upload files to uploads/ directory
 app.post('/upload', function(req, res) {
+	
+	console.log('upload called on ' + req);
+	
   if(!req.files) {
     return res.status(400).send('No files were uploaded.');
   }
@@ -71,15 +74,44 @@ app.get('/uploads/:name', function(req , res){
 
 //******************** Your code goes here ******************** 
 
+/*
+let libm = ffi.Library('libm', {
+  'ceil': [ 'double', [ 'double' ] ]
+});
+console.log(libm.ceil(1.5)); // 2
+ 
+// You can also access just functions in the current process by passing a null
+let current = ffi.Library(null, {
+  'atoi': [ 'int', [ 'string' ] ]
+});
+console.log(current.atoi('1234')); // 1234
+*/
 
+// functions from shared library to use
+let libsvgparse = ffi.Library('parser/libsvgparse', {
+	// test functions
+	'floatToString': [ 'string', [ 'float' ] ],
+	'printHelloWorld': [ 'string', [ 'int' ] ],
+	'createValidSVGimage': ['Object', ['string', 'string']],
+	// 
+});
+
+
+
+console.log(libsvgparse.floatToString(33.3));
+console.log(libsvgparse.printHelloWorld(1));
+
+console.log(libsvgparse.createValidSVGimage('uploads/rects.svg', 'parser/svg.xsd').description);
+
+
+
+// simple example endpoint where server stores information
 let testString = '';
 app.get('/test', function(req , res){
 	console.log(req.query.name1 + '   ' + testString);
 	
 	let retStr = req.query.name1 + " " + testString;
-
 	testString = req.query.name1
-	
 	res.send({
 		foo: retStr
 	});
