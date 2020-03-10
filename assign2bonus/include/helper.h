@@ -19,6 +19,7 @@
 /// extra helper functions for a3
 char* printHelloWorld(int num);
 
+char* JSONcreateValidSVG(char* fileName, char* schemaFile);
 
 /// bonus functions a3
 SVGimage* createEmptySVG();

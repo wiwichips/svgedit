@@ -59,3 +59,11 @@ input[type=submit], button {
 		font-family: "Times New Roman", Times, serif;
     }
 }
+.scrollit {
+    overflow:scroll;
+    height:800px;
+}
+img.resize {
+  width:200px;
+  height:200px;
+}

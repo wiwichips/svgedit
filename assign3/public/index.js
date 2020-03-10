@@ -30,7 +30,7 @@ $(document).ready(function() {
 
     // Event listener form example , we can use this instead explicitly listening for events
     // No redirects if possible
-    $('#someform').submit(function(e){
+/*    $('#someform').submit(function(e){
 		console.log('value in entry box = ' + $('#entryBox').val());
         e.preventDefault();
 		
@@ -50,6 +50,70 @@ $(document).ready(function() {
 				console.log(error); 
 			}
 		});
+    });*/
+	
+	// set the file log table on page load
+	//Pass data to the Ajax call, so it gets passed to the server
+	$.ajax({
+		type: 'get',            //Request type
+		dataType: 'json',       //Data type - we will use JSON for almost everything 
+		url: '/getSVGJSON',   //The server endpoint we are connecting to
+		data: {
+			name1: 'hen_and_chicks.svg'
+		},
+		success: function (data) {
+			// console.log('write object to screen on page load: ' + data.foo); 
+			// $('#imagePath').src = "hen_and_chicks.svg";
+			
+			/// add all the files into the file log
+			for(let i = 0; i < data.foo.length; i++) {
+			
+				let imageFileName = data.foo[i].name;
+			
+				$('#testTable').append('<tbody>');
+				$('#testTable').append('<tr>');
+				$('#testTable').append('<th><img class="resize" src="' + imageFileName + '"></th>');
+				$('#testTable').append('<th><a href="' + imageFileName + '">' + imageFileName + '</a></th>');
+				$('#testTable').append('<th>' + data.foo[i].size + ' kb</th>');
+				$('#testTable').append('<th>' + data.foo[i].numRect + '</th>');
+				$('#testTable').append('<th>' + data.foo[i].numCirc + '</th>');
+				$('#testTable').append('<th>' + data.foo[i].numPaths + '</th>');
+				$('#testTable').append('<th>' + data.foo[i].numGroups + '</th>');
+				$('#testTable').append('</tr>');
+				$('#testTable').append('</tbody>');
+				
+			}
+			
+			// if there are no files, just append NO FILES
+			$('#testTable').append('<p>NO FILES</p>');
+			
+		},
+		fail: function(error) {
+			console.log(error); 
+		}
+	});
+	
+	
+	
+	$('#someform').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/someendpoint',   //The server endpoint we are connecting to
+			data: {
+				name1: $('#entryBox').val(),
+			},
+			success: function (data) {
+				console.log(data.boo);
+				
+			},
+			fail: function(error) {
+				console.log(error); 
+			}
+		});
     });
 	
 	$('#uploadForm').submit(function(e) {
@@ -60,7 +124,7 @@ $(document).ready(function() {
 		
 		$.ajax({
 			type: "POST",
-			url: '/upload',
+			url: '/validUpload',
 			data: formData,
 			contentType: false,
 			processData: false,

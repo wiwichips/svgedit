@@ -15,6 +15,11 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+bool validateSVGfile(char* fileName, char* schemaFile);
+
+
+
+
 /// bonus functions a3
 SVGimage* createEmptySVG();
 

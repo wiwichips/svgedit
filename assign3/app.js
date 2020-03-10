@@ -40,10 +40,7 @@ app.get('/index.js',function(req,res){
 });
 
 //Respond to POST requests that upload files to uploads/ directory
-app.post('/upload', function(req, res) {
-	
-	console.log('upload called on ' + req);
-	
+app.post('/upload', function(req, res) {	
   if(!req.files) {
     return res.status(400).send('No files were uploaded.');
   }
@@ -74,40 +71,72 @@ app.get('/uploads/:name', function(req , res){
 
 //******************** Your code goes here ******************** 
 
-/*
-let libm = ffi.Library('libm', {
-  'ceil': [ 'double', [ 'double' ] ]
-});
-console.log(libm.ceil(1.5)); // 2
- 
-// You can also access just functions in the current process by passing a null
-let current = ffi.Library(null, {
-  'atoi': [ 'int', [ 'string' ] ]
-});
-console.log(current.atoi('1234')); // 1234
-*/
 
-// functions from shared library to use
+/// functions from shared library to use
 let libsvgparse = ffi.Library('parser/libsvgparse', {
 	// test functions
 	'floatToString': [ 'string', [ 'float' ] ],
 	'printHelloWorld': [ 'string', [ 'int' ] ],
-	'createValidSVGimage': ['Object', ['string', 'string']],
-	// 
+	'JSONcreateValidSVG': ['string', ['string', 'string']],
+	'validateSVGfile': ['int', ['string', 'string']],
+});
+
+
+/// end points
+
+// getSVGJSON - returns an array of SVG objects with a filename 
+app.get('/getSVGJSON', function(req , res){
+	// create array
+	let img = [];
+	let totalFiles = 0;
+	let fileNames = fs.readdirSync('uploads'); // get files
+
+	// loop through each file
+	for(let i = 0; i < fileNames.length; i++) {
+		img.push(JSON.parse(libsvgparse.JSONcreateValidSVG('uploads/'+ fileNames[i] +'', 'parser/svg.xsd')));
+		img[i].name = fileNames[i];
+		img[i].size = (fs.statSync('uploads/' + fileNames[i])["size"]) / 1000;
+	}
+	
+	// send the thing
+	res.send({
+		foo: img
+	});
+});
+
+// validUpload - same as /upload except it checks if the svg passed is valid and deletes invalid svgs
+app.post('/validUpload', function(req, res) {
+
+	console.log('upload called on ' + req);
+
+	if(!req.files) {
+		return res.status(400).send('No files were uploaded.');
+	}
+
+	let uploadFile = req.files.uploadFile;
+
+	// Use the mv() method to place the file somewhere on your server
+	uploadFile.mv('uploads/' + uploadFile.name, function(err) {
+	if(err) {
+		return res.status(500).send(err);
+	}
+	
+	// check if the file is valid
+	if(libsvgparse.validateSVGfile('uploads/' + uploadFile.name,'parser/svg.xsd') == 0) {
+		// if the file is invalid, delete it
+		fs.unlinkSync('uploads/' + uploadFile.name)
+		// console.log('deleted ' + uploadFile.name);
+	}
+
+	res.redirect('/');
+	});
 });
 
 
 
-console.log(libsvgparse.floatToString(33.3));
-console.log(libsvgparse.printHelloWorld(1));
-
-console.log(libsvgparse.createValidSVGimage('uploads/rects.svg', 'parser/svg.xsd').description);
-
-
-
-// simple example endpoint where server stores information
-let testString = '';
-app.get('/test', function(req , res){
+/// test endpoints
+// test end point
+app.get('/get', function(req , res){
 	console.log(req.query.name1 + '   ' + testString);
 	
 	let retStr = req.query.name1 + " " + testString;
@@ -118,16 +147,20 @@ app.get('/test', function(req , res){
 });
 
 
+let holder = 'hello';
 //Sample endpoint
 app.get('/someendpoint', function(req , res){
-  let retStr = req.query.name1 + " " + req.query.name2;
+  let retStr = req.query.name1 + " " + holder;
   
-  console.log(req.query.name1 + '   ' + req.query.name2);
+  console.log(req.query.name1 + '   ' + holder);
+  
+  holder = req.query.name1;
   
   res.send({
-    foo: retStr
+    boo: retStr
   });
 });
+
 
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum + '!!');

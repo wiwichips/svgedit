@@ -30,6 +30,24 @@ char* printHelloWorld(int num) {
 	return string;
 }
 
+char* JSONcreateValidSVG(char* fileName, char* schemaFile) {
+	char* JSONstring = NULL;
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	JSONstring = SVGtoJSON(image);
+	
+	deleteSVGimage(image);
+	
+	return JSONstring;
+}
+
+bool validateSVGfile(char* fileName, char* schemaFile) {
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	bool result = validateSVGimage(image, schemaFile);
+	deleteSVGimage(image);
+	return result;
+}
+
 // A2 bonus functions
 SVGimage* createEmptySVG() {
 	// allocate space for the image
