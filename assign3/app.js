@@ -148,6 +148,17 @@ app.get('/createSVG', function(req, res) {
 	});
 });
 
+// svgDetails - returns all details for an SVG needed by View SVG
+app.get('/svgDetails', function(req, res) {
+	
+	
+	
+	res.send({
+		foo: 'worked'
+	});
+});
+
+
 
 /// test endpoints
 // test end point

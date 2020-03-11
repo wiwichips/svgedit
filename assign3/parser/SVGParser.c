@@ -94,6 +94,83 @@ bool createNewSVGimageAndWriteToFile(char* schemaFile, char* fileName, char* tit
 
 
 
+char* circleToJSONfromValidFile(char* fileName, char* schemaFile) {
+	char* result = NULL;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) { // if image invlaid then return empty array
+		result = calloc(4, sizeof(char));
+		strcpy(result, "[]");
+	}
+	else { // otherwise
+		result = circListToJSON(getCircles(image));
+	}
+	
+	deleteSVGimage(image);
+	
+	return result;
+}
+
+char* rectToJSONfromValidFile(char* fileName, char* schemaFile) {
+	char* result = NULL;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) { // if image invlaid then return empty array
+		result = calloc(4, sizeof(char));
+		strcpy(result, "[]");
+	}
+	else { // otherwise
+		result = rectListToJSON(getRects(image));
+	}
+	
+	deleteSVGimage(image);
+	
+	return result;
+}
+
+
+char* pathToJSONfromValidFile(char* fileName, char* schemaFile) {
+	char* result = NULL;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) { // if image invlaid then return empty array
+		result = calloc(4, sizeof(char));
+		strcpy(result, "[]");
+	}
+	else { // otherwise
+		result = pathListToJSON(getPaths(image));
+	}
+	
+	deleteSVGimage(image);
+	
+	return result;
+}
+
+
+char* groupToJSONfromValidFile(char* fileName, char* schemaFile) {
+	char* result = NULL;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) { // if image invlaid then return empty array
+		result = calloc(4, sizeof(char));
+		strcpy(result, "[]");
+	}
+	else { // otherwise
+		result = groupListToJSON(getGroups(image));
+	}
+	
+	deleteSVGimage(image);
+	
+	return result;
+}
 
 
 

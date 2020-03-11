@@ -165,4 +165,30 @@ $(document).ready(function() {
 		});
     });
 	
+	$('#viewPanelForm').submit(function(e) {
+		e.preventDefault();
+		let optionChosen = 'hen_and_chicks.svg';
+		
+		// call the function that returns the informaton about the svg
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				// title 
+				// description
+				// base level info about the svg // other attributes
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+		
+		
+	});
+	
 });

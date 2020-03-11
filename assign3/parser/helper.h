@@ -19,6 +19,11 @@ bool validateSVGfile(char* fileName, char* schemaFile);
 
 bool createNewSVGimageAndWriteToFile(char* schemaFile, char* fileName, char* title, char* description);
 
+char* circleToJSONfromValidFile(char* fileName, char* schemaFile);
+char* rectToJSONfromValidFile(char* fileName, char* schemaFile);
+char* pathToJSONfromValidFile(char* fileName, char* schemaFile);
+char* groupToJSONfromValidFile(char* fileName, char* schemaFile);
+
 
 /// bonus functions a3
 SVGimage* createEmptySVG();
