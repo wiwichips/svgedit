@@ -167,7 +167,7 @@ $(document).ready(function() {
 	
 	$('#viewPanelForm').submit(function(e) {
 		e.preventDefault();
-		let optionChosen = 'hen_and_chicks.svg';
+		let optionChosen = 'rect.svg';
 		
 		// call the function that returns the informaton about the svg
 		$.ajax({
@@ -178,9 +178,8 @@ $(document).ready(function() {
 				filename: optionChosen,
 			},
 			success: function (data) {
-				// title 
-				// description
-				// base level info about the svg // other attributes
+				console.log('title = ' + data.foo.title);
+				console.log('description = ' + data.foo.description);
 				
 			},
 			fail: function(error) {

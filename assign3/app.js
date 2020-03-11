@@ -80,6 +80,12 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'JSONcreateValidSVG': ['string', ['string', 'string']],
 	'validateSVGfile': ['int', ['string', 'string']],
 	'createNewSVGimageAndWriteToFile': ['int', ['string', 'string', 'string', 'string']],
+	'circleToJSONfromValidFile': ['string', ['string', 'string']],
+	'rectToJSONfromValidFile': ['string', ['string', 'string']],
+	'pathToJSONfromValidFile': ['string', ['string', 'string']],
+	'groupToJSONfromValidFile': ['string', ['string', 'string']],
+	'getTitle': ['string', ['string', 'string']],
+	'getDescription': ['string', ['string', 'string']],
 });
 
 
@@ -104,6 +110,7 @@ app.get('/getSVGJSON', function(req , res){
 		foo: img
 	});
 });
+
 
 // validUpload - same as /upload except it checks if the svg passed is valid and deletes invalid svgs
 app.post('/validUpload', function(req, res) {
@@ -151,10 +158,22 @@ app.get('/createSVG', function(req, res) {
 // svgDetails - returns all details for an SVG needed by View SVG
 app.get('/svgDetails', function(req, res) {
 	
+	// console.log(req.query.filename);
 	
+	var details = new Object();
+	
+	// get title and description
+	details.description = libsvgparse.getDescription('uploads/'+ req.query.filename +'', 'parser/svg.xsd');
+	details.title = libsvgparse.getTitle('uploads/'+ req.query.filename +'', 'parser/svg.xsd');
+	
+	// get the lists of shapes
+	details.circles = JSON.parse(libsvgparse.circleToJSONfromValidFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd'));
+	details.rectangles = JSON.parse(libsvgparse.rectToJSONfromValidFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd'));
+	details.paths = JSON.parse(libsvgparse.pathToJSONfromValidFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd'));
+	details.groups = JSON.parse(libsvgparse.groupToJSONfromValidFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd'));
 	
 	res.send({
-		foo: 'worked'
+		foo: details
 	});
 });
 

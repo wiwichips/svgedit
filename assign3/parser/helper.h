@@ -25,6 +25,9 @@ char* pathToJSONfromValidFile(char* fileName, char* schemaFile);
 char* groupToJSONfromValidFile(char* fileName, char* schemaFile);
 
 
+char* getTitle(char* fileName, char* schemaFile);
+char* getDescription(char* fileName, char* schemaFile);
+
 /// bonus functions a3
 SVGimage* createEmptySVG();
 

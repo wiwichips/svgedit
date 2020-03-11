@@ -92,7 +92,49 @@ bool createNewSVGimageAndWriteToFile(char* schemaFile, char* fileName, char* tit
 	return result;
 }
 
+char* getTitle(char* fileName, char* schemaFile) {
+	char* result = NULL;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) { // if image invlaid then return empty array
+		result = calloc(4, sizeof(char));
+		strcpy(result, "{}");
+	}
+	else { // otherwise
+		result = calloc(strlen(image->title) + 10, sizeof(char));
+		strcpy(result, image->title);
+		// result[0] = 'A';
+		
+	}
+	
+	deleteSVGimage(image);
+	
+	return result;
+}
 
+
+
+char* getDescription(char* fileName, char* schemaFile) {
+	char* result = NULL;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) { // if image invlaid then return empty array
+		result = calloc(4, sizeof(char));
+		strcpy(result, "{}");
+	}
+	else { // otherwise
+		result = calloc(strlen(image->description) + 10, sizeof(char));
+		strcpy(result, image->description);
+	}
+	
+	deleteSVGimage(image);
+	
+	return result;
+}
 
 char* circleToJSONfromValidFile(char* fileName, char* schemaFile) {
 	char* result = NULL;
