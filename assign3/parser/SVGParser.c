@@ -57,35 +57,24 @@ bool createNewSVGimageAndWriteToFile(char* schemaFile, char* fileName, char* tit
 	strcpy(image->description, description);
 	strcpy(image->title, title);
 	
-	// check if the last three characters end in svg
-	if(strlen(fileName) > 4) {
-		
-		if(fileName[strlen(fileName) -1] == 'g') {
-			if(fileName[strlen(fileName) -2] == 'v') {
-				if(fileName[strlen(fileName) -3] == 's')  {
-					result = true;
-				}
-				else {
-					result = false;
-				}
-			}
-			else {
-				result = false;
-			}
-		} else {
-			result = false;
-		}
-		
+	//append a .svg to the end if there isn't one already
+	if(strlen(fileName) > 4 && !strcmp(&(fileName[strlen(fileName) - 4]), ".svg")) {
+		// printf("fileName > 4 && !strcmp(&(fileName[strlen(fileName) - 4]), \n");
 	} else {
-		result = false;
+		// allocate new memory
+		char* temp = calloc(strlen(fileName) + 5, sizeof(char));
+		strcpy(temp, fileName);
+		strcat(temp, ".svg");
+		fileName = temp;
 	}
+	
+	// check if its valid
+	result = validateSVGimage(image, schemaFile);
 	
 	if(result == false) {
 		deleteSVGimage(image);
 		return false;
 	}
-	
-	// puts("c - got this far");
 	
 	result = writeSVGimage(image, fileName);
 	
@@ -270,6 +259,15 @@ SVGimage* createEmptySVG() {
 	image->paths = initializeList(&rectangleToString, &deletePath, &comparePaths);
 	image->groups = initializeList(&groupToString, &deleteGroup, &comparePaths);
 	image->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
+	
+	// create a viewbox attribute
+	Attribute* vb = calloc(sizeof(Attribute), 1);
+	vb->name  = calloc(strlen("viewBox") + 5, sizeof(char));
+	strcpy(vb->name, "viewBox");
+	vb->value  = calloc(strlen("0 0 1200 600") + 5, sizeof(char));
+	strcpy(vb->value, "0 0 1200 600");
+	
+	insertBack(image->otherAttributes, vb);
 	
 	// return it
 	return image;

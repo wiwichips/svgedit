@@ -145,12 +145,12 @@ app.post('/validUpload', function(req, res) {
 // createSVG - creates an svg from the client
 app.get('/createSVG', function(req, res) {
 	
-	console.log('filename = ' + req.query.filename);
-	console.log('title = ' + req.query.title);
-	console.log('description = ' + req.query.description);
+	// console.log('filename = ' + req.query.filename);
+	// console.log('title = ' + req.query.title);
+	// console.log('description = ' + req.query.description);
 	
 	// create svgImage with filename titlt description and write to file
-	console.log(libsvgparse.createNewSVGimageAndWriteToFile('parser/svg.xsd', 'uploads/' + req.query.filename, req.query.title, req.query.description));
+	console.log('createSVG = ' + libsvgparse.createNewSVGimageAndWriteToFile('parser/svg.xsd', 'uploads/' + req.query.filename, req.query.title, req.query.description));
 
 	res.send({
 		foo: 'worked'
@@ -160,7 +160,11 @@ app.get('/createSVG', function(req, res) {
 // svgDetails - returns all details for an SVG needed by View SVG
 app.get('/svgDetails', function(req, res) {
 	
-	// console.log(req.query.filename);
+	console.log(req.query.filename);
+	if(req.query.filename === '') {
+		
+	}
+		
 	
 	var details = new Object();
 	

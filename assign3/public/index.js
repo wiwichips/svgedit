@@ -52,8 +52,7 @@ $(document).ready(function() {
 		});
     });*/
 	
-	// set the file log table on page load
-	//Pass data to the Ajax call, so it gets passed to the server
+	// set the file log table and select drop list on page load 
 	$.ajax({
 		type: 'get',            //Request type
 		dataType: 'json',       //Data type - we will use JSON for almost everything 
@@ -84,8 +83,19 @@ $(document).ready(function() {
 				
 			}
 			
+			// also add these to the svgDropDown list
+			for(let i = 0; i < data.foo.length; i++) {
+				
+				let imageFileName = data.foo[i].name;
+				
+				$('#svgDropDown').append('<option>' + imageFileName + '</option>');
+				
+			}
+			
 			// if there are no files, just append NO FILES
-			$('#testTable').append('<p>NO FILES</p>');
+			if(data.foo.length === 0) {
+				$('#testTable').append('<p>NO FILES</p>');
+			}
 			
 		},
 		fail: function(error) {
@@ -165,11 +175,12 @@ $(document).ready(function() {
 		});
     });
 	
-	let optionChosen = 'rect.svg';
-	
+	let optionChosen = 'temp';
+/*
 	$('#viewPanelForm').submit(function(e) {
 		e.preventDefault();
 		optionChosen = 'rect.svg';
+		
 		
 		// call the function that returns the informaton about the svg
 		$.ajax({
@@ -195,7 +206,35 @@ $(document).ready(function() {
 		
 		
 	});
+	*/
 	
+	$('#svgDropDown').change(function () {
+		let str = "";
+		$( "select option:selected" ).each(function() {
+			str += $( this ).text();
+		});
+		
+		// set option Chosen to the option the user clicked
+		optionChosen = str;
+console.log(optionChosen);
+
+		// get the information about the svg from the backend
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				htmlFormattingForViewPanel(data.foo, optionChosen);
+			},
+			fail: function(error) {
+				
+			}
+		});
+
+	}).change();
 	
 	$('#changeTitleForm').submit(function(e){
         e.preventDefault();
@@ -240,5 +279,115 @@ $(document).ready(function() {
 			}
 		});
     });
+	
+	// adds table formatting for the svg view panel
+	function htmlFormattingForViewPanel(svgObject, filename) {
+		
+		// dont do anything if the string is empty
+		if(optionChosen === '') {
+			console.log('y1');
+			return;
+		}
+		
+		// kill the children to make room for the new table
+		$('#SVGviewPanel').empty();
+		
+		// create table for image
+		$('#SVGviewPanel').append('<table class="table table-fixed" border="2">');
+			$('#SVGviewPanel').append('<th><img class="resize" src="' + filename + '"></th>');
+		$('#SVGviewPanel').append('</table>');
+		
+		// create table for title and description
+		$('#SVGviewPanel').append('<table class="table table-fixed" border="2">');
+			$('#SVGviewPanel').append('<tr>');
+				$('#SVGviewPanel').append('<th style="text-align:center">Title<th>');
+				$('#SVGviewPanel').append('<th style="text-align:center">Description<th>');
+			$('#SVGviewPanel').append('</tr>');
+			$('#SVGviewPanel').append('<tr>');
+				$('#SVGviewPanel').append('<td>' + svgObject.title + '<th>');
+				$('#SVGviewPanel').append('<td>' + svgObject.description + '<th>');
+			$('#SVGviewPanel').append('</tr>');
+		$('#SVGviewPanel').append('</table>');
+		
+		// create tabe for components
+		$('#SVGviewPanel').append('<table class="table table-fixed" border="2">');
+			$('#SVGviewPanel').append('<tr>');
+				$('#SVGviewPanel').append('<th style="text-align:center">Component</th>');
+				$('#SVGviewPanel').append('<th style="text-align:center">Summary</th>');
+				$('#SVGviewPanel').append('<th style="text-align:center">Other Attributes</th>');
+			$('#SVGviewPanel').append('</tr>');
+		$('#SVGviewPanel').append('</table>');
+		
+		// populate componenets table
+		// circles
+		for(let i = 1; i < svgObject.circles.length + 1; i++) {
+			$('#SVGviewPanel').append('<tr>');
+				// componenet number
+				$('#SVGviewPanel').append('<td style="text-align:left">Circle ' + i + '</td>');
+				
+				// componenet summary
+				$('#SVGviewPanel').append('<td style="text-align:center">x = ' 
+				+ svgObject.circles[i - 1].cx
+				+ ' y = ' + svgObject.circles[i - 1].cy 
+				+ ' r = ' + svgObject.circles[i - 1].r
+				+ ' units = ' + svgObject.circles[i - 1].units
+				+ '</td>');
+				
+				// componenet other attributes
+				$('#SVGviewPanel').append('<td style="text-align:right">' + svgObject.circles[i - 1].numAttr + '</td>');
+			$('#SVGviewPanel').append('</tr>');
+		}
+		
+		// rectangles
+		for(let i = 1; i < svgObject.rectangles.length + 1; i++) {
+			$('#SVGviewPanel').append('<tr>');
+				// componenet number
+				$('#SVGviewPanel').append('<td style="text-align:left">Rectangle ' + i + '</td>');
+				
+				// componenet summary
+				$('#SVGviewPanel').append('<td style="text-align:center">x = ' 
+				+ svgObject.rectangles[i - 1].x
+				+ ' y = ' + svgObject.rectangles[i - 1].y 
+				+ ' Width = ' + svgObject.rectangles[i - 1].w 
+				+ ' Height = ' + svgObject.rectangles[i - 1].h 
+				+ ' Units = ' + svgObject.rectangles[i - 1].units 
+				+ '</td>');
+				
+				// componenet other attributes
+				$('#SVGviewPanel').append('<td style="text-align:right">' + svgObject.rectangles[i - 1].numAttr + '</td>');
+			$('#SVGviewPanel').append('</tr>');
+		}
+		
+		// paths
+		for(let i = 1; i < svgObject.paths.length + 1; i++) {
+			$('#SVGviewPanel').append('<tr>');
+				// componenet number
+				$('#SVGviewPanel').append('<td style="text-align:left">Path ' + i + '</td>');
+				
+				// componenet summary
+				$('#SVGviewPanel').append('<td style="text-align:center">x = ' 
+				+ svgObject.paths[i - 1].d
+				+ '</td>');
+				
+				// componenet other attributes
+				$('#SVGviewPanel').append('<td style="text-align:right">' + svgObject.paths[i - 1].numAttr + '</td>');
+				
+			$('#SVGviewPanel').append('</tr>');
+		}
+		
+		// groups
+		for(let i = 1; i < svgObject.groups.length + 1; i++) {
+			$('#SVGviewPanel').append('<tr>');
+				
+			$('#SVGviewPanel').append('</tr>');
+		}
+		
+		return;
+	}
+	
+	
+	
+	
+	
 	
 });
