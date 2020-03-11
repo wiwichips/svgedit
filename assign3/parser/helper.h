@@ -24,6 +24,11 @@ char* rectToJSONfromValidFile(char* fileName, char* schemaFile);
 char* pathToJSONfromValidFile(char* fileName, char* schemaFile);
 char* groupToJSONfromValidFile(char* fileName, char* schemaFile);
 
+void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle);
+
+
+
+// for modifying a specific shape
 
 char* getTitle(char* fileName, char* schemaFile);
 char* getDescription(char* fileName, char* schemaFile);

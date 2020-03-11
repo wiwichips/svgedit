@@ -86,6 +86,7 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'groupToJSONfromValidFile': ['string', ['string', 'string']],
 	'getTitle': ['string', ['string', 'string']],
 	'getDescription': ['string', ['string', 'string']],
+	'changeTitleFromFile': ['void', ['string', 'string', 'string']],
 });
 
 

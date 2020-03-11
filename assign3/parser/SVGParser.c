@@ -218,6 +218,25 @@ char* groupToJSONfromValidFile(char* fileName, char* schemaFile) {
 
 
 
+void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle) {	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image && newTitle) { // if image is valid change title
+		strcpy(image->title, newTitle);
+		
+		// write it after changing the image title
+		writeSVGimage(image, fileName);
+	}
+	
+	deleteSVGimage(image);
+	
+	return;
+}
+
+
+
+
 // A2 bonus functions
 SVGimage* createEmptySVG() {
 	// allocate space for the image
