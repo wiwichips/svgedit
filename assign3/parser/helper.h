@@ -17,7 +17,7 @@
 
 bool validateSVGfile(char* fileName, char* schemaFile);
 
-
+bool createNewSVGimageAndWriteToFile(char* schemaFile, char* fileName, char* title, char* description);
 
 
 /// bonus functions a3

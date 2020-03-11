@@ -48,6 +48,57 @@ bool validateSVGfile(char* fileName, char* schemaFile) {
 	return result;
 }
 
+bool createNewSVGimageAndWriteToFile(char* schemaFile, char* fileName, char* title, char* description) {
+	bool result = true;
+	
+	SVGimage* image = createEmptySVG();
+	
+	// copy over the description and the title
+	strcpy(image->description, description);
+	strcpy(image->title, title);
+	
+	// check if the last three characters end in svg
+	if(strlen(fileName) > 4) {
+		
+		if(fileName[strlen(fileName) -1] == 'g') {
+			if(fileName[strlen(fileName) -2] == 'v') {
+				if(fileName[strlen(fileName) -3] == 's')  {
+					result = true;
+				}
+				else {
+					result = false;
+				}
+			}
+			else {
+				result = false;
+			}
+		} else {
+			result = false;
+		}
+		
+	} else {
+		result = false;
+	}
+	
+	if(result == false) {
+		deleteSVGimage(image);
+		return false;
+	}
+	
+	// puts("c - got this far");
+	
+	result = writeSVGimage(image, fileName);
+	
+	return result;
+}
+
+
+
+
+
+
+
+
 // A2 bonus functions
 SVGimage* createEmptySVG() {
 	// allocate space for the image

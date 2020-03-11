@@ -79,6 +79,7 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'printHelloWorld': [ 'string', [ 'int' ] ],
 	'JSONcreateValidSVG': ['string', ['string', 'string']],
 	'validateSVGfile': ['int', ['string', 'string']],
+	'createNewSVGimageAndWriteToFile': ['int', ['string', 'string', 'string', 'string']],
 });
 
 
@@ -95,7 +96,7 @@ app.get('/getSVGJSON', function(req , res){
 	for(let i = 0; i < fileNames.length; i++) {
 		img.push(JSON.parse(libsvgparse.JSONcreateValidSVG('uploads/'+ fileNames[i] +'', 'parser/svg.xsd')));
 		img[i].name = fileNames[i];
-		img[i].size = (fs.statSync('uploads/' + fileNames[i])["size"]) / 1000;
+		img[i].size = Math.round((fs.statSync('uploads/' + fileNames[i])["size"]) / 1000);
 	}
 	
 	// send the thing
@@ -132,6 +133,20 @@ app.post('/validUpload', function(req, res) {
 	});
 });
 
+// createSVG - creates an svg from the client
+app.get('/createSVG', function(req, res) {
+	
+	console.log('filename = ' + req.query.filename);
+	console.log('title = ' + req.query.title);
+	console.log('description = ' + req.query.description);
+	
+	// create svgImage with filename titlt description and write to file
+	console.log(libsvgparse.createNewSVGimageAndWriteToFile('parser/svg.xsd', 'uploads/' + req.query.filename, req.query.title, req.query.description));
+
+	res.send({
+		foo: 'worked'
+	});
+});
 
 
 /// test endpoints

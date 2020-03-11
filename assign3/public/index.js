@@ -142,4 +142,27 @@ $(document).ready(function() {
 		});
 	});
 	
+	$('#createForm').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/createSVG',   //The server endpoint we are connecting to
+			data: {
+				filename: $('#fileName').val(),
+				description: $('#description').val(),
+				title: $('#title').val(),
+			},
+			success: function (data) {
+				
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
+	
 });

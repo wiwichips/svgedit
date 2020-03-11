@@ -17,15 +17,11 @@
     <!-- Custom CSS End -->
 </head>
 <body>
-    <!-- <h3>Download test</h3> -->
-    <!-- If the A3 stub is running and simple.gpx exists in the uploads/ directory on the server, then clicking on the link below will download it from the server.<br> -->
-    <!-- <a href="rects.svg">rects.svg</a> -->
-    <!-- <p>Test</p> -->
-    <!-- <img src="rects.svg"> -->
 
     <hr>
     <div id="blah">I am blah</div>
     <hr>
+	
     <form ref='someform' id='someform'>
           <div class="form-group">
                 <label for="entryBox">i just wrote this so please enter text here</label>
@@ -37,22 +33,44 @@
     </form>	
 	
 
-	
+	<!-- Upload SVG -->
 	<hr>
-    <div id="fileNameHolder">Filename will go here</div>
+    <div>Upload an SVG</div>
     <hr>
     <form ref='uploadForm' id='uploadForm' enctype="multipart/form-data" action="{URL}" method="POST">
 		<div class="form-group">
 			<input type="file" name='uploadFile' id='uploadFile'/>
 		</div>
 		<div class="form-group">
-			<input type='submit' class="btn btn-secondary">
+			<input type='submit' value="Upload" class="btn btn-secondary">
 		</div>
     </form>
 	
-
-	<!-- table -->
+	
+	<!-- Create SVG  -->
+	<hr>
+    <div>Create an SVG</div>
+    <hr>
+    <form ref='createForm' id='createForm' enctype="multipart/form-data" action="{URL}" method="POST">
+		<label for="fileName">SVG name:</label>
+		<input type="text" id="fileName" name="fileName" value="placeholder"><br>
+		
+		<label for="description">Description:</label>
+		<input type="text" id="description" name="description" value="placeholder"><br>
+		
+		<label for="title">Title:</label>
+		<input type="text" id="title" name="title" value="placeholder"><br>
+		
+		<input type="submit" value="Create SVG" class="btn btn-secondary">
+    </form>
+	
+	
+	<!-- table for file log -->
 	<div class="scrollit">
+		<hr>
+		<div>File Log</div>
+		<hr>
+	
 		<table id="testTable" class="table table-fixed" border="2">
 			<tr>
 				<th id="willTest">Image (click to download)</th>
