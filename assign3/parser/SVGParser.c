@@ -222,8 +222,8 @@ void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle) {
 	// create the svg based off of the filename
 	SVGimage* image = createValidSVGimage(fileName, schemaFile);
 	
-	if(image && newTitle) { // if image is valid change title
-		strcpy(image->title, newTitle);
+	if(image && newTitle && strlen(newTitle) < 256) { // if image is valid change title
+		strncpy (image->title, newTitle, 255);
 		
 		// write it after changing the image title
 		writeSVGimage(image, fileName);
@@ -234,7 +234,22 @@ void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle) {
 	return;
 }
 
-
+void changeDescriptionFromFile(char* fileName, char* schemaFile, char* newDescription)
+ {	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image && newDescription && strlen(newDescription) < 256) { // if image is valid change title
+		strncpy (image->description, newDescription, 255);
+		
+		// write it after changing the image title
+		writeSVGimage(image, fileName);
+	}
+	
+	deleteSVGimage(image);
+	
+	return;
+}
 
 
 // A2 bonus functions

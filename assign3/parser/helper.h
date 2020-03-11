@@ -25,6 +25,7 @@ char* pathToJSONfromValidFile(char* fileName, char* schemaFile);
 char* groupToJSONfromValidFile(char* fileName, char* schemaFile);
 
 void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle);
+void changeDescriptionFromFile(char* fileName, char* schemaFile, char* newDescription);
 
 
 

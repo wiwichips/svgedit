@@ -165,9 +165,11 @@ $(document).ready(function() {
 		});
     });
 	
+	let optionChosen = 'rect.svg';
+	
 	$('#viewPanelForm').submit(function(e) {
 		e.preventDefault();
-		let optionChosen = 'rect.svg';
+		optionChosen = 'rect.svg';
 		
 		// call the function that returns the informaton about the svg
 		$.ajax({
@@ -181,13 +183,62 @@ $(document).ready(function() {
 				console.log('title = ' + data.foo.title);
 				console.log('description = ' + data.foo.description);
 				
+				
+				
+				
 			},
 			fail: function(error) {
 				
 			}
 		});
+		  
 		
 		
 	});
+	
+	
+	$('#changeTitleForm').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/changeTitle',   //The server endpoint we are connecting to
+			data: {
+				newTitle: $('#titleBox').val(),
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
+	
+	$('#changeDescriptionForm').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/changeDescription',   //The server endpoint we are connecting to
+			data: {
+				newDescription: $('#descriptionBox').val(),
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
 	
 });

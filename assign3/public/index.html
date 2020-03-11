@@ -30,7 +30,26 @@
 			<option value="audi">Audi.svg</option>
 		</select>
 		<input type="submit" value="Choose SVG" class="btn btn-secondary">
+		
+		<!-- put code for table here? -->
+
 	</form>	
+	
+	<!-- change title -->
+	<hr>
+    <p>Change Title or description</p>
+    <hr>
+    <form ref='changeTitleForm' id='changeTitleForm' enctype="multipart/form-data" action="{URL}" method="POST">
+		<input type="submit" value="Change Title" class="btn btn-secondary">
+		<input type="text" id="titleBox" name="titleBox" value="Title Here"><br>
+		
+    </form>
+	<form ref='changeDescriptionForm' id='changeDescriptionForm' enctype="multipart/form-data" action="{URL}" method="POST">
+		<input type="submit" value="Change Description" class="btn btn-secondary">
+		<input type="text" id="descriptionBox" name="descriptionBox" value="Description Here">
+		
+		
+    </form>
 	
 
 

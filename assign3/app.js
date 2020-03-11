@@ -87,6 +87,7 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'getTitle': ['string', ['string', 'string']],
 	'getDescription': ['string', ['string', 'string']],
 	'changeTitleFromFile': ['void', ['string', 'string', 'string']],
+	'changeDescriptionFromFile': ['void', ['string', 'string', 'string']],
 });
 
 
@@ -177,6 +178,30 @@ app.get('/svgDetails', function(req, res) {
 		foo: details
 	});
 });
+
+// changeTitle - changes the title of a specified image. Does not copy if exceeds 255
+app.get('/changeTitle', function(req , res){
+	console.log(req.query.newTitle);
+	
+	libsvgparse.changeTitleFromFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd', req.query.newTitle);
+
+	res.send({
+		foo: req.query.newTitle
+	});
+});
+
+// changeDescription - changes the description of a specified image. Does not copy if exceeds 255
+app.get('/changeDescription', function(req , res){
+	console.log(req.query.newDescription);
+	
+	libsvgparse.changeDescriptionFromFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd', req.query.newDescription);
+
+	res.send({
+		foo: req.query.newDescription
+	});
+});
+
+
 
 
 
