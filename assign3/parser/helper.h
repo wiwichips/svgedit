@@ -28,6 +28,16 @@ void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle);
 void changeDescriptionFromFile(char* fileName, char* schemaFile, char* newDescription);
 
 
+bool addCircleFromFile(char* fileName, char* schemaFile, float cx, float cy, float r, char* units, char* fill);
+
+
+
+
+
+
+
+
+
 
 // for modifying a specific shape
 

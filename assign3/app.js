@@ -88,6 +88,7 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'getDescription': ['string', ['string', 'string']],
 	'changeTitleFromFile': ['void', ['string', 'string', 'string']],
 	'changeDescriptionFromFile': ['void', ['string', 'string', 'string']],
+	'addCircleFromFile': ['int', ['string', 'string', 'float', 'float', 'float', 'string', 'string']],
 });
 
 
@@ -204,6 +205,26 @@ app.get('/changeDescription', function(req , res){
 		foo: req.query.newDescription
 	});
 });
+
+// addCircle - changes the description of a specified image. Does not copy if exceeds 255
+app.get('/addCircle', function(req , res){	
+	// libsvgparse.changeDescriptionFromFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd', req.query.newDescription);
+
+	console.log('cx = ' + req.query.cx);
+
+	libsvgparse.addCircleFromFile('uploads/'+ req.query.filename, 'parser/svg.xsd', req.query.cx, req.query.cy, req.query.r, req.query.units, req.query.fill);
+
+	res.send({
+		foo: 'worked'
+	});
+});
+
+
+
+
+
+
+
 
 
 

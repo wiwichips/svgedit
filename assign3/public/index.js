@@ -103,29 +103,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	
-	
-	$('#someform').submit(function(e){
-        e.preventDefault();
-		
-        //Pass data to the Ajax call, so it gets passed to the server
-        $.ajax({
-			type: 'get',            //Request type
-			dataType: 'json',       //Data type - we will use JSON for almost everything 
-			url: '/someendpoint',   //The server endpoint we are connecting to
-			data: {
-				name1: $('#entryBox').val(),
-			},
-			success: function (data) {
-				console.log(data.boo);
-				
-			},
-			fail: function(error) {
-				console.log(error); 
-			}
-		});
-    });
-	
 	$('#uploadForm').submit(function(e) {
 		e.preventDefault();
 
@@ -280,12 +257,37 @@ console.log(optionChosen);
 		});
     });
 	
+	$('#addCircle').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/addCircle',   //The server endpoint we are connecting to
+			data: {
+				cx: $('#cxBox').val(),
+				cy: $('#cyBox').val(),
+				r: $('#rBox').val(),
+				units: $('#unitsBox').val(),
+				fill: $('#unitsBox').val(),
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
+	
 	// adds table formatting for the svg view panel
 	function htmlFormattingForViewPanel(svgObject, filename) {
 		
 		// dont do anything if the string is empty
 		if(optionChosen === '') {
-			console.log('y1');
 			return;
 		}
 		

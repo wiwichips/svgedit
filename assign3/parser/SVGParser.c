@@ -207,6 +207,19 @@ char* groupToJSONfromValidFile(char* fileName, char* schemaFile) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle) {	
 	// create the svg based off of the filename
 	SVGimage* image = createValidSVGimage(fileName, schemaFile);
@@ -239,6 +252,68 @@ void changeDescriptionFromFile(char* fileName, char* schemaFile, char* newDescri
 	
 	return;
 }
+
+bool addCircleFromFile(char* fileName, char* schemaFile, float cx, float cy, float r, char* units, char* fill) {
+	bool result = false;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	// if image is null return false
+	if(!image) {
+		return false;
+	}
+	
+	// check if uniuts are greater than 49 chars, in case return false
+	if(strlen(units) > 49) {
+		return false;
+	}
+	
+	// create a circle struct
+	Circle* newCircle = calloc(1, sizeof(Circle));
+	
+	// populate it
+	newCircle->cx = cx;
+	newCircle->cy = cy;
+	newCircle->r = r;
+	strcpy(newCircle->units, units);
+	newCircle->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
+	
+	// add fill as an otherAttribute if it is sent
+	if(strlen(fill) > 0) {
+		insertBack(newCircle->otherAttributes, addAttribute("fill", fill));
+	}
+	
+	// insert the cirlce into the svgImage
+	insertBack(image->circles, newCircle);
+	
+	// check if the image is still valid after adding the circle
+	if(validateSVGimage(image, schemaFile)) {
+		result = true;
+		
+		// write it to file
+		writeSVGimage(image, fileName);
+	}
+	
+	// delete the image
+	deleteSVGimage(image);
+	
+	// return boolean
+	return result;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // A2 bonus functions
