@@ -29,7 +29,32 @@
 	
 	<div id="SVGviewPanel"> 
 	
+	<!-- create it in html nad make the css property display none (to hid eit)  -->
+	<!-- to display in inline is inline -->
+	
 	</div>
+	
+	<!-- Show / edit attribute -->
+	<hr>
+    <p>Show / edit attribute</p>
+    <hr>
+    <form ref='chooseAttribute' id='chooseAttribute' enctype="multipart/form-data" action="{URL}" method="POST">
+		<label>Shape Type:</label>
+		<input type="text" id="chooseShapeType" name="chooseShapeType" value="Title Here">
+		<label>Shape Number:</label>
+		<input type="text" id="chooseShapeNumber" name="chooseShapeNumber" value="Title Here">
+		<input id="showAttributeBox" name="showAttributeBox" type="submit" value="Get Attribute" class="btn btn-secondary">
+    </form>
+	<form ref='addCircle' id='addCircle' enctype="multipart/form-data" action="{URL}" method="POST">
+		<label for="attributeName">Name:</label>
+		<input type="text" id="attributeName" name="attributeName" value="NAME">
+		
+		<label for="attributeValue">Value:</label>
+		<input type="text" id="attributeValue" name="attributeValue" value="VALUE">
+		
+		<input type="submit" value="Change" class="btn btn-secondary">
+		<p>To Edit attribute --> Enter attribute name in name and vlaue in value. Will create a new attribute if that attribute doesn't already exist.</p>
+    </form>
 
 	<!-- change title -->
 	<hr>
@@ -108,20 +133,7 @@
 		
 		<input type="submit" value="Scale Shape" class="btn btn-secondary">
     </form>
-
-    <!-- <hr> -->
-    <!-- <div id="blah">I am blah</div> -->
-    <!-- <hr> -->
-    <!-- <form ref='someform' id='someform'> -->
-          <!-- <div class="form-group"> -->
-                <!-- <label for="entryBox">i just wrote this so please enter text here</label> -->
-                <!-- <input type="text" class="form-control" id="entryBox" value="Value" placeholder="Placeholder"> -->
-            <!-- </div> -->
-        <!-- <div class="form-group"> -->
-            <!-- <input type='submit' class="btn btn-secondary"> -->
-        <!-- </div> -->
-    <!-- </form>	 -->
-
+	
 	<!-- Upload SVG -->
 	<hr>
     <div>Upload an SVG</div>

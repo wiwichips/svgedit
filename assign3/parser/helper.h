@@ -37,7 +37,7 @@ bool findShapeToScale(elementType e, float scaleFactor, SVGimage* image);
 
 bool scaleShape(elementType e, void* data, float scaleFactor);
 
-
+char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeType, int number);
 
 
 // for modifying a specific shape

@@ -311,6 +311,52 @@ puts("rect scale");
 
 
 
+
+// attrListToJSON(list)
+
+char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeType, int number) {
+	char* string = NULL;
+	
+	// try to open SVG, return "bad" if doesn't work
+	
+	// if its an image type, then just return json list of attributes for image
+	
+	// else 
+		// check all the different shapes
+		// see if the index exists
+		// modify the attribute if it does
+		
+	// validate the file
+	
+	// write the image to file
+	
+	
+	
+	
+	
+	
+	
+	
+	if(!strcasecmp(shapeType, "svg") || !strcasecmp(shapeType, "image")) {
+		string = 
+	}
+	
+	
+	
+	
+	return string;
+}
+
+
+
+
+
+
+
+
+
+
+
 void changeTitleFromFile(char* fileName, char* schemaFile, char* newTitle) {	
 	// create the svg based off of the filename
 	SVGimage* image = createValidSVGimage(fileName, schemaFile);

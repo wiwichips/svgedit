@@ -243,7 +243,16 @@ app.get('/scaleShape', function(req , res){
 	});
 });
 
+// chooseAttribute - chooses a shape to display information for
+app.get('/chooseAttribute', function(req , res){
 
+
+
+
+	res.send({
+		foo: erin
+	});
+});
 
 
 

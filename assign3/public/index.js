@@ -333,6 +333,29 @@ console.log(optionChosen);
 		});
     });
 	
+	$('#chooseAttribute').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/chooseAttribute',   //The server endpoint we are connecting to
+			data: {
+				shapeType: $('#chooseShapeType').val(),
+				shapeNumber: $('#chooseShapeNumber').val(),
+				fileName: optionChosen,
+			},
+			success: function (data) {
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
+	
+	
 	// adds table formatting for the svg view panel
 	function htmlFormattingForViewPanel(svgObject, filename) {
 		
