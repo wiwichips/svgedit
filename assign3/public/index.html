@@ -61,13 +61,52 @@
 		<label for="rBox">Radius</label>
 		<input type="text" id="rBox" name="rBox" value="1"><br>
 		
-		<label for="unitsBox">Units</label>
-		<input type="text" id="unitsBox" name="unitsBox" value="Units, blank if no units"><br>
+		<label for="cunitsBox">Units</label>
+		<input type="text" id="cunitsBox" name="cunitsBox" value="Units, blank if no units"><br>
 		
 		<label for="circleFillBox">Fill</label>
 		<input type="text" id="circleFillBox" name="circleFillBox" value="????"><br>
 		
 		<input type="submit" value="Add Circle" class="btn btn-secondary">
+    </form>
+	<br>
+	<form ref='addRectangle' id='addRectangle' enctype="multipart/form-data" action="{URL}" method="POST">
+		<label for="xBox">Horizontal Posistion:</label>
+		<input type="text" id="xBox" name="xBox" value="1"><br>
+		
+		<label for="yBox">Vertical posisiton</label>
+		<input type="text" id="yBox" name="yBox" value="1"><br>
+		
+		<label for="widthBox">Width</label>
+		<input type="text" id="widthBox" name="widthBox" value="1"><br>
+		
+		<label for="heightBox">Heighht</label>
+		<input type="text" id="heightBox" name="heightBox" value="1"><br>
+		
+		<label for="unitsBox">Units</label>
+		<input type="text" id="unitsBox" name="unitsBox" value="Units, blank if no units"><br>
+		
+		<label for="rectangleFillBox">Fill</label>
+		<input type="text" id="rectangleFillBox" name="rectangleFillBox" value="????"><br>
+		
+		<input type="submit" value="Add Rectangle" class="btn btn-secondary">
+    </form>
+	
+	<!-- scaleShape -->
+	<hr>
+    <p>Scale shapes</p>
+    <hr>
+	<form ref='scaleShape' id='scaleShape' enctype="multipart/form-data" action="{URL}" method="POST">
+		<label for="scaleFactorBox">Scale Factor:</label>
+		<input type="text" id="scaleFactorBox" name="scaleFactorBox" value="1"><br>
+		
+		<label for="shapeType">change to a button for circle and a button for rect</label>
+		<input type="text" id="shapeType" name="shapeType" value="Circle"><br>
+		
+		<!-- <label for="index">Element Number</label> -->
+		<!-- <input type="text" id="index" name="index" value="0"><br> -->
+		
+		<input type="submit" value="Scale Shape" class="btn btn-secondary">
     </form>
 
     <!-- <hr> -->

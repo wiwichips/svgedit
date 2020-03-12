@@ -205,18 +205,109 @@ char* groupToJSONfromValidFile(char* fileName, char* schemaFile) {
 
 
 
+bool scaleShapeFromFile(char* fileName, char* schemaFile, float scaleFactor, char* shapeType) {
+	bool result = false;
+	elementType e;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) { // if image invlaid then return empty array
+		return false;
+	}
+	
+	// find the type
+	if(!strcasecmp(shapeType, "circle")) {
+		e = CIRC;
+	} else if (!strcasecmp(shapeType, "rectangle")) {
+		e = RECT;
+	} else if(!strcasecmp(shapeType, "imageimage")) {
+		e = SVG_IMAGE;
+		
+	} else {
+		// incorrect type
+		deleteSVGimage(image);
+		return false;
+	}
+	
+	// attempt to scale the shape
+	result = findShapeToScale(e, scaleFactor, image);
+	
+	if(result == true) {
+		
+		result = writeSVGimage(image, fileName);
+puts("write svg image");
+	}
+	
+	deleteSVGimage(image);
+	
+	return result;
+}
 
+bool findShapeToScale(elementType e, float scaleFactor, SVGimage* image) {
+	if(e == SVG_IMAGE) {
+		// scale all shapes TODO
+		return false;
+	}
+	
+	
+	List* list = NULL;
+	ListIterator itr;
+	int i = 0;
+	
+	// get list of either all rectagles or all circles
+	if(e == CIRC) {
+		list = getCircles(image);
+		
+	} else if (e == RECT) {
+		list = getRects(image);
+		
+	} else {
+		return false;
+	}
+	
+	// set list iterator
+	itr = createIterator(list);
+	
+	// Cycle through data
+	if(e == CIRC) {
+		for(Circle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+			scaleShape(CIRC, data, scaleFactor);
+			
+			i++;
+		
+		}
+	}
+	else{
+		for(Rectangle* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+			scaleShape(RECT, data, scaleFactor);
+			
+			i++;
+		
+		}
+	}
+	
+	return true;
+}
 
-
-
-
-
-
-
-
-
-
-
+bool scaleShape(elementType e, void* data, float scaleFactor) {
+	
+	if(e == CIRC) {
+		// ((Circle*) data)->cx *= scaleFactor;
+		// ((Circle*) data)->cy *= scaleFactor;
+		((Circle*) data)->r *= scaleFactor;
+puts("Circle scale");
+		
+	} else if (e == RECT) {
+		// ((Rectangle*) data)->x *= scaleFactor;
+		// ((Rectangle*) data)->y *= scaleFactor;
+		((Rectangle*) data)->width *= scaleFactor;
+		((Rectangle*) data)->height *= scaleFactor;
+puts("rect scale");
+	}
+	
+	return true;
+}
 
 
 
@@ -269,6 +360,11 @@ bool addCircleFromFile(char* fileName, char* schemaFile, float cx, float cy, flo
 		return false;
 	}
 	
+	// check if radius is positive
+	if(r < 0) {
+		return false;
+	}
+	
 	// create a circle struct
 	Circle* newCircle = calloc(1, sizeof(Circle));
 	
@@ -291,7 +387,7 @@ bool addCircleFromFile(char* fileName, char* schemaFile, float cx, float cy, flo
 	if(validateSVGimage(image, schemaFile)) {
 		result = true;
 		
-		// write it to file
+		// write it to file if it is valid
 		writeSVGimage(image, fileName);
 	}
 	
@@ -302,7 +398,72 @@ bool addCircleFromFile(char* fileName, char* schemaFile, float cx, float cy, flo
 	return result;
 }
 
-
+bool addRectangleFromFile(char* fileName, char* schemaFile, float x, float y, float width, float height, char* units, char* fill) {
+	bool result = false;
+	
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+// printf("fileName = %s\n", fileName);
+	
+	// if image is null return false
+	if(!image) {
+// puts("!image");
+		return false;
+	}
+	
+	// check if uniuts are greater than 49 chars, in case return false
+	if(strlen(units) > 49) {
+// puts("strlen(units) > 49");
+		return false;
+	}
+	
+	// check if radius is positive
+	if(width < 0 || height < 0) {
+// puts("width < 0 || height < 0");
+		return false;
+	}
+	
+	
+//debugging
+// printf("x = %f\ny = %f\n, height = %f\n units = %s\nfill = %s\n", x, y, height, units, fill);
+	
+	// create a Rectangle struct
+	Rectangle* newRectangle = calloc(1, sizeof(Rectangle));
+	
+	// populate it
+	newRectangle->x = x;
+	newRectangle->y = y;
+	newRectangle->width = width;
+	newRectangle->height = height;
+	strcpy(newRectangle->units, units);
+	newRectangle->otherAttributes = initializeList(&rectangleToString, &deleteAttribute, &comparePaths);
+	
+	// add fill as an otherAttribute if it is sent
+	if(strlen(fill) > 0) {
+		insertBack(newRectangle->otherAttributes, addAttribute("fill", fill));
+	}
+	
+	// insert the cirlce into the svgImage
+	insertBack(image->rectangles, newRectangle);
+	
+	// check if the image is still valid after adding the circle
+	if(validateSVGimage(image, schemaFile)) {
+		result = true;
+		
+		// write it to file
+		writeSVGimage(image, fileName);
+		
+	}
+	
+// puts("\t\tabout to delte");
+	
+	// delete the image
+	deleteSVGimage(image);
+	
+	// return boolean
+	return result;
+}
 
 
 

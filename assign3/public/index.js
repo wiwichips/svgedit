@@ -269,12 +269,62 @@ console.log(optionChosen);
 				cx: $('#cxBox').val(),
 				cy: $('#cyBox').val(),
 				r: $('#rBox').val(),
-				units: $('#unitsBox').val(),
-				fill: $('#unitsBox').val(),
+				units: $('#cunitsBox').val(),
+				fill: $('#circleFillBox').val(),
 				filename: optionChosen,
 			},
 			success: function (data) {
 				
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
+	
+	$('#addRectangle').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/addRectangle',   //The server endpoint we are connecting to
+			data: {
+				x: $('#xBox').val(),
+				y: $('#yBox').val(),
+				width: $('#widthBox').val(),
+				height: $('#heightBox').val(),
+				units: $('#unitsBox').val(),
+				fill: $('#rectangleFillBox').val(),
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
+	
+	$('#scaleShape').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/scaleShape',   //The server endpoint we are connecting to
+			data: {
+				scaleFactor: $('#scaleFactorBox').val(),
+				shapeType: $('#shapeType').val(),
+				index: 0, // depricated
+				fileName: optionChosen,
+			},
+			success: function (data) {
 				
 			},
 			fail: function(error) {

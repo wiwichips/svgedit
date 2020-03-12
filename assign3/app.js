@@ -89,6 +89,8 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'changeTitleFromFile': ['void', ['string', 'string', 'string']],
 	'changeDescriptionFromFile': ['void', ['string', 'string', 'string']],
 	'addCircleFromFile': ['int', ['string', 'string', 'float', 'float', 'float', 'string', 'string']],
+	'addRectangleFromFile': ['int', ['string', 'string', 'float', 'float', 'float', 'float', 'string', 'string']],
+	'scaleShapeFromFile': ['int', ['string', 'string', 'float', 'string']],
 });
 
 
@@ -206,12 +208,8 @@ app.get('/changeDescription', function(req , res){
 	});
 });
 
-// addCircle - changes the description of a specified image. Does not copy if exceeds 255
+// addCircle - adds a circle to an image
 app.get('/addCircle', function(req , res){	
-	// libsvgparse.changeDescriptionFromFile('uploads/'+ req.query.filename +'', 'parser/svg.xsd', req.query.newDescription);
-
-	console.log('cx = ' + req.query.cx);
-
 	libsvgparse.addCircleFromFile('uploads/'+ req.query.filename, 'parser/svg.xsd', req.query.cx, req.query.cy, req.query.r, req.query.units, req.query.fill);
 
 	res.send({
@@ -219,9 +217,31 @@ app.get('/addCircle', function(req , res){
 	});
 });
 
+// addRectangle - changes the description of a specified image. Does not copy if exceeds 255
+app.get('/addRectangle', function(req , res){	
 
+	libsvgparse.addRectangleFromFile('uploads/'+ req.query.filename, 'parser/svg.xsd', req.query.x, req.query.y, req.query.width, req.query.height, req.query.units, req.query.fill);
 
+	res.send({
+		foo: 'worked'
+	});
+});
 
+// scaleShape - scales a shape in an image by a scaleFactor
+app.get('/scaleShape', function(req , res){
+
+	console.log(req.query.scaleFactor);
+	console.log(req.query.shapeType);
+	console.log(req.query.index);
+	
+	// bool scaleShapeFromFile(char* fileName, char* schemaFile, float scaleFactor, int index, char* shapeType) {
+
+	libsvgparse.scaleShapeFromFile('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.scaleFactor, req.query.shapeType);
+
+	res.send({
+		foo: 'worked'
+	});
+});
 
 
 

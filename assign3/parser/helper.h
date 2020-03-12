@@ -29,12 +29,13 @@ void changeDescriptionFromFile(char* fileName, char* schemaFile, char* newDescri
 
 
 bool addCircleFromFile(char* fileName, char* schemaFile, float cx, float cy, float r, char* units, char* fill);
+bool addRectangleFromFile(char* fileName, char* schemaFile, float x, float y, float width, float height, char* units, char* fill);
 
+bool scaleShapeFromFile(char* fileName, char* schemaFile, float scaleFactor, char* shapeType);
 
+bool findShapeToScale(elementType e, float scaleFactor, SVGimage* image);
 
-
-
-
+bool scaleShape(elementType e, void* data, float scaleFactor);
 
 
 
