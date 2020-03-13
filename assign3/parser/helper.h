@@ -41,12 +41,7 @@ void* getDataFromIndex(List* list, int index);
 char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeType, int number);
 
 
-
-
-
-
-
-
+char* betterAttrListToJSONimage(void* data, elementType e);
 
 
 

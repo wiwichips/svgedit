@@ -347,10 +347,13 @@ console.log(optionChosen);
 				fileName: optionChosen,
 			},
 			success: function (data) {
-				
-				console.log("success");
-				
-				
+				if(data.foo.bad === false) {
+
+					// change the html stuff
+					htmlFormattingForAttributesList(data.foo);
+					
+				}
+			
 				
 				
 			},
@@ -466,7 +469,26 @@ console.log(optionChosen);
 	}
 	
 	
-	
+	function htmlFormattingForAttributesList(svgObject) {
+		
+		// empty html
+		$('#showAttributesList').empty();
+		
+		// display primary attribites (x,y,width,height,cx,cy,r,d,etc)
+		
+		// display other atributes
+		for(let i = 0; i < svgObject.otherAttributes.length; i++) {
+			
+			$('#showAttributesList').append('<p>');
+				$('#showAttributesList').append('name = ' + svgObject.otherAttributes[i].name);
+				$('#showAttributesList').append(' value = ' + svgObject.otherAttributes[i].value);
+			$('#showAttributesList').append('</p>');
+			$('#showAttributesList').append('<br>');
+			
+			console.log("hey google openmaps");
+		}
+		
+	}
 	
 	
 	

@@ -339,7 +339,7 @@ char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeT
 	int index = number;
 	
 	// try to open SVG, return "bad" if doesn't work
-	elementType e;
+	// elementType e;
 	
 	// create the svg based off of the filename
 	SVGimage* image = createValidSVGimage(fileName, schemaFile);
@@ -352,6 +352,12 @@ char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeT
 	
 	// if its an image type, then just return json list of attributes for image
 	if(!strcasecmp(shapeType, "svg") || !strcasecmp(shapeType, "image") || !strcasecmp(shapeType, "img") || !strcasecmp(shapeType, "SVGimage")) {
+		
+		// temporarily add new attributes 
+		insertBack(image->otherAttributes, addAttribute("title", image->title));
+		insertBack(image->otherAttributes, addAttribute("description", image->description));
+		insertBack(image->otherAttributes, addAttribute("namespace", image->namespace));
+		
 		string = attrListToJSON(image->otherAttributes);
 		deleteSVGimage(image);
 		return string;
@@ -362,7 +368,7 @@ char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeT
 			// deleteSVGimage(image);
 			return string;
 		} else {
-puts("Circle* circ = getDataFromIndex(getCircles(image), index);");
+// puts("Circle* circ = getDataFromIndex(getCircles(image), index);");
 			Circle* circ = getDataFromIndex(getCircles(image), index);
 			printf("circ = %p\n", circ);
 			
@@ -371,6 +377,11 @@ puts("Circle* circ = getDataFromIndex(getCircles(image), index);");
 				strcpy(string, "bad");
 				return string;
 			}
+			
+			// temporarily add new attributes 
+			insertBack(circ->otherAttributes, addAttribute("cx", floatToString(circ->cx)));
+			insertBack(circ->otherAttributes, addAttribute("cy", floatToString(circ->cy)));
+			insertBack(circ->otherAttributes, addAttribute("r", floatToString(circ->r)));
 			
 			string = attrListToJSON(circ->otherAttributes);
 		}
@@ -381,7 +392,7 @@ puts("Circle* circ = getDataFromIndex(getCircles(image), index);");
 			// deleteSVGimage(image);
 			return string;
 		} else {
-puts("Rectangle* circ = getDataFromIndex(getCircles(image), index);");
+// puts("Rectangle* circ = getDataFromIndex(getCircles(image), index);");
 			Rectangle* circ = getDataFromIndex(getRects(image), index);
 			printf("rect = %p\n", circ);
 			
@@ -391,6 +402,14 @@ puts("Rectangle* circ = getDataFromIndex(getCircles(image), index);");
 				return string;
 			}
 			
+			
+			// temporarily add new attributes 
+			insertBack(circ->otherAttributes, addAttribute("x", floatToString(circ->x)));
+			insertBack(circ->otherAttributes, addAttribute("y", floatToString(circ->y)));
+			insertBack(circ->otherAttributes, addAttribute("width", floatToString(circ->width)));
+			insertBack(circ->otherAttributes, addAttribute("height", floatToString(circ->height)));
+			
+			// set string to json
 			string = attrListToJSON(circ->otherAttributes);
 		}
 	}
@@ -408,6 +427,9 @@ puts("Rectangle* circ = getDataFromIndex(getCircles(image), index);");
 				strcpy(string, "bad");
 				return string;
 			}
+			
+			// temporarily add new attributes 
+			insertBack(circ->otherAttributes, addAttribute("d", circ->data));
 			
 			string = attrListToJSON(circ->otherAttributes);
 		}
@@ -427,7 +449,7 @@ puts("Rectangle* circ = getDataFromIndex(getCircles(image), index);");
 				strcpy(string, "bad");
 				return string;
 			}
-			
+						
 			string = attrListToJSON(circ->otherAttributes);
 		}
 	}
@@ -442,12 +464,6 @@ puts("Rectangle* circ = getDataFromIndex(getCircles(image), index);");
 	
 	return string;
 }
-
-
-
-
-
-
 
 
 
@@ -606,14 +622,6 @@ bool addRectangleFromFile(char* fileName, char* schemaFile, float x, float y, fl
 	// return boolean
 	return result;
 }
-
-
-
-
-
-
-
-
 
 
 

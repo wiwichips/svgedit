@@ -248,9 +248,28 @@ app.get('/scaleShape', function(req , res){
 // chooseAttribute - chooses a shape to display information for
 app.get('/chooseAttribute', function(req , res){
 
-	let erin = libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1);
+	let erin = new Object();
+	
+	// console.log("shooting star: --->" + libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1));
+	
+	if(libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1) != "bad" && libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1) != "[]") {
+		
+		
+		
+		erin.otherAttributes = JSON.parse(libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1));
+		
+		// remember to add other details
+		
+		erin.bad = false;
+	}
+	
+	else {
+		erin.bad = true;
+	}
+	
 
-	console.log(erin);
+
+	
 
 	res.send({
 		foo: erin
