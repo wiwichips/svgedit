@@ -272,7 +272,7 @@ app.get('/chooseAttribute', function(req , res){
 app.get('/changeAttribute', function(req , res){
 	
 	// call function in c
-	let yes = libsvgparse.updateAttributeFromFile(req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1, req.query.name, req.query.value);
+	let yes = libsvgparse.updateAttributeFromFile('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1, req.query.name, req.query.value);
 	
 	console.log('yes = ' + yes);
 	

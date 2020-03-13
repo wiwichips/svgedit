@@ -471,21 +471,28 @@ bool updateAttributeFromFile(char* fileName, char* schemaFile, char* shapeType, 
 	SVGimage* image = createValidSVGimage(fileName, schemaFile);
 	
 	if(image == NULL) {
+puts("image == null");
 		return false;
 	}
 	
 	// if its an image type, then just return json list of attributes for image
 	if(!strcasecmp(shapeType, "svg") || !strcasecmp(shapeType, "image") || !strcasecmp(shapeType, "img") || !strcasecmp(shapeType, "SVGimage")) {
+puts("svg");
 		setAttribute(image, SVG_IMAGE, index, addAttribute(name, value));
-		
+
 	}
 
 	else if(!strcasecmp(shapeType, "circle") || !strcasecmp(shapeType, "circ")) {
+puts("circle");
 		if(index > getLength(getCircles(image)) || index < 0) {
 			// deleteSVGimage(image);
+puts("index > getLength(getcircles(image)....)");
 			return false;
 		} else {
+
+puts("index is permissible, now calling setattributes");
 			setAttribute(image, CIRC, index, addAttribute(name, value));
+
 		}
 	}
 	
@@ -1263,12 +1270,12 @@ void addComponent(SVGimage* image, elementType type, void* newElement) {
 // returns true if there is another attribute ofthe same name
 bool isDuplicateAttribute(List* otherAttributes, Attribute* newAttribute) {
 	ListIterator itr = createIterator(otherAttributes);
-
+printf("newAttribute->value = %s\n", newAttribute->value);
 	for(Attribute* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
 		
 		// replace
 		if(strcmp(data->name, newAttribute->name) == 0) {
-//			strcpy(data->value, newAttribute->value);
+			// strcpy(data->value, newAttribute->value);
 
 			// free the old value
 			free(data->value);
@@ -1279,6 +1286,7 @@ bool isDuplicateAttribute(List* otherAttributes, Attribute* newAttribute) {
 			
 			// copy the new value over
 			strcpy(data->value, newAttribute->value);
+printf("strcpy( %s , %s )\n", data->value, newAttribute->value);
 			
 			// delete new attribute if its a duplicate
 			deleteAttribute(newAttribute);

@@ -1,7 +1,7 @@
 // Put all onload AJAX calls here, and event listeners
 $(document).ready(function() {
     // On page-load AJAX Example
-    $.ajax({
+/*    $.ajax({
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/someendpoint',   //The server endpoint we are connecting to
@@ -10,11 +10,7 @@ $(document).ready(function() {
             name2: "Value 2"
         },
         success: function (data) {
-            /*  Do something with returned object
-                Note that what we get is an object, not a string, 
-                so we do not need to parse it on the server.
-                JavaScript really does handle JSONs seamlessly
-            */
+
 			
             $('#blah').html("On page load, received string '"+data.foo+"' from server");
             //We write the object to the console to show that the request was successful
@@ -26,7 +22,7 @@ $(document).ready(function() {
             $('#blah').html("On page load, received error from server");
             console.log(error); 
         }
-    });
+    });*/
 
     // Event listener form example , we can use this instead explicitly listening for events
     // No redirects if possible
@@ -84,6 +80,8 @@ $(document).ready(function() {
 			}
 			
 			// also add these to the svgDropDown list
+			$('#svgDropDown').append('<option>' + '' + '</option>');
+			
 			for(let i = 0; i < data.foo.length; i++) {
 				
 				let imageFileName = data.foo[i].name;
@@ -122,11 +120,13 @@ $(document).ready(function() {
 			},
 			success: function(msg) {
 				console.log();
+				location.reload();
 			},
 			error: function() {
 				// error
 			}
 		});
+		
 	});
 	
 	$('#createForm').submit(function(e){
@@ -143,13 +143,15 @@ $(document).ready(function() {
 				title: $('#title').val(),
 			},
 			success: function (data) {
-				
+				location.reload();
 				
 			},
 			fail: function(error) {
 				
 			}
 		});
+		
+		// location.reload();
     });
 	
 	let optionChosen = 'temp';
@@ -210,7 +212,7 @@ console.log(optionChosen);
 					
 					// display other options
 					$("#underSVGviewPanelStuff").css({
-							display: "block",
+						display: "block",
 					});
 				}
 			},
@@ -363,7 +365,6 @@ console.log(optionChosen);
 			}
 		});
 		
-		location.reload();
     });
 	
 	$('#addRectangle').submit(function(e){
@@ -391,6 +392,32 @@ console.log(optionChosen);
 				
 			}
 		});
+		
+		// get the information about the svg from the backend
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				if(optionChosen != "") {
+					htmlFormattingForViewPanel(data.foo, optionChosen);
+					
+					// display other options
+					$("#underSVGviewPanelStuff").css({
+							display: "block",
+					});
+				}
+			},
+			fail: function(error) {
+				
+			}
+		});
+		
+		location.reload();
     });
 	
 	$('#scaleShape').submit(function(e){
@@ -414,6 +441,32 @@ console.log(optionChosen);
 				
 			}
 		});
+		
+		// get the information about the svg from the backend
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				if(optionChosen != "") {
+					htmlFormattingForViewPanel(data.foo, optionChosen);
+					
+					// display other options
+					$("#underSVGviewPanelStuff").css({
+							display: "block",
+					});
+				}
+			},
+			fail: function(error) {
+				
+			}
+		});
+		
+		location.reload();
     });
 	
 	let shapeIDNum = -1;
@@ -481,6 +534,33 @@ console.log(optionChosen);
 				
 			}
 		});
+		
+		// get the information about the svg from the backend
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				if(optionChosen != "") {
+					htmlFormattingForViewPanel(data.foo, optionChosen);
+					
+					// display other options
+					$("#underSVGviewPanelStuff").css({
+							display: "block",
+					});
+					location.reload();
+				}
+			},
+			fail: function(error) {
+				
+			}
+		});
+		
+		
     });
 	
 	
