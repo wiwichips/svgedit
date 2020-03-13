@@ -91,6 +91,8 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'addCircleFromFile': ['int', ['string', 'string', 'float', 'float', 'float', 'string', 'string']],
 	'addRectangleFromFile': ['int', ['string', 'string', 'float', 'float', 'float', 'float', 'string', 'string']],
 	'scaleShapeFromFile': ['int', ['string', 'string', 'float', 'string']],
+	
+	'returnInformationAboutShape': ['string', ['string', 'string', 'string', 'int']],
 });
 
 
@@ -246,8 +248,9 @@ app.get('/scaleShape', function(req , res){
 // chooseAttribute - chooses a shape to display information for
 app.get('/chooseAttribute', function(req , res){
 
+	let erin = libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1);
 
-
+	console.log(erin);
 
 	res.send({
 		foo: erin

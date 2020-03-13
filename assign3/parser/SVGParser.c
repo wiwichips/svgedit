@@ -310,37 +310,133 @@ puts("rect scale");
 }
 
 
-
+void* getDataFromIndex(List* list, int index) {
+	ListIterator itr;
+	int i = 0;
+	
+	itr = createIterator(list);
+	
+printf("index = %d\n", index);
+	
+	for(void* data = nextElement(&itr); data != NULL; data = nextElement(&itr)) {
+		
+		if(i == index) {
+printf("index %d = i %d\n", index, i);
+			return data;
+		}
+		
+		i++;
+	}
+	
+	return NULL;
+}
 
 // attrListToJSON(list)
 
 char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeType, int number) {
-	char* string = NULL;
+	char* string = calloc(5, sizeof(char));
+	strcpy(string, "bad");
+	int index = number;
 	
 	// try to open SVG, return "bad" if doesn't work
+	elementType e;
 	
-	// if its an image type, then just return json list of attributes for image
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
 	
-	// else 
-		// check all the different shapes
-		// see if the index exists
-		// modify the attribute if it does
-		
-	// validate the file
-	
-	// write the image to file
-	
-	
-	
-	
-	
-	
-	
-	
-	if(!strcasecmp(shapeType, "svg") || !strcasecmp(shapeType, "image")) {
-		string = 
+	if(image == NULL) { // if image invlaid then return empty array
+		string = calloc(5, sizeof(char));
+		strcpy(string, "bad");
+		return string;
 	}
 	
+	// if its an image type, then just return json list of attributes for image
+	if(!strcasecmp(shapeType, "svg") || !strcasecmp(shapeType, "image") || !strcasecmp(shapeType, "img") || !strcasecmp(shapeType, "SVGimage")) {
+		string = attrListToJSON(image->otherAttributes);
+		deleteSVGimage(image);
+		return string;
+	}
+	
+	else if(!strcasecmp(shapeType, "circle") || !strcasecmp(shapeType, "circ")) {
+		if(index > getLength(getCircles(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return string;
+		} else {
+puts("Circle* circ = getDataFromIndex(getCircles(image), index);");
+			Circle* circ = getDataFromIndex(getCircles(image), index);
+			printf("circ = %p\n", circ);
+			
+			if(circ == NULL) { // if image invlaid then return empty array
+				string = calloc(5, sizeof(char));
+				strcpy(string, "bad");
+				return string;
+			}
+			
+			string = attrListToJSON(circ->otherAttributes);
+		}
+	}
+	
+	else if(!strcasecmp(shapeType, "rectangle") || !strcasecmp(shapeType, "rect")) {
+		if(index > getLength(getRects(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return string;
+		} else {
+puts("Rectangle* circ = getDataFromIndex(getCircles(image), index);");
+			Rectangle* circ = getDataFromIndex(getRects(image), index);
+			printf("rect = %p\n", circ);
+			
+			if(circ == NULL) { // if image invlaid then return empty array
+				string = calloc(5, sizeof(char));
+				strcpy(string, "bad");
+				return string;
+			}
+			
+			string = attrListToJSON(circ->otherAttributes);
+		}
+	}
+	
+	else if(!strcasecmp(shapeType, "path")) {
+		if(index > getLength(getRects(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return string;
+		} else {
+			Path* circ = getDataFromIndex(getPaths(image), index);
+			printf("path = %p\n", circ);
+			
+			if(circ == NULL) { // if image invlaid then return empty array
+				string = calloc(5, sizeof(char));
+				strcpy(string, "bad");
+				return string;
+			}
+			
+			string = attrListToJSON(circ->otherAttributes);
+		}
+	}
+	
+	// else if for gorups
+	else if(!strcasecmp(shapeType, "group")) {
+		if(index > getLength(getGroups(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return string;
+		} else {
+			Group* circ = getDataFromIndex(getGroups(image), index);
+			printf("path = %p\n", circ);
+			
+			if(circ == NULL) { // if image invlaid then return empty array
+				string = calloc(5, sizeof(char));
+				strcpy(string, "bad");
+				return string;
+			}
+			
+			string = attrListToJSON(circ->otherAttributes);
+		}
+	}
+	
+	else {
+		string = calloc(5, sizeof(char));
+		strcpy(string, "bad");
+		return string;
+	}
 	
 	
 	

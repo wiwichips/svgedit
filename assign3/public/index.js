@@ -348,6 +348,11 @@ console.log(optionChosen);
 			},
 			success: function (data) {
 				
+				console.log("success");
+				
+				
+				
+				
 			},
 			fail: function(error) {
 				
