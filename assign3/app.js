@@ -73,7 +73,7 @@ app.get('/uploads/:name', function(req , res){
 
 
 /// functions from shared library to use
-let libsvgparse = ffi.Library('parser/libsvgparse', {
+let libsvgparse = ffi.Library('libsvgparse', {
 	// test functions
 	'floatToString': [ 'string', [ 'float' ] ],
 	'printHelloWorld': [ 'string', [ 'int' ] ],
