@@ -204,7 +204,15 @@ console.log(optionChosen);
 				filename: optionChosen,
 			},
 			success: function (data) {
-				htmlFormattingForViewPanel(data.foo, optionChosen);
+				
+				if(optionChosen != "") {
+					htmlFormattingForViewPanel(data.foo, optionChosen);
+					
+					// display other options
+					$("#underSVGviewPanelStuff").css({
+							display: "block",
+					});
+				}
 			},
 			fail: function(error) {
 				
@@ -227,12 +235,37 @@ console.log(optionChosen);
 			},
 			success: function (data) {
 				
-				
 			},
 			fail: function(error) {
 				
 			}
 		});
+		
+		// get the information about the svg from the backend
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				if(optionChosen != "") {
+					htmlFormattingForViewPanel(data.foo, optionChosen);
+					
+					// display other options
+					$("#underSVGviewPanelStuff").css({
+							display: "block",
+					});
+				}
+			},
+			fail: function(error) {
+				
+			}
+		});
+		
+		
     });
 	
 	$('#changeDescriptionForm').submit(function(e){
@@ -250,6 +283,30 @@ console.log(optionChosen);
 			success: function (data) {
 				
 				
+			},
+			fail: function(error) {
+				
+			}
+		});
+		
+		// get the information about the svg from the backend
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				if(optionChosen != "") {
+					htmlFormattingForViewPanel(data.foo, optionChosen);
+					
+					// display other options
+					$("#underSVGviewPanelStuff").css({
+							display: "block",
+					});
+				}
 			},
 			fail: function(error) {
 				
@@ -281,6 +338,32 @@ console.log(optionChosen);
 				
 			}
 		});
+		
+		// get the information about the svg from the backend
+		$.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/svgDetails',   //The server endpoint we are connecting to
+			data: {
+				filename: optionChosen,
+			},
+			success: function (data) {
+				
+				if(optionChosen != "") {
+					htmlFormattingForViewPanel(data.foo, optionChosen);
+					
+					// display other options
+					$("#underSVGviewPanelStuff").css({
+							display: "block",
+					});
+				}
+			},
+			fail: function(error) {
+				
+			}
+		});
+		
+		location.reload();
     });
 	
 	$('#addRectangle').submit(function(e){
@@ -333,8 +416,14 @@ console.log(optionChosen);
 		});
     });
 	
+	let shapeIDNum = -1;
+	let shapeIDType = 'bad';
+	
 	$('#chooseAttribute').submit(function(e){
         e.preventDefault();
+		
+		shapeIDNum = $('#chooseShapeNumber').val();
+		shapeIDType = $('#chooseShapeType').val();
 		
         //Pass data to the Ajax call, so it gets passed to the server
         $.ajax({
@@ -347,13 +436,44 @@ console.log(optionChosen);
 				fileName: optionChosen,
 			},
 			success: function (data) {
+				// if it is not bad
 				if(data.foo.bad === false) {
 
 					// change the html stuff
 					htmlFormattingForAttributesList(data.foo);
 					
+					// show edit options
+					$("#changeAttribute").css({
+						display: "block",
+					});
 				}
-			
+				
+				
+			},
+			fail: function(error) {
+				
+			}
+		});
+    });
+	
+	$('#changeAttribute').submit(function(e){
+        e.preventDefault();
+		
+        //Pass data to the Ajax call, so it gets passed to the server
+        $.ajax({
+			type: 'get',            //Request type
+			dataType: 'json',       //Data type - we will use JSON for almost everything 
+			url: '/changeAttribute',   //The server endpoint we are connecting to
+			data: {
+				name: $('#attributeName').val(),
+				value: $('#attributeValue').val(),
+				shapeType: shapeIDType,
+				shapeNumber: shapeIDNum,
+				fileName: optionChosen,
+			},
+			success: function (data) {
+				
+				
 				
 				
 			},
@@ -485,7 +605,7 @@ console.log(optionChosen);
 			$('#showAttributesList').append('</p>');
 			$('#showAttributesList').append('<br>');
 			
-			console.log("hey google openmaps");
+			// console.log("hey google openmaps");
 		}
 		
 	}

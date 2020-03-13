@@ -91,10 +91,9 @@ let libsvgparse = ffi.Library('parser/libsvgparse', {
 	'addCircleFromFile': ['int', ['string', 'string', 'float', 'float', 'float', 'string', 'string']],
 	'addRectangleFromFile': ['int', ['string', 'string', 'float', 'float', 'float', 'float', 'string', 'string']],
 	'scaleShapeFromFile': ['int', ['string', 'string', 'float', 'string']],
-	
+	'updateAttributeFromFile': ['int', ['string', 'string', 'string', 'int', 'string', 'string']],
 	'returnInformationAboutShape': ['string', ['string', 'string', 'string', 'int']],
 });
-
 
 /// end points
 
@@ -253,9 +252,6 @@ app.get('/chooseAttribute', function(req , res){
 	// console.log("shooting star: --->" + libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1));
 	
 	if(libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1) != "bad" && libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1) != "[]") {
-		
-		
-		
 		erin.otherAttributes = JSON.parse(libsvgparse.returnInformationAboutShape('uploads/'+ req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1));
 		
 		// remember to add other details
@@ -266,17 +262,24 @@ app.get('/chooseAttribute', function(req , res){
 	else {
 		erin.bad = true;
 	}
-	
-
-
-	
 
 	res.send({
 		foo: erin
 	});
 });
 
-
+// changeAttribute - chnages an attribute for a shape
+app.get('/changeAttribute', function(req , res){
+	
+	// call function in c
+	let yes = libsvgparse.updateAttributeFromFile(req.query.fileName, 'parser/svg.xsd', req.query.shapeType, req.query.shapeNumber - 1, req.query.name, req.query.value);
+	
+	console.log('yes = ' + yes);
+	
+	res.send({
+		foo: 'worked'
+	});
+});
 
 
 

@@ -465,7 +465,69 @@ char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeT
 	return string;
 }
 
+bool updateAttributeFromFile(char* fileName, char* schemaFile, char* shapeType, int number, char* name, char* value) {
+	int index = number;
+	// create the svg based off of the filename
+	SVGimage* image = createValidSVGimage(fileName, schemaFile);
+	
+	if(image == NULL) {
+		return false;
+	}
+	
+	// if its an image type, then just return json list of attributes for image
+	if(!strcasecmp(shapeType, "svg") || !strcasecmp(shapeType, "image") || !strcasecmp(shapeType, "img") || !strcasecmp(shapeType, "SVGimage")) {
+		setAttribute(image, SVG_IMAGE, index, addAttribute(name, value));
+		
+	}
 
+	else if(!strcasecmp(shapeType, "circle") || !strcasecmp(shapeType, "circ")) {
+		if(index > getLength(getCircles(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return false;
+		} else {
+			setAttribute(image, CIRC, index, addAttribute(name, value));
+		}
+	}
+	
+	else if(!strcasecmp(shapeType, "rectangle") || !strcasecmp(shapeType, "rect")) {
+		if(index > getLength(getRects(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return false;
+		} else {
+			setAttribute(image, RECT, index, addAttribute(name, value));
+		}
+	}
+	
+	else if(!strcasecmp(shapeType, "path")) {
+		if(index > getLength(getRects(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return false;
+		} else {
+			setAttribute(image, PATH, index, addAttribute(name, value));
+		}
+	}
+	
+	// else if for gorups
+	else if(!strcasecmp(shapeType, "group")) {
+		if(index > getLength(getGroups(image)) || index < 0) {
+			// deleteSVGimage(image);
+			return false;
+		} else {
+			setAttribute(image, GROUP, index, addAttribute(name, value));
+		}
+	}
+	
+	// validate it
+	if(!validateSVGimage(image, schemaFile)) {
+		
+		return false;
+	}
+	
+	// write it to file
+	bool result = writeSVGimage(image, fileName);
+	
+	return result;
+}
 
 
 
@@ -1001,7 +1063,8 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 	else if(elemType == CIRC){
 //		puts("CIRC");
 		
-		list = image->circles;
+		// list = image->circles;
+		list = getCircles(image);
 
 		// check if the index is valid
 		if(elemIndex >= getLength(list)) {
@@ -1048,7 +1111,9 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 	}
 
 	else if(elemType == RECT){
-		list = image->rectangles;
+		// list = image->rectangles;
+		list = getRects(image);
+		
 		// check if the index is valid
 		if(elemIndex >= getLength(list)) {
 			return;
@@ -1101,7 +1166,8 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 	}
 	
 	else if(elemType == PATH){
-		list = image->paths;
+		// list = image->paths;
+		list = getPaths(image);
 		// check if the index is valid
 		if(elemIndex >= getLength(list)) {
 			return;
@@ -1136,7 +1202,8 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
 	}
 	
 	else if(elemType == GROUP){
-		list = image->groups;
+		// list = image->groups;
+		list = getGroups(image);
 		// check if the index is valid
 		if(elemIndex >= getLength(list)) {
 			return;

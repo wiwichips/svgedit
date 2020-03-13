@@ -43,7 +43,7 @@ char* returnInformationAboutShape(char* fileName, char* schemaFile, char* shapeT
 
 char* betterAttrListToJSONimage(void* data, elementType e);
 
-
+bool updateAttributeFromFile(char* fileName, char* schemaFile, char* shapeType, int number, char* name, char* value);
 
 
 
